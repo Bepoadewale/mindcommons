@@ -29,3 +29,5 @@ Last updated: 2026-11-17
 ## Next executable task
 
 Resume by checking repository state, open PRs, and deployment status. The highest-priority external dependency is account-owner Cloudflare authorization; until then, continue independent local reviewer-preparation work. Deployment, a live AI call, and production-linked public assets remain blocked.
+
+The standard Wrangler OAuth login flow was canceled before authorization because its requested scopes included unrelated zone and email-routing writes. `wrangler whoami` still reports unauthenticated. A least-privilege account-scoped Cloudflare authorization is needed; do not send credentials through chat.
