@@ -21,4 +21,6 @@
 - Targeted credential-pattern scan found no matches. A local Gitleaks container could not start because Docker Desktop returned HTTP 500 on container creation; the PR's `secret-scan` remains required.
 - Verified `npm run dev`: `/`, `/vision/`, and `/api/demo` returned HTTP 200 and the API marked its fictional community `synthetic: true`. Removed a redundant Pages redirect that Wrangler identified as invalid; the normal SPA fallback resolves `/vision/`.
 - Cloudflare access remains blocked: general Keychain token invalid; active provisioner token lists no accounts. No resources provisioned or mutated.
-- Updated README, architecture, reviewer guide, RFP map, status, evidence links, checklist and state for actual local evidence. Next: commit/push the feature branch, open application PR #2, and merge only after every CI check passes.
+- Updated README, architecture, reviewer guide, RFP map, status, evidence links, checklist and state for actual local evidence.
+- Committed implementation as `4b01926` and strict-CSP offline styling fix as `b6e0ade`; pushed feature branch and opened PR #2. Configured strict branch-protection checks for `validate`, `verify`, `browser-acceptance`, and `secret-scan`, with no human review requirement.
+- PR #2 CI is active for the latest commit. The existing `gh pr checks 2 --watch --interval 120` watcher remains the sole CI monitor. Do not merge until all four checks pass and the final diff is reviewed.
