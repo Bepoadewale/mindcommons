@@ -35,3 +35,11 @@ Automated tests use a deterministic mock. Wrangler local D1 exercises migrations
 **Status:** accepted.
 
 All content is fictional and synthetic. The prototype will not accept arbitrary narrative uploads or clinical prompts. Any future human-subject work requires co-design, ethical review, privacy/security assessment, safeguarding, and legal advice.
+
+## ADR-006: GitHub Pages hosts a vision-only fallback
+
+**Status:** selected while Cloudflare account access is unavailable.
+
+Publish a separately built, static future-product visualization at the repository's GitHub Pages URL. This page bundle has no demo API, model calls, service-worker registration or install-manifest link; the live governance-controlled demo still requires the Cloudflare Pages Functions, D1 and Workers AI deployment in ADR-001. GitHub Pages is available for public repositories on GitHub Free and supports custom GitHub Actions workflows. The fallback makes the proposed screens reviewable without implying that the backend is deployed.
+
+The Pages URL is not evidence of a live prototype. It becomes a verified artifact only after the GitHub Pages configuration, deployment workflow and public HTTPS response are checked. Sources: [GitHub Pages availability and limits](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [custom workflow publishing](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).

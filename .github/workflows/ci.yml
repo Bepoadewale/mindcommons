@@ -51,6 +51,7 @@ jobs:
       - run: npm run build
       - run: npm run db:migrate:local
       - run: npm run test:e2e:fullstack
+      - run: npm run test:vision-static
 
   secret-scan:
     name: secret-scan

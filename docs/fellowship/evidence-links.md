@@ -5,7 +5,7 @@
 | Source repository        | Public; app merged to `main`; required CI passed | https://github.com/Bepoadewale/mindcommons                                                                         |
 | Live demo                | Not deployed                                     | None yet                                                                                                           |
 | Technical video          | Not recorded                                     | None yet                                                                                                           |
-| Future product vision    | Implemented locally                              | `/vision/` interactive wireframe; public URL awaits deployment                                                     |
+| Future product vision    | Static GitHub Pages publication in progress      | `/vision/` locally; public URL pending Pages configuration and verification                                        |
 | Architecture and limits  | Documented                                       | [System overview](../architecture/system-overview.md), [technical validation](../research/technical-validation.md) |
 | Test evidence            | Local and CI checks passed                       | 14 unit tests, 4 browser tests, local D1/API integration, full-stack browser path, axe checks; no live AI call     |
 | Threat model and privacy | Draft documentation                              | [Threat model](../security/threat-model.md), [privacy limits](../security/privacy-limitations.md)                  |

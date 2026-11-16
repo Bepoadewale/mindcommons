@@ -26,6 +26,7 @@ Reviewed 2026-11-16. These facts are a point-in-time check; confirm limits, mode
 - Use a semantic HTML/CSS design system and installable PWA manifest/service worker. Cache static public assets only; never cache API responses or private narratives.
 - Unit and integration tests use a mock AI binding; Wrangler local D1 tests exercise the real SQLite-compatible database path. Playwright tests cover browser journeys. A separate live call is required to claim production inference.
 - Workflow permissions should default to read-only and pin third-party actions to reviewed versions or immutable revisions. GitHub Actions docs: <https://docs.github.com/actions/security-for-github-actions/security-guides/automatic-token-authentication>.
+- GitHub Pages is available for public repositories on GitHub Free, and a custom Actions workflow can build and deploy a static artifact. Its Actions deployment requires `pages: write` and `id-token: write`; a separate build job needs only read permissions plus Pages read access for configuration. MindCommons uses it only for a static future-vision visualization: no API, AI, consent changes, or sensitive data are sent. It is a limited wireframe fallback, not the backend demo. Sources: <https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages>, <https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages>.
 
 ## Research and legal context
 

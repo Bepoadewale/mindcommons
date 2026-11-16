@@ -215,7 +215,8 @@ export default function App() {
     setInstallPrompt(null);
   }
 
-  if (/^\/vision\/?$/.test(window.location.pathname)) return <Vision />;
+  const visionPath = `${import.meta.env.BASE_URL}vision`;
+  if ([visionPath, `${visionPath}/`].includes(window.location.pathname)) return <Vision />;
 
   return (
     <div className="site-shell">
@@ -223,7 +224,7 @@ export default function App() {
         Skip to content
       </a>
       <header className="topbar">
-        <a className="brand" href="/">
+        <a className="brand" href={import.meta.env.BASE_URL}>
           <span className="brand-mark" aria-hidden="true">
             m
           </span>
@@ -232,7 +233,7 @@ export default function App() {
         <nav aria-label="Main navigation">
           <a href="#why">Why</a>
           <a href="#demo">Demo</a>
-          <a href="/vision/">Future vision</a>
+          <a href={`${import.meta.env.BASE_URL}vision/`}>Future vision</a>
         </nav>
         <div className="top-actions">
           {installPrompt && (
@@ -751,7 +752,7 @@ export default function App() {
               health workers need to shape the rules, safety measures and benefit commitments. This
               code does not stand in for that work.
             </p>
-            <a href="/vision/" className="text-link">
+            <a href={`${import.meta.env.BASE_URL}vision/`} className="text-link">
               Explore the proposed future experience ↗
             </a>
           </div>
@@ -759,7 +760,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <a className="brand" href="/">
+        <a className="brand" href={import.meta.env.BASE_URL}>
           <span className="brand-mark" aria-hidden="true">
             m
           </span>
@@ -768,7 +769,7 @@ export default function App() {
         <p>Open technical exploration · synthetic data only</p>
         <div>
           <a href="https://github.com/Bepoadewale/mindcommons">GitHub</a>
-          <a href="/vision/">Future vision</a>
+          <a href={`${import.meta.env.BASE_URL}vision/`}>Future vision</a>
           <a href="https://github.com/Bepoadewale/mindcommons/blob/main/SECURITY.md">Security</a>
         </div>
       </footer>
@@ -776,7 +777,7 @@ export default function App() {
   );
 }
 
-function Vision() {
+export function Vision({ standalone = false }: { standalone?: boolean }) {
   const screens = [
     [
       '01',
@@ -821,22 +822,31 @@ function Vision() {
         Skip to content
       </a>
       <header className="topbar">
-        <a className="brand" href="/">
+        <a className="brand" href={standalone ? '#vision-main' : import.meta.env.BASE_URL}>
           <span className="brand-mark" aria-hidden="true">
             m
           </span>
           <span>mindcommons</span>
         </a>
         <nav aria-label="Main navigation">
-          <a href="/#why">Why</a>
-          <a href="/#demo">Demo</a>
-          <a href="/vision/" aria-current="page">
+          {!standalone && <a href={`${import.meta.env.BASE_URL}#why`}>Why</a>}
+          {!standalone && <a href={`${import.meta.env.BASE_URL}#demo`}>Demo</a>}
+          <a
+            href={standalone ? '#vision-main' : `${import.meta.env.BASE_URL}vision/`}
+            aria-current="page"
+          >
             Future vision
           </a>
         </nav>
-        <a className="button button-dark" href="/#demo">
-          Back to the demo ↗
-        </a>
+        {standalone ? (
+          <a className="button button-dark" href="https://github.com/Bepoadewale/mindcommons">
+            Prototype source ↗
+          </a>
+        ) : (
+          <a className="button button-dark" href={`${import.meta.env.BASE_URL}#demo`}>
+            Back to the demo ↗
+          </a>
+        )}
       </header>
       <main id="vision-main">
         <section className="vision-hero">
@@ -907,16 +917,20 @@ function Vision() {
         </section>
       </main>
       <footer className="footer">
-        <a className="brand" href="/">
+        <a className="brand" href={standalone ? '#vision-main' : import.meta.env.BASE_URL}>
           <span className="brand-mark" aria-hidden="true">
             m
           </span>
           <span>mindcommons</span>
         </a>
-        <p>Public interactive wireframe · proposed screens clearly labelled</p>
+        <p>
+          {standalone
+            ? 'Public wireframe · proposed screens clearly labelled · static preview only'
+            : 'Public interactive wireframe · proposed screens clearly labelled'}
+        </p>
         <div>
           <a href="https://github.com/Bepoadewale/mindcommons">GitHub</a>
-          <a href="/#demo">Working prototype</a>
+          {!standalone && <a href={`${import.meta.env.BASE_URL}#demo`}>Working prototype</a>}
         </div>
       </footer>
     </div>

@@ -37,6 +37,6 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [ ] Dedicated Cloudflare Pages and D1 resources; Workers AI binding; free-tier verified.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
-- [~] Interactive future-vision page implemented locally; public link awaits deployment.
+- [~] Future-vision page implemented locally; static GitHub Pages build and deployment workflow are prepared; public URL awaits setup and live validation. This is not the live backend demo.
 - [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
 - [~] No unverified live links published; final URL check awaits deployment/video.
