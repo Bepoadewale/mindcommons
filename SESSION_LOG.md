@@ -32,3 +32,6 @@
 - PR #2 merged to `main` at `38f3e9e7f2a9698d2b771a94dc1907857eee73aa`. GitHub confirmed the PR was merged, and both local and remote feature branches are absent. Local checkout is synchronized to `main`.
 - Cloudflare credentials remain the only blocker to production deployment and live AI verification; no Cloudflare resource has been changed. Video and public wireframe URL still depend on deployment or a separately verified hosting account.
 - Opening a documentation-only PR #3 to correct resumable state/checklist links after the merge; four required CI checks remain enforced.
+
+- Verified PR #3 is `MERGED` at `9f57948ac412c1c9d2452df9fa78fc199d80ad8d`; local checkout is clean on `main`, only local `main` exists, and the remote `docs/record-prototype-merge` branch is absent.
+- Rechecked `npx wrangler whoami`: this environment is unauthenticated. No Cloudflare mutation has occurred. Updating the persistent plan/state to make the account-authorization blocker and remaining public evidence explicit.
