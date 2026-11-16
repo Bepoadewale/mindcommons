@@ -38,7 +38,7 @@ All content is fictional and synthetic. The prototype will not accept arbitrary 
 
 ## ADR-006: GitHub Pages hosts a vision-only fallback
 
-**Status:** selected while Cloudflare account access is unavailable.
+**Status:** deployed and verified as a static fallback while Cloudflare account access is unavailable.
 
 Publish a separately built, static future-product visualization at the repository's GitHub Pages URL. This page bundle has no demo API, model calls, service-worker registration or install-manifest link; the live governance-controlled demo still requires the Cloudflare Pages Functions, D1 and Workers AI deployment in ADR-001. GitHub Pages is available for public repositories on GitHub Free and supports custom GitHub Actions workflows. The fallback makes the proposed screens reviewable without implying that the backend is deployed.
 

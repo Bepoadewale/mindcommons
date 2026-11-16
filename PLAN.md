@@ -12,7 +12,7 @@ Use a small full-stack web application on Cloudflare Pages: React/TypeScript ass
 4. **Reviewer experience:** responsive accessible landing/demo, session isolation/reset, benefit records, `/vision/` wireframe and installable PWA assets are implemented. Android install has not been device-tested.
 5. **Quality/security:** unit, integration, browser tests, limits, headers, threat model, dependency and secret checks are implemented and locally/CI verified as recorded in `STATE.md`.
 6. **Hosted deployment:** blocked until account-owner authorization and free resource scope can be verified. No resources have been provisioned.
-7. **Submission evidence:** reviewer guide, RFP traceability and roadmap are documented. A static, vision-only GitHub Pages build and deployment workflow are prepared as a public wireframe fallback; public HTTPS verification remains. Production-accurate public video and the live backend URL still require the Cloudflare deployment.
+7. **Submission evidence:** reviewer guide, RFP traceability and roadmap are documented. The static, vision-only GitHub Pages wireframe is public and verified. Production-accurate public video and the live backend URL still require the Cloudflare deployment.
 8. **Final acceptance:** pending live deployment/inference, public URLs, video, Android/device check and final production verification. Recheck CI, public links, branch cleanup and DavDeploy isolation at that stage.
 
 ## Routine decisions

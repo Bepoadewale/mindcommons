@@ -36,7 +36,7 @@ npm run dev
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: not deployed yet
 - Technical video: not recorded yet
-- Future-product wireframe: local route `/vision/`; GitHub Pages publication is in progress and will be a static visualization only
+- Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization only; no API or AI execution)
 
 ## Privacy, research, and governance limits
 
