@@ -1,0 +1,18 @@
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests/vision-static',
+  fullyParallel: true,
+  reporter: 'list',
+  use: {
+    baseURL: 'http://127.0.0.1:4174/mindcommons/',
+    trace: 'retain-on-failure',
+    ...devices['Desktop Chrome'],
+  },
+  webServer: {
+    command: 'node scripts/serve-vision-preview.mjs',
+    url: 'http://127.0.0.1:4174/mindcommons/',
+    reuseExistingServer: !process.env.CI,
+    timeout: 30_000,
+  },
+});

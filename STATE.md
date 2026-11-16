@@ -28,6 +28,6 @@ Last updated: 2026-11-17
 
 ## Next executable task
 
-Resume by checking repository state, open PRs, and deployment status. The highest-priority external dependency is account-owner Cloudflare authorization; until then, continue independent local reviewer-preparation work. Deployment, a live AI call, and production-linked public assets remain blocked.
+The vision-only GitHub Pages build and deployment workflow are in progress. On resume, check PRs and workflow state, then verify public HTTPS access to the wireframe. That static page is not the backend demo. Cloudflare authorization is still needed for the live demo and real AI path.
 
 The standard Wrangler OAuth login flow was canceled before authorization because its requested scopes included unrelated zone and email-routing writes. `wrangler whoami` still reports unauthenticated. A least-privilege account-scoped Cloudflare authorization is needed; do not send credentials through chat.

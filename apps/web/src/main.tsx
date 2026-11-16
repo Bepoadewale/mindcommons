@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App, { Vision } from './App';
 import './styles.css';
 
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+const visionOnly = import.meta.env.VITE_VISION_ONLY === 'true';
+
+if (!visionOnly && 'serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener(
     'load',
     () => void navigator.serviceWorker.register('/service-worker.js'),
@@ -11,7 +13,5 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <React.StrictMode>{visionOnly ? <Vision standalone /> : <App />}</React.StrictMode>,
 );
