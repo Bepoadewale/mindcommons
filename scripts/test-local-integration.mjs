@@ -3,9 +3,9 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const base = 'http://127.0.0.1:8789';
 const server = spawn(
-  'npx',
+  process.execPath,
   [
-    'wrangler',
+    'node_modules/wrangler/bin/wrangler.js',
     'pages',
     'dev',
     'dist',
@@ -24,8 +24,38 @@ const server = spawn(
     cwd: process.cwd(),
     stdio: ['ignore', 'ignore', 'pipe'],
     env: { ...process.env, FORCE_COLOR: '0' },
+    detached: process.platform !== 'win32',
   },
 );
+
+async function stopServer() {
+  if (server.exitCode !== null || server.signalCode !== null) return;
+  const waitForExit = (milliseconds) =>
+    new Promise((resolve) => {
+      if (server.exitCode !== null || server.signalCode !== null) return resolve(true);
+      const timer = setTimeout(() => {
+        server.removeListener('exit', onExit);
+        resolve(false);
+      }, milliseconds);
+      const onExit = () => {
+        clearTimeout(timer);
+        resolve(true);
+      };
+      server.once('exit', onExit);
+    });
+  try {
+    process.kill(process.platform === 'win32' ? server.pid : -server.pid, 'SIGTERM');
+  } catch {
+    server.kill('SIGTERM');
+  }
+  if (await waitForExit(5000)) return;
+  try {
+    process.kill(process.platform === 'win32' ? server.pid : -server.pid, 'SIGKILL');
+  } catch {
+    server.kill('SIGKILL');
+  }
+  await waitForExit(2000);
+}
 
 let stderr = '';
 server.stderr.setEncoding('utf8');
@@ -73,8 +103,16 @@ async function expectJson(response, status) {
 
 function executeLocalSql(command) {
   const result = spawnSync(
-    'npx',
-    ['wrangler', 'd1', 'execute', 'mindcommons-demo-d1', '--local', '--command', command],
+    process.execPath,
+    [
+      'node_modules/wrangler/bin/wrangler.js',
+      'd1',
+      'execute',
+      'mindcommons-demo-d1',
+      '--local',
+      '--command',
+      command,
+    ],
     { cwd: process.cwd(), encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } },
   );
   assert.equal(result.status, 0, `local test setup SQL failed: ${result.stderr}`);
@@ -312,6 +350,5 @@ try {
   console.error(error instanceof Error ? error.message : String(error));
   process.exitCode = 1;
 } finally {
-  server.kill('SIGTERM');
-  await new Promise((resolve) => server.once('exit', resolve));
+  await stopServer();
 }

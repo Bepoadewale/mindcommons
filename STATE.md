@@ -13,6 +13,7 @@ Last updated: 2026-11-16
 - Feature branch `feat/governance-controlled-demo` contains a React/Vite PWA, Pages Functions, D1 migrations, deterministic authorization, separate fictional permissions, fixed synthetic inference workflow, benefit evidence, audit/provenance, `/vision/` wireframe, and tests. Commits `4b01926` and `b6e0ade` are pushed to PR #2; the PR is not merged.
 - Locally verified: 14 unit tests, 4 fixture-backed Playwright tests, Pages Functions + local D1 API integration, full-stack browser flow through real local functions/D1, axe WCAG 2.1 A/AA scan on the demo and vision pages, TypeScript, ESLint, production build and docs link validator. Full-stack flows use an explicitly labeled deterministic mock; no actual AI inference has been called.
 - `npm ci` completed with 0 reported vulnerabilities. A targeted credential-pattern scan found no matches. Local Docker-based Gitleaks could not start because Docker Desktop returned HTTP 500 on container creation; GitHub CI's `secret-scan` job must pass before merge.
+- The first PR workflow `verify` job timed out at 10 minutes after local integration printed success; logs showed orphan Wrangler/Workerd processes during cleanup. Both local runners now spawn Wrangler directly, shut down their process group with bounded fallback, and the CI verify timeout is 15 minutes. Local full suite passes with the new lifecycle handling.
 - `npm run dev` started the Pages runtime; `/`, `/vision/`, and `/api/demo` each returned HTTP 200 and the API identified a fictional community with `synthetic: true`.
 - PWA manifest includes SVG and 192/512 PNG icons; service worker excludes API data from cache. Browser behavior checked; Android installation has not been device-tested.
 
@@ -24,7 +25,7 @@ Last updated: 2026-11-16
 ## Current branch and PR state
 
 - Current branch: `feat/governance-controlled-demo`, based on merged foundation `main`.
-- PR #2: https://github.com/Bepoadewale/mindcommons/pull/2. CI is running for the latest push; wait on the existing `gh pr checks 2 --watch --interval 120` watcher. No production deployment yet.
+- PR #2: https://github.com/Bepoadewale/mindcommons/pull/2. A commit fixes the CI teardown timeout; wait on the existing `gh pr checks 2 --watch --interval 120` watcher for its latest run after pushing that fix. No production deployment yet.
 - `wrangler.local.jsonc` exists locally as an ignored helper after Wrangler rejected custom config paths; it must not be committed. No credential values are stored in it.
 
 ## Next executable task

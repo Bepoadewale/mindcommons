@@ -4,9 +4,9 @@ import { chromium } from '@playwright/test';
 
 const base = 'http://127.0.0.1:8790';
 const server = spawn(
-  'npx',
+  process.execPath,
   [
-    'wrangler',
+    'node_modules/wrangler/bin/wrangler.js',
     'pages',
     'dev',
     'dist',
@@ -25,8 +25,38 @@ const server = spawn(
     cwd: process.cwd(),
     stdio: ['ignore', 'ignore', 'pipe'],
     env: { ...process.env, FORCE_COLOR: '0' },
+    detached: process.platform !== 'win32',
   },
 );
+
+async function stopServer() {
+  if (server.exitCode !== null || server.signalCode !== null) return;
+  const waitForExit = (milliseconds) =>
+    new Promise((resolve) => {
+      if (server.exitCode !== null || server.signalCode !== null) return resolve(true);
+      const timer = setTimeout(() => {
+        server.removeListener('exit', onExit);
+        resolve(false);
+      }, milliseconds);
+      const onExit = () => {
+        clearTimeout(timer);
+        resolve(true);
+      };
+      server.once('exit', onExit);
+    });
+  try {
+    process.kill(process.platform === 'win32' ? server.pid : -server.pid, 'SIGTERM');
+  } catch {
+    server.kill('SIGTERM');
+  }
+  if (await waitForExit(5000)) return;
+  try {
+    process.kill(process.platform === 'win32' ? server.pid : -server.pid, 'SIGKILL');
+  } catch {
+    server.kill('SIGKILL');
+  }
+  await waitForExit(2000);
+}
 let stderr = '';
 server.stderr.setEncoding('utf8');
 server.stderr.on('data', (chunk) => {
@@ -143,6 +173,5 @@ try {
   process.exitCode = 1;
 } finally {
   await browser?.close();
-  server.kill('SIGTERM');
-  await new Promise((resolve) => server.once('exit', resolve));
+  await stopServer();
 }
