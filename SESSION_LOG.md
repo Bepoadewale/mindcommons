@@ -35,3 +35,8 @@
 
 - Verified PR #3 is `MERGED` at `9f57948ac412c1c9d2452df9fa78fc199d80ad8d`; local checkout is clean on `main`, only local `main` exists, and the remote `docs/record-prototype-merge` branch is absent.
 - Rechecked `npx wrangler whoami`: this environment is unauthenticated. No Cloudflare mutation has occurred. Updating the persistent plan/state to make the account-authorization blocker and remaining public evidence explicit.
+
+## 2026-11-17 (continued)
+
+- PR #3 was verified merged at `9f57948ac412c1c9d2452df9fa78fc199d80ad8d`; PR #4 merged the corrected execution state at `1e0990119b44148bea255f5f3f6a61464c0a78a6`. Both documentation PRs passed all four required checks; GitHub removed their remote source branches and local `main` was synchronized.
+- Retried `npx wrangler whoami`; the CLI remains unauthenticated. Started the standard `wrangler login` flow, which requested broad OAuth scopes including unrelated zone and email-routing writes, then canceled before authorization. No Cloudflare resources were changed.
