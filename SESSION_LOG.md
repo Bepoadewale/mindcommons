@@ -25,3 +25,10 @@
 - Committed implementation as `4b01926` and strict-CSP offline styling fix as `b6e0ade`; pushed feature branch and opened PR #2. Configured strict branch-protection checks for `validate`, `verify`, `browser-acceptance`, and `secret-scan`, with no human review requirement.
 - PR #2 CI is active for the latest commit. The existing `gh pr checks 2 --watch --interval 120` watcher remains the sole CI monitor. Do not merge until all four checks pass and the final diff is reviewed.
 - The initial CI `verify` job hit its 10-minute timeout after integration output; job logs showed Wrangler/Workerd orphan processes at teardown. Updated both local test runners to launch project-local Wrangler directly and terminate the process group with bounded wait/kill fallback; increased `verify` timeout to 15 minutes. The complete local suite passes with that change. Push it and use the existing PR-check watcher for the new run.
+
+## 2026-11-17
+
+- PR #2 completed successfully: GitHub CI run `43977143691` passed `validate`, `verify`, `browser-acceptance`, and `secret-scan`.
+- PR #2 merged to `main` at `38f3e9e7f2a9698d2b771a94dc1907857eee73aa`. GitHub confirmed the PR was merged, and both local and remote feature branches are absent. Local checkout is synchronized to `main`.
+- Cloudflare credentials remain the only blocker to production deployment and live AI verification; no Cloudflare resource has been changed. Video and public wireframe URL still depend on deployment or a separately verified hosting account.
+- Opening a documentation-only PR #3 to correct resumable state/checklist links after the merge; four required CI checks remain enforced.

@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [~] Foundation PR #1 and documentation validation passed/merged; application PR #2 still needs CI, merge and cleanup.
-- [x] Application, tests, contribution/security guidance and reproducible commands implemented locally; clean install still pending.
-- [x] PR #1 merged source branch removed locally/remotely; PR #2 cleanup pending.
+- [x] Foundation PR #1 and application PR #2 merged after required checks passed; GitHub verified the merge.
+- [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
+- [x] Merged PR #1 and #2 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -38,5 +38,5 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
 - [~] Interactive future-vision page implemented locally; public link awaits deployment.
-- [ ] Reviewer guide, RFP mapping and 12-month roadmap.
+- [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
 - [~] No unverified live links published; final URL check awaits deployment/video.
