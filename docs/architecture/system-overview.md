@@ -1,6 +1,6 @@
 # System overview
 
-## Intended MVP architecture (not deployed yet)
+## Implemented local prototype architecture (not deployed)
 
 ```mermaid
 flowchart LR
@@ -12,7 +12,7 @@ flowchart LR
   F -->|decision and bounded result| V
 ```
 
-The static user interface is not an authority boundary. The function loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls Workers AI only for an allowed operation. A denied request ends before inference.
+The static user interface is not an authority boundary. The function loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Locally, the binding is replaced by a deterministic mock explicitly enabled for development; production inference has not been verified.
 
 ## Trust boundaries
 
@@ -25,7 +25,7 @@ The static user interface is not an authority boundary. The function loads serve
 
 ## State and records
 
-Expected records: short-lived demo session, community, policy proposal and effective version, fictional individual permission with purpose/expiry/withdrawal state, fixed research request, authorization decision, AI execution provenance, append-oriented audit event, and hypothetical benefit commitment. Do not store free-form health narratives.
+Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, policy proposal and effective version, fictional individual permission with purpose/expiry/withdrawal state, fixed research request, authorization decision, AI execution provenance, append-oriented audit event, and hypothetical benefit commitment. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
 
 ## Failure behavior
 

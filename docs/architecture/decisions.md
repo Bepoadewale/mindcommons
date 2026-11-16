@@ -10,6 +10,8 @@
 
 **Alternatives:** a plain static site cannot enforce policy; a paid VM, managed database, or paid Workers plan violates the zero-cost constraint; conventional training is too resource-heavy. Workers with Static Assets is technically viable but adds no current benefit over the documented Pages functions directory and bindings.
 
+The hosted model candidate is `@cf/google/gemma-4-26b-a4b-it`. Cloudflare's 2026-11-05 model-deprecation notice invalidated the first Llama candidate; the replacement is still subject to account-level and live free-allowance verification. Local Pages development overrides the configured AI binding with a nonfunctional placeholder and a separately labeled deterministic mock, preventing account calls.
+
 ## ADR-002: Deterministic authorization before inference
 
 **Status:** accepted.

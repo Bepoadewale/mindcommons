@@ -59,5 +59,7 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Documentation structure and local links verified (${markdown.length} Markdown files).`);
+  console.log(
+    `Documentation structure and local links verified (${markdown.length} Markdown files).`,
+  );
 }

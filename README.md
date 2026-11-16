@@ -14,26 +14,33 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 
 ## Current status
 
-The public repository and Phase 0 evidence are being established. The application, tests, deployment, and reviewer assets are not yet implemented. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for verified progress.
+The core synthetic scenario is implemented and runs locally. Unit, local Pages + D1 integration, browser, and full-stack browser checks pass. The full-stack test uses an explicitly labelled deterministic mock, so it does not prove a live model call. No production Cloudflare resources or public demo have been deployed. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
 
 ## Architecture direction
 
-The current decision is a React and TypeScript single-page application, Cloudflare Pages Functions, D1, and Workers AI, using only the free plan. Static assets remain public; all authorization runs in the API. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). This is a planned design, not a deployed service.
+The implementation uses a React and TypeScript single-page application, Cloudflare Pages Functions, D1, and a Workers AI binding for a possible live deployment, subject to account access and free-plan verification. Static assets remain public; all authorization runs in the API. Local inference uses an explicit deterministic mock. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed interactive wireframe runs at `/vision/` locally.
 
 ## Develop and verify
 
-Commands will be documented after the application and lockfile are created and validated. Do not treat these instructions as available yet.
+Requirements: Node.js 24+, npm 11+.
+
+```bash
+npm ci
+npm run dev
+```
+
+`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Pages Functions runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` checks the built UI against local Pages Functions and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run verify` runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
 
 ## Public links
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: not deployed yet
 - Technical video: not recorded yet
-- Future-product wireframe: not published yet
+- Future-product wireframe: local interactive route `/vision/`; public access awaits deployment
 
 ## Privacy, research, and governance limits
 
-The prototype must use synthetic content only. It is not suitable for patient data, clinical decisions, or human-subject research. Demo roles are not identity verification, audit records are not tamper-proof, and a cloud inference call does not establish deletion from model weights. Community authority, consent language, safeguarding, and benefit-sharing arrangements need to be co-designed before any real pilot. See [threat model](docs/security/threat-model.md), [privacy limitations](docs/security/privacy-limitations.md), and [community authority](docs/governance/community-authority.md).
+The prototype must use synthetic content only. It is not suitable for patient data, clinical decisions, or human-subject research. Demo roles are not identity verification, audit records are not tamper-proof, and a cloud inference call does not establish deletion from model weights. Application limits cap new sessions at 500/day, API requests at 60/minute/session, and model runs at 100/day; these safeguards do not guarantee account-wide free usage. Community authority, consent language, safeguarding, and benefit-sharing arrangements need to be co-designed before any real pilot. See [threat model](docs/security/threat-model.md), [privacy limitations](docs/security/privacy-limitations.md), and [community authority](docs/governance/community-authority.md).
 
 ## Contributing and license
 

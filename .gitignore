@@ -155,3 +155,11 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Local Cloudflare Pages runtime and test output
+.wrangler/
+.dev.vars
+playwright-report/
+test-results/
+wrangler.local.jsonc
+.DS_Store

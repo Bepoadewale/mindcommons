@@ -14,13 +14,13 @@ Prototype policy versions, fictional permission records, authorization results, 
 - A reviewer mistakes fictional roles, mock tests, or an ordinary audit table for real governance or immutable evidence.
 - Resource exhaustion causes quota failure or unexpected paid activation.
 
-## Controls to implement and verify
+## Implemented controls and verification status
 
-- Server-controlled opaque session, expiry and isolation; no client-supplied authority.
+- Server-controlled opaque session, two-hour expiry and isolation; at most 500 new synthetic sessions per UTC day; no client-supplied authority.
 - Strict schemas, body-size and text limits; fixed job IDs/model IDs; no script upload or arbitrary prompt execution.
 - Fail-closed authorization before AI; separate policy and individual permission checks; negative tests spy on AI binding.
-- Same-origin API, restrictive CORS, security headers, safe text rendering, no secrets in browser.
-- Application-level rate limits and a hard daily demo cap where practical; no automatic upgrade or paid fallback.
+- Same-origin mutation checks, no cross-origin credential support, security headers, safe text rendering, no secrets in browser.
+- Application-level rate limits (60 requests/minute/session), a 500-session/day cap and a 100-call/day AI cap; local API tests exercise each cap. No automatic upgrade or paid fallback.
 - Do not log submitted narratives; synthetic-only corpus; no API caching or browser persistence of sensitive records.
 - Append-oriented decision events with correlation IDs, without claiming tamper resistance.
 - Locked dependencies, CI least privilege, secret scanning, build and browser tests.
