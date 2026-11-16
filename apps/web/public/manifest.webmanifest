@@ -1,0 +1,31 @@
+{
+  "name": "MindCommons — Community rules for AI research",
+  "short_name": "MindCommons",
+  "description": "A synthetic demonstration of community rules and individual permissions governing AI research.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f5ef",
+  "theme_color": "#f5f5ef",
+  "icons": [
+    {
+      "src": "/mindcommons-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/mindcommons-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/mindcommons-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
