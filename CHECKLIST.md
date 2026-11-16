@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] Foundation PR #1 and application PR #2 merged after required checks passed; GitHub verified the merge.
+- [x] Foundation PR #1, application PR #2, and state documentation PR #3 merged after required checks passed; GitHub verified the merges.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1 and #2 source branches removed locally/remotely.
+- [x] Merged PR #1, #2, and #3 source branches removed locally/remotely.
 
 ## Phase 0
 
