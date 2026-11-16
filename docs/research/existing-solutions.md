@@ -9,6 +9,10 @@ This is a research snapshot, not a claim of novelty. Reviewed 2026-11-16.
 | [Flower](https://flower.ai/docs/framework/) | Open framework and tooling to build, simulate and deploy federated AI across common ML frameworks and devices. | MindCommons focuses on lightweight authorization and accountability around a fixed job; it does not implement federated training or claim that centralized inference is privacy-preserving. |
 | [Open Data Commons / CARE principles](https://www.gida-global.org/care) | Governance principles and related approaches for collective benefit, authority to control, responsibility and ethics in Indigenous data governance. | These are important governance references, not software functionality to copy mechanically. MindCommons must learn from relevant participants and local context; a synthetic demo cannot confer legitimate authority. |
 
+## Relevant Nigerian community-health context
+
+SRHIN's public article on its BraveHeart Innovation describes community leaders trained to recognize anxiety and depression and provide psychosocial support and mental-health education to young people in two IDP camps. This is useful local context for designing with community health workers and young people. It is not a MindCommons pilot, endorsement, partnership, or evidence that SRHIN has agreed to host this project. Source: <https://srhin.org/breaking-the-silence-how-braveheart-innovation-is-bringing-mental-health-closer-to-young-people-in-abujas-idp-camps/>.
+
 ## What MindCommons proposes to add
 
 An open, independently deployable control layer that links a versioned community rule, separate individual permission, bounded research request, deterministic authorization result, real model call, provenance and a benefit commitment record. The prototype tests this narrow technical path only. It does not prove legal compliance, consent validity, model unlearning, privacy-preserving computation, representative governance, or community adoption.
