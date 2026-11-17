@@ -251,11 +251,16 @@
 - Read-only Cloudflare preflight confirmed account `1630257815c70704ad812cd52c284ca2`, dedicated Worker `mindcommons-mozilla-demo` at version `b01d3f96-d72a-41a2-b751-88dff3c7adc9`, and D1 `mindcommons-demo-d1` (`9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`). Migrations 0007 and 0008 are pending. The subscription API returned HTTP 403 using both configured token services; Cloudflare's documented permission is `Billing Read` or `Billing Write`. No migration/deployment or account/resource mutation was attempted.
 - Updated status, reviewer guide, technical evidence, RFP mapping, link registry, and technical validation to distinguish merged/local capabilities from the hosted release and record the billing verification blocker. No outreach, real data use, DavDeploy change, or charge.
 - Verified the public GitHub Pages wireframe returns HTTP 200. Production migration/deployment remains blocked until billing can be read.
-- Verified the public GitHub Pages wireframe returns HTTP 200. Production migration/deployment remains blocked until billing can be read.
-- Next: finish the documentation PR through protected checks, then retain the exact billing-read blocker for any future deployment attempt.
+- Next: production migration/deployment remains blocked until billing can be read through the Cloudflare API or current billing is independently verified by the owner before proceeding.
 
 ## 2026-11-18 — PR #41 merged; remaining deployment gate clarified
 
 - PR #41, [documentation status reconciliation](https://github.com/Bepoadewale/mindcommons/pull/41), merged through protected `main` at `791eaa02bbb865bffbe8b97f936523cc98ebfa94`. Its required checks all passed: `validate`, `verify`, `browser-acceptance`, and `secret-scan`. GitHub deleted the source branch and synchronized local checkout to `main`.
-- PR #41's post-merge CI run `44194854283` and Pages publish run `44194852519` were running when this entry was drafted. The Pages site had been publicly verified at HTTP 200 before PR #41; update workflow result and reconfirm the URL after the existing watchers finish.
+- PR #41's post-merge CI run `44194854283` and Pages publish run `44194852519` both passed. The refreshed public Pages site returned HTTP 200.
 - The next action is no longer local implementation: deployment requires a successful current Cloudflare billing/free-tier verification. Both configured token services returned HTTP 403 on the subscription read. Migrations 0007 and 0008 remain pending; the exact MindCommons account/Worker/D1 were verified read-only. No remote mutations were made.
+
+## 2026-11-18 — PR #42 merged; final links rechecked
+
+- PR #42 merged to protected `main` at `b1070ce4e6f3f7eb73e82db9633684f2854040ec`. All four required PR checks passed; post-merge CI run `44196877121` and Pages publish run `44196877364` passed. Its source branch was removed and local `main` synchronized.
+- Rechecked the public Worker demo (HTTP 200), captioned MP4 (HTTP 200, `video/mp4`), and GitHub Pages future vision (HTTP 200). GitHub reports no open repository PRs; local `main` is clean and synchronized.
+- The hosted Worker remains at `b01d3f96-d72a-41a2-b751-88dff3c7adc9`; D1 migrations 0007 and 0008 remain pending. No Cloudflare resource was modified because billing verification remains unavailable. This is the only deployment blocker recorded; optional YouTube upload and physical Android testing remain owner/optional tasks, while community co-design and any pilot are future host-dependent work.
