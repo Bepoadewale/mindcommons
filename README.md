@@ -14,7 +14,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 
 ## Current status
 
-The demo is publicly hosted at the URL below. Its server checks synthetic individual permission and community policy before a fixed model call. A bounded live call to Cloudflare Workers AI and a server-side rejection of prohibited commercial use have been verified. The live browser flow and video are being finalized; local automated tests continue to use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
+The demo is publicly hosted at the URL below. Its server checks synthetic individual permission and community policy before a fixed model call. A bounded live call to Cloudflare Workers AI and a server-side rejection of prohibited commercial use have been verified. The landing page links to a genuine 1080p screen recording served by the same Worker. Local automated tests continue to use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
 
 ## Architecture direction
 
@@ -35,7 +35,7 @@ npm run dev
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
-- Technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (direct MP4 link; verify after this pull request deploys)
+- Technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (public 1920×1080 MP4; YouTube upload is still planned by the project owner)
 - Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
 
 ## Privacy, research, and governance limits
