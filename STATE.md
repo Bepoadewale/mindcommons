@@ -24,7 +24,7 @@ Last updated: 2026-11-17
 - Updated tests and RFP/status/reviewer documentation.
 - `apps/web/public/mindcommons-demo.mp4`, a genuine Chromium capture at 1920×1080, 25 fps, 90.44 seconds, H.264, 3.76 MB. It shows a live non-empty model result, denied commercial request, and activity/benefit views. The pending output change only formats the same answer and removes metadata; inspect the public capture after deploy and replace only if its visible behavior differs materially.
 
-No PR is open for this branch yet. The local video is not yet public evidence.
+PR #19 is open from `feat/public-demo-video-link` at commit `265b113`; local checks passed and GitHub checks are running. The MP4 is in that PR but is not public evidence until merge and deployment are verified.
 
 ## Known limits
 
@@ -37,8 +37,8 @@ No PR is open for this branch yet. The local video is not yet public evidence.
 
 ## Next executable work
 
-1. Rerun local checks after the latest response/UI changes.
-2. After merge/deploy, verify the MP4 at the same path and replace it only if the visible behavior differs materially.
-3. Open and merge a PR with passing required checks; deploy only the exact MindCommons Worker after account/resource/billing preflight.
-4. Verify the visible “Watch the project demo” link, direct MP4 response and GitHub Pages MP4 URL without authentication.
+1. Wait for PR #19's required checks and merge only after they pass.
+2. Preflight Cloudflare account/resource/billing identity and deploy only the exact MindCommons Worker.
+3. Verify the visible “Watch the project demo” link, direct MP4 response and GitHub Pages MP4 URL without authentication.
+4. Replace the recording only if the deployed UI differs materially; otherwise retain the verified 1080p artifact.
 5. Update remaining acceptance evidence and continue with the outstanding full-project requirements.
