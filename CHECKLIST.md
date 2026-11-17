@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#19 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#20 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#19 source branches removed locally/remotely.
+- [x] Merged PR #1–#20 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -45,4 +45,4 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [x] Eight-screen future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, all disclosures, assets, 390 px mobile width, no API calls, and axe WCAG 2.1 A/AA verified in Chromium. It is static and is not the live backend demo.
 - [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
 - [x] Source, live backend, and production video links verified.
-- [~] GitHub Pages vision build and MP4 fallback: PR #19 Pages workflow failed because it omitted the production build required by the output-isolation validator; PR #20 adds the missing build step.
+- [x] GitHub Pages vision page and mirrored MP4 fallback: PR #20 fixed the build sequence; post-merge Pages publish run `44072149990` succeeded. Both public URLs return HTTPS 200, and the MP4 is `video/mp4`.

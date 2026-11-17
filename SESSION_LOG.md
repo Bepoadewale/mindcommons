@@ -107,3 +107,11 @@
 - GitHub Pages workflow run `44070661332` failed because `scripts/validate-vision-build.mjs` checks production `dist/index.html` remains separate, but the workflow only built `dist-vision`. Added `npm run build` before `npm run build:vision` on branch `fix/pages-vision-build-order`; the exact build/validator/static-test sequence passes locally.
 - Updated `STATE.md`, `CHECKLIST.md`, README and fellowship/demo evidence to distinguish the verified production video from the still-pending Pages MP4 fallback. `npm run verify` passed (23 unit tests, formatting, lint, typecheck, builds, isolation validation, local D1/Worker integration with labeled mock, docs); `npm run test:vision-static` passed all 3 tests including axe accessibility.
 - Next: commit/push the focused workflow and evidence fix, open PR #20, wait for required checks, merge only if green, and verify the published GitHub Pages MP4 fallback.
+
+## 2026-11-17 — Pages fallback published
+
+- PR #20 merged to protected `main` at `0899d29fe3d04b4dc32922239baf4febf966c987`; required checks passed in run `44071916062`. GitHub verified the merged state and source branch deletion.
+- Post-merge CI run `44072149252` passed all four jobs; GitHub Pages publish run `44072149990` passed its build and deploy jobs.
+- Verified `https://bepoadewale.github.io/mindcommons/` returns unauthenticated HTTPS 200. The mirrored `https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4` also returns 200, `video/mp4`, and 3,759,462 bytes. The production landing page links to the production Worker-hosted MP4.
+- Local branch `fix/pages-vision-build-order` was deleted after verifying PR #20 merged; GitHub had removed the remote branch. Checkout is clean on `main`, and `git fetch --prune` shows only `origin/main`.
+- Next: update persistent evidence to record Pages success through PR #21; continue the remaining acceptance work, including physical Android installation if an Android device becomes available. The owner plans to upload the video to YouTube later.
