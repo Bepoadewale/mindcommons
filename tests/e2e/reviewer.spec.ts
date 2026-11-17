@@ -70,6 +70,7 @@ const demo = {
 
 test.beforeEach(async ({ page }) => {
   let role = 'community_representative';
+  let policy = { ...demo.policy, requiredBenefitObligationIds: [] as string[] };
   let permissions = demo.permissions.map((permission) => ({ ...permission }));
   let permissionHistory = [...demo.permissionHistory];
   let benefit = {
@@ -84,18 +85,95 @@ test.beforeEach(async ({ page }) => {
     reviewed_by: null as string | null,
   };
   await page.route('**/api/demo', async (route) =>
-    route.fulfill({ json: { ...demo, demoRole: role, permissions, permissionHistory, benefit } }),
+    route.fulfill({
+      json: { ...demo, demoRole: role, policy, permissions, permissionHistory, benefit },
+    }),
   );
+  await page.route('**/api/agreement', async (route) => {
+    const status = benefit.reviewed_at
+      ? 'community-reviewed'
+      : benefit.evidence
+        ? 'evidence-recorded'
+        : benefit.accepted_at
+          ? 'accepted'
+          : benefit.agreed_at
+            ? 'agreed'
+            : 'proposed';
+    await route.fulfill({
+      json: {
+        schemaVersion: '2.0.0',
+        agreementId: `demo-community:policy:${policy.version}`,
+        communityId: 'demo-community',
+        policyVersion: policy.version,
+        status: 'active',
+        effectiveAt: '2020-01-01T00:00:00.000Z',
+        expiresAt: null,
+        requiredBenefitObligationIds: policy.requiredBenefitObligationIds,
+        permittedPurposes: [
+          policy.allowed_purpose,
+          ...(policy.commercialAllowed ? ['commercial-advertising'] : []),
+        ],
+        authorizedResearcherIds: ['demo:researcher'],
+        commercialUseAllowed: policy.commercialAllowed,
+        withdrawalMode: policy.withdrawalMode,
+        contributions: demo.contributions.map((contribution) => {
+          const permission = permissions.find((item) =>
+            item.permission_id.startsWith(`${contribution.contributorId}:`),
+          )!;
+          return {
+            ...contribution,
+            permission: {
+              purpose: permission.purpose,
+              status: permission.status,
+              version: permission.version,
+              expiresAt: permission.expires_at,
+            },
+          };
+        }),
+        modelUse: {
+          allowedModelIds: ['@cf/google/gemma-4-26b-a4b-it'],
+          allowedJobTypes: ['theme-classification'],
+          trainingAllowed: false,
+          publicOutputsAllowed: false,
+          clinicalUseAllowed: false,
+        },
+        benefitObligations: [
+          {
+            obligationId: 'benefit-findings',
+            description: benefit.title,
+            accountableParty: benefit.owner,
+            dueAt: benefit.due_at,
+            status,
+            agreedByCommunity: Boolean(benefit.agreed_at),
+            agreedBy: benefit.agreed_by,
+            acceptedByResearchTeam: Boolean(benefit.accepted_at),
+            acceptedBy: benefit.accepted_by,
+            evidence: benefit.evidence,
+            reviewOutcome: benefit.review_outcome,
+            reviewedBy: benefit.reviewed_by,
+          },
+        ],
+      },
+    });
+  });
   await page.route('**/api/role', async (route) => {
     role = route.request().postDataJSON().role;
     await route.fulfill({ json: { role, synthetic: true } });
   });
-  await page.route('**/api/policy/decision', async (route) =>
-    route.fulfill({
+  await page.route('**/api/policy/decision', async (route) => {
+    if (role === 'community_representative') {
+      policy = {
+        ...policy,
+        version: 2,
+        withdrawalMode: 'require-all',
+        requiredBenefitObligationIds: ['benefit-findings'],
+      };
+    }
+    await route.fulfill({
       status: role === 'community_representative' ? 200 : 403,
       json: { proposalStatus: 'approved', policyVersion: 2 },
-    }),
-  );
+    });
+  });
   await page.route('**/api/consent', async (route) => {
     const { action, contributorId } = route.request().postDataJSON() as {
       action: 'grant' | 'withdraw';
@@ -175,6 +253,72 @@ test.beforeEach(async ({ page }) => {
     }
     await route.fulfill({ json: { status: benefit.status, synthetic: true } });
   });
+});
+
+test('guided reviewer preview updates across withdrawal, policy and benefit changes without inference', async ({
+  page,
+}) => {
+  let inferenceRequests = 0;
+  await page.route('**/api/research/run', async (route) => {
+    inferenceRequests += 1;
+    await route.fulfill({ status: 403, json: { status: 'denied' } });
+  });
+  await page.goto('/');
+  const preview = page.locator('.authorization-preview');
+  await expect(page.getByRole('navigation', { name: 'Guided reviewer walkthrough' })).toContainText(
+    'Inspect activity and receipt evidence',
+  );
+  const firstStep = page.getByRole('link', { name: 'Read the community rule' });
+  await firstStep.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#community-rule')).toBeFocused();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await expect(preview).toContainText('would allow the request');
+  await expect(preview).toContainText('PREVIEW ONLY · NO MODEL CALL');
+  expect(inferenceRequests).toBe(0);
+
+  await page.addScriptTag({
+    path: new URL('../../node_modules/axe-core/axe.min.js', import.meta.url).pathname,
+  });
+  const violations = await page.evaluate(async () => {
+    const browser = window as unknown as Window & {
+      axe: {
+        run: (
+          context: Element,
+          options: { runOnly: string[] },
+        ) => Promise<{ violations: Array<{ id: string; impact: string | null }> }>;
+      };
+    };
+    const violations: string[] = [];
+    for (const selector of ['.reviewer-journey', '.authorization-preview']) {
+      const element = document.querySelector(selector);
+      if (!element) throw new Error(`Reviewer guide element missing: ${selector}`);
+      const result = await browser.axe.run(element, {
+        runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+      });
+      violations.push(...result.violations.map(({ id, impact }) => `${id}:${impact}`));
+    }
+    return violations;
+  });
+  expect(violations).toEqual([]);
+
+  await page.getByLabel('Acting as').selectOption('community_member');
+  await page.getByRole('button', { name: 'Withdraw Fictional contributor B permission' }).click();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await expect(preview).toContainText('response-b (individual permission not active)');
+  await page.getByLabel('Acting as').selectOption('community_representative');
+  await page.getByRole('button', { name: 'Approve policy' }).click();
+  await page.getByLabel('Acting as').selectOption('community_member');
+  await page.getByRole('button', { name: 'Grant Fictional contributor B permission' }).click();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await expect(preview).toContainText('required benefit not agreed');
+
+  await page.getByLabel('Acting as').selectOption('community_representative');
+  await page.getByRole('button', { name: 'Agree to commitment' }).click();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await page.getByRole('button', { name: 'Accept as fictional research team' }).click();
+  await expect(preview).toContainText('would allow the request');
+  expect(inferenceRequests).toBe(0);
 });
 
 test('public reviewer can understand the scenario and see separate rule and permission records', async ({

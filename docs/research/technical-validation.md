@@ -2,6 +2,17 @@
 
 Reviewed 2026-11-17. Platform quotas and model availability can change; recheck them before any future deployment or substantial usage increase. The current prototype deployment and live behavior are recorded below.
 
+## Fellowship call and host alignment (checked 2026-11-17)
+
+- The official 2027–2028 FAQ was last updated October 25, 2026. It distinguishes individual Fellowships from team/project Incubators, says the Embedded host identifies a challenge and collaborates with the Fellow, and confirms the call accepts early-stage concepts provided they have a credible route to a publicly useful prototype by the end of the fellowship. This supports presenting MindCommons as a technical capability artifact with a future host-dependent co-design process, not as a finished product or existing partnership. Sources: [official FAQ](https://www.mozillafoundation.org/en/what-we-do/grantmaking/fellowship/2027-call-for-applications/faqs/) and [official call page](https://www.mozillafoundation.org/en/what-we-do/grantmaking/fellowship/2027-call-for-applications/).
+- The call page lists SRHIN among Track I Embedded hosts and gives the Embedded package as $75,000 stipend plus $25,000 project budget. It states the Letter of Intent deadline as December 17, 2026 at 11:59 p.m. Pacific, with a 12-month fellowship beginning June 1, 2027. Dates and terms should be rechecked before submission. The project does not contact the host or prepare the applicant's personal answers.
+
+## Reviewer-preview validation (2026-11-17)
+
+- The current feature branch adds a browser preview by fetching the session's Community AI Agreement and evaluating the fixed request with the shared deterministic evaluator. It makes no AI call. Actual submission remains a separate user action and runs the server-side check again. The preview's browser test covers withdrawal, collective-policy change, required-benefit denial, agreement/acceptance and renewed eligibility; it also checks keyboard anchor navigation and scoped WCAG 2.1 A/AA rules. Eight reviewer browser tests passed.
+- Full local `npm run verify` passed with 55 unit tests and Worker/D1 integration. `npm run test:e2e:fullstack` now builds before launching the local Worker, preventing stale `dist/` assets from being tested; full-stack browser acceptance passed with the clearly labeled mock binding. No hosted change or live inference was involved.
+- The preview introduced an initial session bootstrap race when `/api/demo` and `/api/agreement` were requested concurrently. It was corrected by loading `/api/demo` first so the session cookie exists before the second same-origin request. Worker + D1 browser verification passed after the fix.
+
 ## Platform direction
 
 - Cloudflare's current best-practices guide recommends Workers Static Assets for new static and full-stack apps. Static assets can use a same-origin Worker API and D1/Workers AI bindings without a persistent server. Pages Functions remain supported and can use the same runtime bindings, but are no longer the selected architecture here. Sources: <https://developers.cloudflare.com/workers/best-practices/workers-best-practices/> and <https://developers.cloudflare.com/pages/functions/>.

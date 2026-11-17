@@ -12,3 +12,5 @@
 | RFP alignment             | Evidence mapped to Mozilla's public 2027–2028 Fellowship RFP; no personal application responses included.                                                                                     | [Alignment](rfp-alignment.md)                                                                                                                                                                                    |
 
 These are public technical artifacts. The demo is synthetic and does not represent a real pilot, SRHIN endorsement, a community-owned cooperative, clinical validation, or benefits delivered to participants. The owner may later upload the video to YouTube; no upload is claimed.
+
+PR #39 added Agreement v2 conformance tests and a session-scoped decision-receipt export to the repository. Both passed local and GitHub checks, but have not been migrated/deployed to the hosted Worker. The current live URL and video do not demonstrate that newer code.
