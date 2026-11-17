@@ -2,11 +2,12 @@
 
 Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future work.
 
-## Fellowship-strengthening follow-up (branch-local until PR merge)
+## Fellowship-strengthening follow-up
 
-- [~] Benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. Local API verification shows pre-inference denial until community agreement and research-team acceptance, and denial when required data are missing or inconsistent.
-- [~] Conditional result release checks that required benefit facts remain unchanged during model execution; a local delayed-inference integration path verifies withholding. GitHub CI and hosted behavior for this new code are not yet verified.
-- [ ] Consent explanation, portable v2 conformance, decision receipt, governance design framework, privacy/data-flow audit, reviewer journey improvements, and SRHIN-specific roadmap/evidence summary remain to be completed.
+- [x] PR #37 merged: benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. The initial policy remains permissive. Local API integration denies before inference until community agreement and research-team acceptance; the same request can proceed after acceptance.
+- [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; the delayed-inference API integration verified withholding. PR checks and post-merge CI passed. Hosted behavior for this new code remains unverified because no production migration or deploy was performed.
+- [~] Consent explanation, governance design framework, data-flow audit and cross-session API tests are in branch `feat/consent-governance-privacy`; local verification passed. PR and GitHub checks are pending.
+- [ ] Portable v2 conformance, safe decision receipt, guided reviewer journey, completed SRHIN roadmap/evidence summary, and production reconciliation remain.
 
 ## Repository and quality
 

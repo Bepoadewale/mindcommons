@@ -423,6 +423,20 @@ try {
     })),
     "one visitor must not see another visitor's permission history",
   );
+  const secondSessionId = secondCookie.slice(secondCookie.indexOf('=') + 1);
+  await expectJson(await api(`/api/agreement?sessionId=${secondSessionId}`), 401);
+  await expectJson(
+    await api('/api/research/run', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: {
+        purpose: 'community-wellbeing-research',
+        jobType: 'theme-classification',
+        sessionId: secondSessionId,
+      },
+    }),
+    400,
+  );
 
   await expectJson(
     await api('/api/role', {
