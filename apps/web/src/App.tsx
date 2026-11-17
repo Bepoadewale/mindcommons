@@ -344,11 +344,19 @@ export default function App() {
               </a>
               <a
                 className="text-link"
+                href={`${import.meta.env.BASE_URL}mindcommons-demo-captioned.mp4`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Watch the captioned project demo ↗
+              </a>
+              <a
+                className="text-link"
                 href={`${import.meta.env.BASE_URL}mindcommons-demo.mp4`}
                 target="_blank"
                 rel="noreferrer"
               >
-                Watch the project demo ↗
+                View the original screen recording ↗
               </a>
             </div>
             <div className="hero-note">
