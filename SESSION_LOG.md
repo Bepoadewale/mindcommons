@@ -114,4 +114,11 @@
 - Post-merge CI run `44072149252` passed all four jobs; GitHub Pages publish run `44072149990` passed its build and deploy jobs.
 - Verified `https://bepoadewale.github.io/mindcommons/` returns unauthenticated HTTPS 200. The mirrored `https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4` also returns 200, `video/mp4`, and 3,759,462 bytes. The production landing page links to the production Worker-hosted MP4.
 - Local branch `fix/pages-vision-build-order` was deleted after verifying PR #20 merged; GitHub had removed the remote branch. Checkout is clean on `main`, and `git fetch --prune` shows only `origin/main`.
-- Next: update persistent evidence to record Pages success through PR #21; continue the remaining acceptance work, including physical Android installation if an Android device becomes available. The owner plans to upload the video to YouTube later.
+- Verified production PWA assets in Chromium: manifest and registered service worker; declared SVG, 192 px and 512 px icons all returned 200. Mobile emulation at 390 px had no horizontal overflow. With browser network emulation offline, the public shell loaded from cache, API requests remained uncached, and the demo displayed a service-unavailable message. This is browser evidence, not Android install-prompt evidence.
+
+## 2026-11-17 — PR #21 evidence update
+
+- PR #21 merged through protected `main` at `17168133d780795eefe9c00568af85b59850efc4`; all four required CI checks passed in run `44073097271`. GitHub removed the remote source branch, and the local source branch was removed after confirming the merge.
+- Post-merge CI run `44073475285` passed all four jobs; GitHub Pages publish run `44073475314` succeeded.
+- Updated the checklist, status, and fellowship evidence with Pages deployment and video URL results. No production infrastructure changed.
+- `adb` and Android emulator tooling are not installed, so physical Android installability remains unverified. Next: update this remaining acceptance item and technical RFP status through PR #22, then continue any independently verifiable PWA checks.
