@@ -552,6 +552,14 @@ export default function App() {
                     Demo authority is simulated for this fictional scenario; it is not real-world
                     identity verification.
                   </p>
+                  <p className="inline-note agreement-links">
+                    <a href="/api/agreement" target="_blank" rel="noreferrer">
+                      View this session’s Community AI Agreement (JSON)
+                    </a>
+                    <a href="/api/agreement/schema" target="_blank" rel="noreferrer">
+                      View its JSON Schema
+                    </a>
+                  </p>
                 </article>
 
                 <article className="panel permission-panel">

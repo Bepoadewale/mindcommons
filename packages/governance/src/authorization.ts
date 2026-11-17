@@ -1,4 +1,8 @@
 import type { DemoContributorId } from '../../contracts/src';
+import {
+  evaluateCommunityAIAgreement,
+  type CommunityAIAgreement,
+} from '../../community-ai-agreement/src';
 
 export type DemoRole = 'community_representative' | 'researcher' | 'community_member';
 export type ResearchPurpose =
@@ -57,6 +61,7 @@ export interface AuthorizationFacts {
     allowedPurpose: string;
     commercialAllowed: boolean;
     withdrawalMode: WithdrawalMode;
+    effectiveAt: string;
   } | null;
   contributions: SyntheticContribution[];
   permissions: PermissionFact[];
@@ -73,73 +78,96 @@ export interface AuthorizationDecision {
   excludedContributions: { contributionId: string; contributorId: string; reason: string }[];
 }
 
-export function authorizeResearch(facts: AuthorizationFacts): AuthorizationDecision {
-  const reasons: string[] = [];
+export function communityAgreementFromFacts(facts: AuthorizationFacts): CommunityAIAgreement {
   const policy = facts.activePolicy;
   const permissionById = new Map(
     facts.permissions.map((permission) => [permission.permissionId, permission]),
   );
-  const eligibleContributionIds: string[] = [];
-  const excludedContributions: AuthorizationDecision['excludedContributions'] = [];
-
-  if (facts.actorRole !== 'researcher') reasons.push('researcher-role-required');
-  if (!policy || policy.status !== 'active') reasons.push('no-effective-community-policy');
-  if (policy && facts.purpose === 'commercial-advertising' && !policy.commercialAllowed) {
-    reasons.push('community-policy-prohibits-commercial-use');
-  }
-  if (
-    policy &&
-    facts.purpose !== 'commercial-advertising' &&
-    facts.purpose !== policy.allowedPurpose
-  ) {
-    reasons.push('purpose-not-approved-by-community-policy');
-  }
-  for (const contribution of facts.contributions) {
-    const permissionId = permissionIdFor(contribution.contributorId, contribution.purpose);
-    const permission = permissionById.get(permissionId);
-    let exclusionReason: string | null = null;
-    if (contribution.purpose !== facts.purpose) {
-      exclusionReason = 'contribution-purpose-does-not-match-request';
-    } else if (!permission) {
-      exclusionReason = 'individual-permission-missing';
-    } else if (permission.purpose !== contribution.purpose) {
-      exclusionReason = 'individual-purpose-does-not-match-contribution';
-    } else if (permission.status !== 'granted') {
-      exclusionReason = 'individual-permission-not-active';
-    } else if (Date.parse(permission.expiresAt) <= facts.now.getTime()) {
-      exclusionReason = 'individual-permission-expired';
-    }
-
-    if (exclusionReason) {
-      excludedContributions.push({
+  const agreement: CommunityAIAgreement = {
+    schemaVersion: '1.0.0',
+    agreementId: `${facts.communityId}:policy:${policy?.version ?? 'none'}`,
+    communityId: facts.communityId,
+    policyVersion: policy?.version ?? 1,
+    status: policy?.status ?? 'superseded',
+    effectiveAt: policy?.effectiveAt ?? null,
+    permittedPurposes: policy
+      ? [
+          policy.allowedPurpose as ResearchPurpose,
+          ...(policy.commercialAllowed ? (['commercial-advertising'] as const) : []),
+        ]
+      : [],
+    authorizedResearcherIds: facts.actorRole === 'researcher' ? ['demo:researcher'] : [],
+    commercialUseAllowed: policy?.commercialAllowed ?? false,
+    withdrawalMode: policy?.withdrawalMode ?? 'require-all',
+    contributions: facts.contributions.map((contribution) => {
+      const permission = permissionById.get(
+        permissionIdFor(contribution.contributorId, contribution.purpose),
+      );
+      return {
         contributionId: contribution.contributionId,
         contributorId: contribution.contributorId,
-        reason: exclusionReason,
-      });
-    } else {
-      eligibleContributionIds.push(contribution.contributionId);
-    }
-  }
-  if (facts.jobType !== 'theme-classification') reasons.push('job-type-not-allowlisted');
+        purpose: contribution.purpose,
+        permission: {
+          purpose: (permission?.purpose as ResearchPurpose | undefined) ?? contribution.purpose,
+          status: permission?.status ?? 'expired',
+          version: permission?.version ?? 1,
+          expiresAt: permission?.expiresAt ?? '1970-01-01T00:00:00.000Z',
+        },
+      };
+    }),
+    modelUse: {
+      allowedModelIds: [DEMO_MODEL_ID],
+      allowedJobTypes: ['theme-classification'],
+      trainingAllowed: false,
+      publicOutputsAllowed: false,
+      clinicalUseAllowed: false,
+    },
+    benefitObligations: [
+      {
+        obligationId: 'fictional-accessible-summary',
+        description:
+          'Prepare and share a plain-language accessible summary of the fictional findings.',
+        accountableParty: 'Fictional research team',
+        dueAt: '2027-01-15T00:00:00.000Z',
+        status: 'proposed',
+        agreedByCommunity: false,
+        acceptedByResearchTeam: false,
+      },
+    ],
+  };
+  return agreement;
+}
 
-  if (facts.activePolicy?.withdrawalMode === 'require-all' && excludedContributions.length > 0) {
-    reasons.push('community-policy-requires-all-contributors-to-have-active-permission');
-  }
-  if (
-    facts.activePolicy?.withdrawalMode === 'exclude-withdrawn' &&
-    eligibleContributionIds.length === 0
-  ) {
-    reasons.push('no-contributor-records-authorized');
-  }
-
-  const allowed = reasons.length === 0;
+export function authorizeResearch(facts: AuthorizationFacts): AuthorizationDecision {
+  const agreement = communityAgreementFromFacts(facts);
+  const evaluation = evaluateCommunityAIAgreement(
+    agreement,
+    {
+      researcherId: facts.actorRole === 'researcher' ? 'demo:researcher' : 'unauthorized-role',
+      purpose: facts.purpose,
+      jobType: facts.jobType,
+      modelId: DEMO_MODEL_ID,
+      contributionIds: facts.contributions.map((item) => item.contributionId),
+      operation: 'inference',
+      outputAudience: 'community',
+      clinicalUse: false,
+    },
+    facts.now,
+  );
+  const reasonMap: Record<string, string> = {
+    'no-effective-community-agreement': 'no-effective-community-policy',
+    'job-type-not-allowlisted-by-agreement': 'job-type-not-allowlisted',
+  };
+  const reasons = evaluation.reasons.map((reason) => reasonMap[reason] ?? reason);
+  if (facts.actorRole !== 'researcher') reasons.unshift('researcher-role-required');
+  const allowed = evaluation.allowed && facts.actorRole === 'researcher';
 
   return {
     allowed,
-    policyVersion: policy?.status === 'active' ? policy.version : null,
+    policyVersion: evaluation.policyVersion,
     reasons: allowed ? ['community-policy-allows-eligible-contributions'] : reasons,
-    eligibleContributionIds: allowed ? eligibleContributionIds : [],
-    excludedContributions,
+    eligibleContributionIds: allowed ? evaluation.eligibleContributionIds : [],
+    excludedContributions: evaluation.excludedContributions,
   };
 }
 

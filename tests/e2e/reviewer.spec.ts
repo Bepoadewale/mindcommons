@@ -126,6 +126,13 @@ test('public reviewer can understand the scenario and see separate rule and perm
     contributorHistory.getByRole('heading', { name: 'Permission history' }),
   ).toBeVisible();
   await expect(page.getByText('Version 1 · granted').first()).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'View this session’s Community AI Agreement (JSON)' }),
+  ).toHaveAttribute('href', '/api/agreement');
+  await expect(page.getByRole('link', { name: 'View its JSON Schema' })).toHaveAttribute(
+    'href',
+    '/api/agreement/schema',
+  );
   await expect(page.getByRole('link', { name: 'View the open source' })).toHaveAttribute(
     'href',
     'https://github.com/Bepoadewale/mindcommons',
