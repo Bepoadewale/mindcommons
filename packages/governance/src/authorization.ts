@@ -79,6 +79,20 @@ export type ResearchExecution =
   | { status: 'denied'; decision: AuthorizationDecision }
   | { status: 'completed'; decision: AuthorizationDecision; modelId: string; output: unknown };
 
+function publicInferenceOutput(output: unknown): unknown {
+  if (!output || typeof output !== 'object' || !('choices' in output)) return output;
+  const choices = output.choices;
+  if (!Array.isArray(choices)) return output;
+  const first = choices[0];
+  const message = first && typeof first === 'object' && 'message' in first ? first.message : null;
+  const content =
+    message && typeof message === 'object' && 'content' in message ? message.content : null;
+  if (typeof content !== 'string' || content.trim().length === 0) {
+    throw new Error('The model returned no user-facing answer.');
+  }
+  return { text: content.trim() };
+}
+
 export async function executeResearch(
   facts: AuthorizationFacts,
   inference: AIInferenceBinding,
@@ -86,7 +100,7 @@ export async function executeResearch(
   const decision = authorizeResearch(facts);
   if (!decision.allowed) return { status: 'denied', decision };
 
-  const output = await inference.run(DEMO_MODEL_ID, {
+  const modelOutput = await inference.run(DEMO_MODEL_ID, {
     messages: [
       {
         role: 'system',
@@ -98,5 +112,6 @@ export async function executeResearch(
     max_completion_tokens: 180,
     chat_template_kwargs: { enable_thinking: false },
   });
+  const output = publicInferenceOutput(modelOutput);
   return { status: 'completed', decision, modelId: DEMO_MODEL_ID, output };
 }

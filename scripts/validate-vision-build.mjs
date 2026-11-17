@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const output = resolve(import.meta.dirname, '../dist-vision');
@@ -53,5 +53,10 @@ if (errors.length) {
 const productionHtml = readFileSync(resolve(import.meta.dirname, '../dist/index.html'), 'utf8');
 if (!productionHtml.includes('<title>MindCommons — Community rules for AI research</title>')) {
   console.error('Vision-only build must not overwrite the production application output.');
+  process.exitCode = 1;
+}
+
+if (!existsSync(join(output, 'mindcommons-demo.mp4'))) {
+  console.error('Vision-only static build must include the public demonstration video.');
   process.exitCode = 1;
 }

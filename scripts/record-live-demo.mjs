@@ -62,7 +62,7 @@ try {
   const allowedRun = await allowedRunResponse;
   assert.equal(allowedRun.status(), 200, 'the permitted research request must succeed');
   const allowedPayload = await allowedRun.json();
-  const modelAnswer = allowedPayload.output?.choices?.[0]?.message?.content;
+  const modelAnswer = allowedPayload.output?.text;
   assert.equal(
     typeof modelAnswer === 'string' && modelAnswer.trim().length > 0,
     true,
@@ -72,12 +72,16 @@ try {
     timeout: 60000,
   });
   await page.getByText('@cf/google/gemma-4-26b-a4b-it', { exact: true }).waitFor();
-  await pause(14000);
+  await page
+    .getByText('Inference ran with Cloudflare Workers AI. Inputs were synthetic.')
+    .scrollIntoViewIfNeeded();
+  await pause(12000);
 
   await page.locator('#request-purpose').selectOption('commercial-advertising');
   await page.getByRole('button', { name: /Check rules and run evaluation/ }).click();
   await page.getByText(/community-policy-prohibits-commercial-use/).waitFor();
-  await pause(12000);
+  await page.getByText(/community-policy-prohibits-commercial-use/).scrollIntoViewIfNeeded();
+  await pause(11000);
 
   // The app loads the audit feed on entry; refresh it after the denied run so
   // the recording shows the server-recorded decision as well as the response.

@@ -48,6 +48,21 @@ type DemoState = {
   events: EventRecord[];
   runs: RunRecord[];
 };
+
+function displayInferenceOutput(output: unknown): string {
+  if (output && typeof output === 'object' && 'text' in output && typeof output.text === 'string') {
+    const fencedJson = output.text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    if (fencedJson) {
+      try {
+        return JSON.stringify(JSON.parse(fencedJson[1]), null, 2);
+      } catch {
+        // Keep the model's original text when it is not valid JSON.
+      }
+    }
+    return output.text;
+  }
+  return JSON.stringify(output, null, 2);
+}
 type ActionResponse = {
   status?: string;
   error?: string;
@@ -264,6 +279,14 @@ export default function App() {
               </a>
               <a className="text-link" href="https://github.com/Bepoadewale/mindcommons">
                 View the open source ↗
+              </a>
+              <a
+                className="text-link"
+                href={`${import.meta.env.BASE_URL}mindcommons-demo.mp4`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Watch the project demo ↗
               </a>
             </div>
             <div className="hero-note">
@@ -611,7 +634,7 @@ export default function App() {
                             (latestRun?.reasons ?? []).join(' · '))}
                       </p>
                       {latest?.output !== undefined && latest.output !== null && (
-                        <pre>{JSON.stringify(latest.output, null, 2)}</pre>
+                        <pre>{displayInferenceOutput(latest.output)}</pre>
                       )}
                     </div>
                   )}

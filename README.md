@@ -35,7 +35,7 @@ npm run dev
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
-- Technical video: in progress; the reviewed draft showed an empty visible AI answer and is not public evidence.
+- Technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (direct MP4 link; verify after this pull request deploys)
 - Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
 
 ## Privacy, research, and governance limits
