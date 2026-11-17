@@ -5,7 +5,7 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#34 merged after their required checks passed; merged source branches cleaned up locally and remotely.
+- [x] PRs #1–#35 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #35 post-merge CI run `44137169473` and Pages run `44137169692` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
 - [x] Local `npm run verify` passed with 38 unit tests and Worker/D1 integration.
 - [x] `npm run test:e2e` passed 6/6; `npm run test:e2e:fullstack` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3.
