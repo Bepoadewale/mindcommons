@@ -5,9 +5,16 @@ export const DemoRoleSchema = z.enum([
   'researcher',
   'community_member',
 ]);
+export const DemoContributorIdSchema = z.enum(['contributor-a', 'contributor-b', 'contributor-c']);
+export type DemoContributorId = z.infer<typeof DemoContributorIdSchema>;
+export const ResearchPurposeSchema = z.enum([
+  'community-wellbeing-research',
+  'community-access-research',
+  'commercial-advertising',
+]);
 export const ResearchRequestSchema = z
   .object({
-    purpose: z.enum(['community-wellbeing-research', 'commercial-advertising']),
+    purpose: ResearchPurposeSchema,
     jobType: z.literal('theme-classification'),
   })
   .strict();
@@ -17,7 +24,12 @@ export const PolicyDecisionSchema = z
     decision: z.enum(['approve', 'reject']),
   })
   .strict();
-export const PermissionActionSchema = z.object({ action: z.enum(['withdraw', 'grant']) }).strict();
+export const PermissionActionSchema = z
+  .object({
+    contributorId: DemoContributorIdSchema,
+    action: z.enum(['withdraw', 'grant']),
+  })
+  .strict();
 export const ChangeDemoRoleSchema = z.object({ role: DemoRoleSchema }).strict();
 export const BenefitEvidenceSchema = z
   .object({ evidence: z.enum(['accessible-summary-prepared', 'community-review-scheduled']) })

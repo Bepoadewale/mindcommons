@@ -117,16 +117,24 @@ try {
   await page.getByText(/community-policy-prohibits-commercial-use/i).waitFor();
 
   await page.getByLabel('Acting as').selectOption('community_member');
-  await page.getByRole('button', { name: 'Withdraw permission' }).click();
+  await page.getByRole('button', { name: /Withdraw Fictional contributor B permission/i }).click();
   await page.getByLabel('Acting as').selectOption('researcher');
   await page.getByLabel('Requested purpose').selectOption('community-wellbeing-research');
   await page.getByRole('button', { name: /check rules and run evaluation/i }).click();
-  await page.locator('.result-heading strong').filter({ hasText: 'denied' }).waitFor();
-  await page.getByText(/individual-permission-not-active/i).waitFor();
+  await page.locator('.result-heading strong').filter({ hasText: 'completed' }).waitFor();
+  await page.getByText(/Processed records: response-a, response-c/).waitFor();
+  await page.getByText(/response-b \(individual-permission-not-active\)/).waitFor();
 
   await page.getByLabel('Acting as').selectOption('community_representative');
   await page.getByRole('button', { name: 'Approve policy' }).click();
   await page.getByText('ACTIVE · V2').waitFor();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await page.getByRole('button', { name: /check rules and run evaluation/i }).click();
+  await page.locator('.result-heading strong').filter({ hasText: 'denied' }).waitFor();
+  await page
+    .getByText(/community-policy-requires-all-contributors-to-have-active-permission/i)
+    .waitFor();
+  await page.getByLabel('Acting as').selectOption('community_representative');
   await page.getByRole('button', { name: 'Record demo evidence' }).click();
   await page.getByText(/Synthetic evidence: an accessible summary draft was prepared/i).waitFor();
 

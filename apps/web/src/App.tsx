@@ -20,6 +20,10 @@ type RunRecord = {
   reasons: string[];
   model_id: string | null;
   output: unknown;
+  contributionDecisions?: {
+    processedContributionIds: string[];
+    excludedContributions: { contributionId: string; contributorId: string; reason: string }[];
+  };
   created_at: string;
   completed_at: string | null;
 };
@@ -34,21 +38,41 @@ type PermissionHistoryRecord = {
   correlation_id: string;
   recorded_at: string;
 };
+type PermissionRecord = {
+  permission_id: string;
+  purpose: string;
+  status: string;
+  expires_at: string;
+  version: number;
+};
+type ContributionRecord = {
+  contributionId: string;
+  contributorId: string;
+  purpose: string;
+};
 type DemoState = {
   community: { id: string; name: string; location: string };
   synthetic: boolean;
   demoRole: Role;
   availableRoles: Role[];
   expiresAt: string;
-  policy: { version: number; status: string; allowed_purpose: string; commercialAllowed: boolean };
+  policy: {
+    version: number;
+    status: string;
+    allowed_purpose: string;
+    commercialAllowed: boolean;
+    withdrawalMode: string;
+  };
   proposal: {
     proposal_id: string;
     status: string;
     title: string;
     proposed_purpose: string;
     proposedCommercialAllowed: boolean;
+    withdrawalMode: string;
   };
-  permission: { purpose: string; status: string; expires_at: string; version: number };
+  contributions: ContributionRecord[];
+  permissions: PermissionRecord[];
   permissionHistory: PermissionHistoryRecord[];
   benefit: {
     title: string;
@@ -84,6 +108,8 @@ type ActionResponse = {
   modelId?: string;
   provider?: string;
   inferenceMode?: string;
+  inputContributionIds?: string[];
+  excludedContributions?: { contributionId: string; contributorId: string; reason: string }[];
   correlationId?: string;
 };
 
@@ -92,6 +118,17 @@ const roleLabels: Record<Role, string> = {
   researcher: 'Researcher',
   community_member: 'Community member',
 };
+const contributorLabels: Record<string, string> = {
+  'contributor-a': 'Fictional contributor A',
+  'contributor-b': 'Fictional contributor B',
+  'contributor-c': 'Fictional contributor C',
+};
+
+function purposeLabel(purpose: string): string {
+  if (purpose === 'community-wellbeing-research') return 'Community wellbeing research';
+  if (purpose === 'community-access-research') return 'Community access research';
+  return 'Commercial advertising';
+}
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, {
@@ -183,12 +220,16 @@ export default function App() {
     );
   }
 
-  async function changePermission(action: 'withdraw' | 'grant') {
+  async function changePermission(action: 'withdraw' | 'grant', contributorId: string) {
     await act(
-      () => request('/api/consent', { method: 'POST', body: JSON.stringify({ action }) }),
+      () =>
+        request('/api/consent', {
+          method: 'POST',
+          body: JSON.stringify({ action, contributorId }),
+        }),
       action === 'withdraw'
-        ? 'Individual permission was withdrawn for this synthetic session.'
-        : 'Individual permission was granted for this synthetic session.',
+        ? `The fictional ${contributorId.replace('contributor-', 'contributor ')} withdrew permission.`
+        : `The fictional ${contributorId.replace('contributor-', 'contributor ')} granted permission.`,
     );
   }
 
@@ -451,16 +492,21 @@ export default function App() {
                   <div className="panel-label">COMMUNITY RULE</div>
                   <h3>Research with a clear purpose</h3>
                   <p>
-                    Approved use: community wellbeing research. Unrelated commercial advertising is
-                    not permitted under this scenario's current rule.
+                    Approved use: {purposeLabel(data.policy.allowed_purpose)}. Commercial use is{' '}
+                    {data.policy.commercialAllowed ? 'permitted' : 'prohibited'} by this fictional
+                    rule.
                   </p>
                   <div className="rule-row">
                     <span>Purpose allowed</span>
-                    <strong>Wellbeing research</strong>
+                    <strong>{purposeLabel(data.policy.allowed_purpose)}</strong>
                   </div>
                   <div className="rule-row">
-                    <span>Commercial ads</span>
-                    <strong className="text-denied">Not allowed</strong>
+                    <span>Withdrawal rule</span>
+                    <strong>
+                      {data.policy.withdrawalMode === 'require-all'
+                        ? 'Require every contributor'
+                        : 'Exclude only withheld contributions'}
+                    </strong>
                   </div>
                   <div className="proposal-box">
                     <div className="proposal-title">
@@ -469,8 +515,8 @@ export default function App() {
                     </div>
                     <h4>{data.proposal.title}</h4>
                     <p>
-                      Keep community wellbeing research in scope and prohibit unrelated commercial
-                      advertising.
+                      If approved, the same research request will require active permission from
+                      every contributor; one withdrawal will block the full job.
                     </p>
                     {data.proposal.status === 'reviewed' ? (
                       role === 'community_representative' ? (
@@ -513,88 +559,101 @@ export default function App() {
                     <span className="panel-icon icon-person" aria-hidden="true">
                       ◉
                     </span>
-                    <span
-                      className={`status-pill ${data.permission.status === 'granted' ? 'status-active' : 'status-muted'}`}
-                    >
-                      {data.permission.status.toUpperCase()}
-                    </span>
+                    <span className="status-pill status-active">3 FICTIONAL CONTRIBUTORS</span>
                   </div>
                   <div className="panel-label">INDIVIDUAL PERMISSION</div>
                   <h3>A separate say for each person</h3>
                   <p>
-                    Fictional participant A has a separate permission record. Collective policy
-                    cannot override this person's choice.
+                    Each synthetic contribution has a separate permission for its stated purpose.
+                    Collective policy cannot override an individual's refusal.
                   </p>
-                  <div className="permission-detail">
-                    <div>
-                      <span>Purpose</span>
-                      <strong>Community wellbeing research</strong>
-                    </div>
-                    <div>
-                      <span>Expires</span>
-                      <strong>{new Date(data.permission.expires_at).toLocaleDateString()}</strong>
-                    </div>
-                    <div>
-                      <span>Record version</span>
-                      <strong>v{data.permission.version}</strong>
-                    </div>
-                  </div>
-                  <section
-                    className="permission-history"
-                    aria-labelledby="permission-history-title"
-                  >
-                    <h4 id="permission-history-title">Permission history</h4>
-                    <p>Up to 50 versions are retained in this short-lived synthetic session.</p>
-                    <ol>
-                      {data.permissionHistory.map((record) => (
-                        <li key={`${record.permission_id}-${record.version}`}>
-                          <div className="permission-history-heading">
-                            <strong>
-                              Version {record.version} · {record.status}
-                            </strong>
-                            <time dateTime={record.recorded_at}>
-                              {new Date(record.recorded_at).toLocaleString()}
-                            </time>
+                  <div className="contributor-permission-list">
+                    {data.permissions.map((permission) => {
+                      const contributorId = permission.permission_id.split(':')[0];
+                      const history = data.permissionHistory.filter(
+                        (record) => record.permission_id === permission.permission_id,
+                      );
+                      return (
+                        <section className="contributor-permission" key={permission.permission_id}>
+                          <div className="permission-detail">
+                            <div>
+                              <span>{contributorLabels[contributorId] ?? contributorId}</span>
+                              <strong
+                                className={permission.status === 'granted' ? '' : 'text-denied'}
+                              >
+                                {permission.status.toUpperCase()} · v{permission.version}
+                              </strong>
+                            </div>
+                            <div>
+                              <span>Purpose and expiry</span>
+                              <strong>
+                                {purposeLabel(permission.purpose)} ·{' '}
+                                {new Date(permission.expires_at).toLocaleDateString()}
+                              </strong>
+                            </div>
                           </div>
-                          <span>
-                            {record.action === 'created'
-                              ? 'Initial permission record'
-                              : record.action === 'migration-backfill'
-                                ? 'Current record captured when history was introduced'
-                                : `Recorded by ${record.actor.replace('demo:', '')}`}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                  </section>
-                  {role === 'community_member' ? (
-                    <div className="button-row permission-actions">
-                      <button
-                        className={
-                          data.permission.status === 'granted'
-                            ? 'button button-outline'
-                            : 'button button-dark'
-                        }
-                        disabled={busy}
-                        onClick={() =>
-                          void changePermission(
-                            data.permission.status === 'granted' ? 'withdraw' : 'grant',
-                          )
-                        }
-                      >
-                        {data.permission.status === 'granted'
-                          ? 'Withdraw permission'
-                          : 'Grant permission'}
-                      </button>
-                    </div>
-                  ) : (
+                          <section
+                            className="permission-history"
+                            aria-label={`${contributorLabels[contributorId]} permission history`}
+                          >
+                            <h4>Permission history</h4>
+                            <p>Up to 50 versions are kept in this short-lived synthetic session.</p>
+                            <ol>
+                              {history.map((record) => (
+                                <li key={`${record.permission_id}-${record.version}`}>
+                                  <div className="permission-history-heading">
+                                    <strong>
+                                      Version {record.version} · {record.status}
+                                    </strong>
+                                    <time dateTime={record.recorded_at}>
+                                      {new Date(record.recorded_at).toLocaleString()}
+                                    </time>
+                                  </div>
+                                  <span>
+                                    {record.action === 'created'
+                                      ? 'Initial synthetic permission record'
+                                      : record.action === 'migration-backfill'
+                                        ? 'Synthetic record added during migration'
+                                        : `Recorded by ${record.actor.replace('demo:', '')}`}
+                                  </span>
+                                </li>
+                              ))}
+                            </ol>
+                          </section>
+                          {role === 'community_member' && (
+                            <button
+                              className={
+                                permission.status === 'granted'
+                                  ? 'button button-outline'
+                                  : 'button button-dark'
+                              }
+                              disabled={busy}
+                              onClick={() =>
+                                void changePermission(
+                                  permission.status === 'granted' ? 'withdraw' : 'grant',
+                                  contributorId,
+                                )
+                              }
+                            >
+                              {permission.status === 'granted'
+                                ? `Withdraw ${contributorLabels[contributorId]} permission`
+                                : `Grant ${contributorLabels[contributorId]} permission`}
+                            </button>
+                          )}
+                        </section>
+                      );
+                    })}
+                  </div>
+                  {role !== 'community_member' && (
                     <p className="inline-note">
-                      Switch to the fictional member seat to change this sample permission.
+                      Switch to the fictional member seat to simulate each contributor's own
+                      permission change.
                     </p>
                   )}
                   <p className="panel-footnote">
-                    Withdrawals block new requests. This demo does not remove copies from model
-                    weights.
+                    These controls simulate contributor choices, not verified identities.
+                    Withdrawals block future processing under the current community rule; this demo
+                    cannot remove copies from model weights.
                   </p>
                 </article>
 
@@ -656,7 +715,8 @@ export default function App() {
                   <div className="execution-note">
                     <span className="execution-dot" />
                     <span>
-                      Server checks the policy and individual permission before any model call.
+                      The server checks every contribution's purpose and permission, sends only
+                      eligible records, and rechecks authorization before releasing results.
                     </span>
                   </div>
                   {(latest || latestRun) && (
@@ -671,8 +731,41 @@ export default function App() {
                             ? 'Mock result: local tests used a fixed response; no AI inference occurred.'
                             : `Inference ran with ${latest.provider}. Inputs were synthetic.`
                           : (latest?.decision?.reasons.join(' · ') ??
+                            latest?.message ??
                             (latestRun?.reasons ?? []).join(' · '))}
                       </p>
+                      {(
+                        latest?.inputContributionIds ??
+                        latestRun?.contributionDecisions?.processedContributionIds ??
+                        []
+                      ).length > 0 && (
+                        <p>
+                          Processed records:{' '}
+                          {(
+                            latest?.inputContributionIds ??
+                            latestRun?.contributionDecisions?.processedContributionIds ??
+                            []
+                          ).join(', ')}
+                          .
+                        </p>
+                      )}
+                      {(
+                        latest?.excludedContributions ??
+                        latestRun?.contributionDecisions?.excludedContributions ??
+                        []
+                      ).length > 0 && (
+                        <p>
+                          Excluded records:{' '}
+                          {(
+                            latest?.excludedContributions ??
+                            latestRun?.contributionDecisions?.excludedContributions ??
+                            []
+                          )
+                            .map((item) => `${item.contributionId} (${item.reason})`)
+                            .join('; ')}
+                          .
+                        </p>
+                      )}
                       {latest?.output !== undefined && latest.output !== null && (
                         <pre>{displayInferenceOutput(latest.output)}</pre>
                       )}
