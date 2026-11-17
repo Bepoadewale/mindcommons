@@ -253,3 +253,9 @@
 - Verified the public GitHub Pages wireframe returns HTTP 200. Production migration/deployment remains blocked until billing can be read.
 - Verified the public GitHub Pages wireframe returns HTTP 200. Production migration/deployment remains blocked until billing can be read.
 - Next: finish the documentation PR through protected checks, then retain the exact billing-read blocker for any future deployment attempt.
+
+## 2026-11-18 — PR #41 merged; remaining deployment gate clarified
+
+- PR #41, [documentation status reconciliation](https://github.com/Bepoadewale/mindcommons/pull/41), merged through protected `main` at `791eaa02bbb865bffbe8b97f936523cc98ebfa94`. Its required checks all passed: `validate`, `verify`, `browser-acceptance`, and `secret-scan`. GitHub deleted the source branch and synchronized local checkout to `main`.
+- PR #41's post-merge CI run `44194854283` and Pages publish run `44194852519` were running when this entry was drafted. The Pages site had been publicly verified at HTTP 200 before PR #41; update workflow result and reconfirm the URL after the existing watchers finish.
+- The next action is no longer local implementation: deployment requires a successful current Cloudflare billing/free-tier verification. Both configured token services returned HTTP 403 on the subscription read. Migrations 0007 and 0008 remain pending; the exact MindCommons account/Worker/D1 were verified read-only. No remote mutations were made.
