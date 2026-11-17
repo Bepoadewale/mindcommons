@@ -160,3 +160,9 @@
 - PR #26 merged through protected `main` at `222716db47c74d5209bed54e2a85c6986edd2a55`; all four required checks passed in run `44085615391`. Its source branch was deleted locally and remotely.
 - Post-merge CI run `44085988459` passed all four jobs, and Pages publish run `44085988289` succeeded. The Worker demo, Worker MP4, Pages vision page, and mirrored MP4 each returned HTTPS 200 in a post-deployment check.
 - The RFP evidence map was reviewed against the current official PDF. Its broad paraphrases need explicit source passages and accurate section-level links; PR #27 corrects this without writing personal application responses. No application or Cloudflare changes were made.
+
+## 2026-11-17 — Individual permission history implementation
+
+- Completion audit found that the consent table's version counter did not retain prior states. Added a session-scoped history migration, atomic history writes for grant/withdraw actions, API readback, an accessible history timeline, a 50-version cap, and migration backfill documentation.
+- Local `npm run verify`, `npm run test:e2e` (5 tests), and `npm run test:e2e:fullstack` passed. The local integration verifies initial, withdrawn and isolated histories, reset cleanup, and the version cap. All local AI calls use the explicitly labeled mock.
+- Current branch: `feat/individual-permission-history`. The production D1 migration and Worker deployment are not yet performed; complete them only after the feature PR passes required checks and account/resource/billing preflight.

@@ -23,6 +23,17 @@ type RunRecord = {
   created_at: string;
   completed_at: string | null;
 };
+type PermissionHistoryRecord = {
+  permission_id: string;
+  version: number;
+  purpose: string;
+  status: string;
+  expires_at: string;
+  action: string;
+  actor: string;
+  correlation_id: string;
+  recorded_at: string;
+};
 type DemoState = {
   community: { id: string; name: string; location: string };
   synthetic: boolean;
@@ -38,6 +49,7 @@ type DemoState = {
     proposedCommercialAllowed: boolean;
   };
   permission: { purpose: string; status: string; expires_at: string; version: number };
+  permissionHistory: PermissionHistoryRecord[];
   benefit: {
     title: string;
     owner: string;
@@ -527,6 +539,34 @@ export default function App() {
                       <strong>v{data.permission.version}</strong>
                     </div>
                   </div>
+                  <section
+                    className="permission-history"
+                    aria-labelledby="permission-history-title"
+                  >
+                    <h4 id="permission-history-title">Permission history</h4>
+                    <p>Up to 50 versions are retained in this short-lived synthetic session.</p>
+                    <ol>
+                      {data.permissionHistory.map((record) => (
+                        <li key={`${record.permission_id}-${record.version}`}>
+                          <div className="permission-history-heading">
+                            <strong>
+                              Version {record.version} · {record.status}
+                            </strong>
+                            <time dateTime={record.recorded_at}>
+                              {new Date(record.recorded_at).toLocaleString()}
+                            </time>
+                          </div>
+                          <span>
+                            {record.action === 'created'
+                              ? 'Initial permission record'
+                              : record.action === 'migration-backfill'
+                                ? 'Current record captured when history was introduced'
+                                : `Recorded by ${record.actor.replace('demo:', '')}`}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
                   {role === 'community_member' ? (
                     <div className="button-row permission-actions">
                       <button

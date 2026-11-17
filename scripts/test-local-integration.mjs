@@ -133,6 +133,10 @@ try {
   assert.equal(initial.demoRole, 'community_representative');
   assert.equal(initial.policy.version, 1);
   assert.equal(initial.proposal.status, 'reviewed');
+  assert.deepEqual(
+    initial.permissionHistory.map(({ version, status, action }) => ({ version, status, action })),
+    [{ version: 1, status: 'granted', action: 'created' }],
+  );
 
   await expectJson(
     await api('/api/policy/decision', {
@@ -215,13 +219,27 @@ try {
     }),
     200,
   );
-  await expectJson(
+  const withdrawnPermission = await expectJson(
     await api('/api/consent', {
       method: 'POST',
       cookie: initialCookie,
       body: { action: 'withdraw' },
     }),
     200,
+  );
+  assert.equal(withdrawnPermission.version, 2);
+  const afterWithdrawal = await (await api('/api/demo', { cookie: initialCookie })).json();
+  assert.equal(afterWithdrawal.permission.status, 'withdrawn');
+  assert.deepEqual(
+    afterWithdrawal.permissionHistory.map(({ version, status, action }) => ({
+      version,
+      status,
+      action,
+    })),
+    [
+      { version: 2, status: 'withdrawn', action: 'withdrawn' },
+      { version: 1, status: 'granted', action: 'created' },
+    ],
   );
   await expectJson(
     await api('/api/role', { method: 'POST', cookie: initialCookie, body: { role: 'researcher' } }),
@@ -237,6 +255,27 @@ try {
   );
   assert.ok(withdrawn.decision.reasons.includes('individual-permission-not-active'));
 
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { role: 'community_member' },
+    }),
+    200,
+  );
+  const initialSessionId = initialCookie.slice(initialCookie.indexOf('=') + 1);
+  executeLocalSql(
+    `UPDATE individual_permissions SET version = 50 WHERE session_id = '${initialSessionId}' AND permission_id = 'participant-a'`,
+  );
+  await expectJson(
+    await api('/api/consent', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { action: 'grant' },
+    }),
+    429,
+  );
+
   const secondSessionResponse = await api('/api/demo');
   const secondCookie = cookieFrom(secondSessionResponse);
   assert.notEqual(
@@ -251,6 +290,11 @@ try {
     "one visitor must not see another visitor's state changes",
   );
   assert.equal(secondSession.permission.status, 'granted');
+  assert.deepEqual(
+    secondSession.permissionHistory.map(({ version, status }) => ({ version, status })),
+    [{ version: 1, status: 'granted' }],
+    "one visitor must not see another visitor's permission history",
+  );
 
   const resetResponse = await api('/api/demo', { method: 'DELETE', cookie: initialCookie });
   const reset = await expectJson(resetResponse, 200);
@@ -259,6 +303,14 @@ try {
   const resetState = await (await api('/api/demo', { cookie: resetCookie })).json();
   assert.equal(resetState.proposal.status, 'reviewed');
   assert.equal(resetState.permission.status, 'granted');
+  assert.deepEqual(
+    resetState.permissionHistory.map(({ version, status, action }) => ({
+      version,
+      status,
+      action,
+    })),
+    [{ version: 1, status: 'granted', action: 'created' }],
+  );
   await expectJson(
     await api('/api/benefit', {
       method: 'POST',

@@ -758,6 +758,45 @@ select:disabled {
 .permission-actions {
   margin-top: 16px;
 }
+.permission-history {
+  margin-top: 18px;
+  border-top: 1px solid #ecefe8;
+  padding-top: 14px;
+}
+.permission-history h4 {
+  margin: 0 0 9px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.permission-history ol {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.permission-history li {
+  display: grid;
+  gap: 4px;
+  border-left: 2px solid #c7d8b9;
+  padding: 3px 0 3px 10px;
+}
+.permission-history-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 10px;
+}
+.permission-history-heading strong {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+.permission-history time,
+.permission-history li > span {
+  color: #596457;
+  font-size: 11px;
+  line-height: 1.5;
+}
 .field-grid {
   display: grid;
   grid-template-columns: 1.3fr 0.8fr;
