@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-const output = resolve(import.meta.dirname, '../dist');
+const output = resolve(import.meta.dirname, '../dist-vision');
 const html = readFileSync(join(output, 'index.html'), 'utf8');
 const errors = [];
 
@@ -48,4 +48,10 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log(`Vision-only static build verified (${assets.length} local asset links).`);
+}
+
+const productionHtml = readFileSync(resolve(import.meta.dirname, '../dist/index.html'), 'utf8');
+if (!productionHtml.includes('<title>MindCommons — Community rules for AI research</title>')) {
+  console.error('Vision-only build must not overwrite the production application output.');
+  process.exitCode = 1;
 }

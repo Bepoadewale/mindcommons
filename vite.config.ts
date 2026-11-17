@@ -28,7 +28,7 @@ export default defineConfig({
   root: 'apps/web',
   publicDir: 'public',
   base: process.env.VITE_BASE_PATH || '/',
-  build: { outDir: '../../dist', emptyOutDir: true },
+  build: { outDir: visionOnly ? '../../dist-vision' : '../../dist', emptyOutDir: true },
   test: {
     environment: 'node',
     include: ['../../tests/**/*.test.ts'],
