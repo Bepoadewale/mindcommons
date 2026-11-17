@@ -1,4 +1,6 @@
 import { onRequestPost as createBenefitEvidence } from './api/benefit';
+import { onRequestGet as loadAgreement } from './api/agreement';
+import { communityAIAgreementJsonSchema } from '../packages/community-ai-agreement/src';
 import { onRequestPost as updateConsent } from './api/consent';
 import { onRequestDelete as resetDemo, onRequestGet as loadDemo } from './api/demo';
 import { onRequestPost as decidePolicy } from './api/policy/decision';
@@ -10,6 +12,10 @@ import type { Context, Env } from './types';
 type Handler = (context: Context) => Promise<Response>;
 
 const routes: Record<string, Record<string, Handler>> = {
+  '/api/agreement': { GET: loadAgreement },
+  '/api/agreement/schema': {
+    GET: async () => json(communityAIAgreementJsonSchema()),
+  },
   '/api/benefit': { POST: createBenefitEvidence },
   '/api/consent': { POST: updateConsent },
   '/api/demo': { DELETE: resetDemo, GET: loadDemo },

@@ -158,6 +158,21 @@ try {
   assert.equal(initial.permissions.length, 3);
   assert.equal(initial.policy.withdrawalMode, 'exclude-withdrawn');
   assert.equal(initial.proposal.withdrawalMode, 'require-all');
+  const initialAgreement = await expectJson(
+    await api('/api/agreement', { cookie: initialCookie }),
+    200,
+  );
+  assert.equal(initialAgreement.policyVersion, 1);
+  assert.equal(initialAgreement.contributions.length, 3);
+  assert.equal(
+    initialAgreement.contributions[0].permission.purpose,
+    'community-wellbeing-research',
+  );
+  assert.equal(initialAgreement.modelUse.trainingAllowed, false);
+  assert.equal(initialAgreement.benefitObligations[0].status, 'proposed');
+  const agreementSchema = await expectJson(await api('/api/agreement/schema'), 200);
+  assert.equal(agreementSchema.$schema, 'https://json-schema.org/draft/2020-12/schema');
+  assert.ok(agreementSchema.properties.authorizedResearcherIds);
   assert.deepEqual(
     initial.permissionHistory.map(({ permission_id, version, status, action }) => ({
       permission_id,
@@ -270,6 +285,16 @@ try {
     ).status,
     'withdrawn',
   );
+  const agreementAfterWithdrawal = await expectJson(
+    await api('/api/agreement', { cookie: initialCookie }),
+    200,
+  );
+  assert.equal(
+    agreementAfterWithdrawal.contributions.find(
+      ({ contributorId }) => contributorId === 'contributor-b',
+    ).permission.status,
+    'withdrawn',
+  );
   assert.deepEqual(
     afterWithdrawal.permissionHistory
       .filter(({ permission_id }) => permission_id.startsWith('contributor-b:'))
@@ -321,6 +346,11 @@ try {
     200,
   );
   assert.equal(approvedDifferentRule.policyVersion, 2);
+  const agreementAfterPolicyChange = await expectJson(
+    await api('/api/agreement', { cookie: initialCookie }),
+    200,
+  );
+  assert.equal(agreementAfterPolicyChange.withdrawalMode, 'require-all');
   await expectJson(
     await api('/api/role', {
       method: 'POST',

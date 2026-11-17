@@ -27,6 +27,7 @@ type PolicyRow = {
   allowed_purpose: string;
   commercial_allowed: number;
   withdrawal_mode: 'exclude-withdrawn' | 'require-all';
+  effective_at: string;
 };
 function contributionDecisionEvidence(decision: {
   eligibleContributionIds: string[];
@@ -71,7 +72,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   const [policy, permissionRows] = await Promise.all([
     context.env.DB.prepare(
-      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
+      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
     )
       .bind(session.sessionId)
       .first<PolicyRow>(),
@@ -94,6 +95,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
           allowedPurpose: policy.allowed_purpose,
           commercialAllowed: Boolean(policy.commercial_allowed),
           withdrawalMode: policy.withdrawal_mode,
+          effectiveAt: policy.effective_at,
         }
       : null,
     contributions: SYNTHETIC_CONTRIBUTIONS,

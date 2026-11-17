@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "agreementId": "fictional-community:policy:1",
+  "communityId": "fictional-community",
+  "policyVersion": 1,
+  "status": "active",
+  "effectiveAt": "2026-11-17T00:00:00.000Z",
+  "permittedPurposes": ["community-wellbeing-research"],
+  "authorizedResearcherIds": ["fictional-researcher-1"],
+  "commercialUseAllowed": false,
+  "withdrawalMode": "exclude-withdrawn",
+  "contributions": [
+    {
+      "contributionId": "synthetic-response-1",
+      "contributorId": "fictional-contributor-1",
+      "purpose": "community-wellbeing-research",
+      "permission": {
+        "purpose": "community-wellbeing-research",
+        "status": "granted",
+        "version": 1,
+        "expiresAt": "2027-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "contributionId": "synthetic-response-2",
+      "contributorId": "fictional-contributor-2",
+      "purpose": "community-wellbeing-research",
+      "permission": {
+        "purpose": "community-wellbeing-research",
+        "status": "granted",
+        "version": 1,
+        "expiresAt": "2027-01-01T00:00:00.000Z"
+      }
+    }
+  ],
+  "modelUse": {
+    "allowedModelIds": ["@cf/google/gemma-4-26b-a4b-it"],
+    "allowedJobTypes": ["theme-classification"],
+    "trainingAllowed": false,
+    "publicOutputsAllowed": false,
+    "clinicalUseAllowed": false
+  },
+  "benefitObligations": [
+    {
+      "obligationId": "fictional-summary",
+      "description": "Share a plain-language summary with the fictional community representative.",
+      "accountableParty": "Fictional research team",
+      "dueAt": "2027-01-15T00:00:00.000Z",
+      "status": "accepted",
+      "agreedByCommunity": true,
+      "acceptedByResearchTeam": true
+    }
+  ]
+}

@@ -36,6 +36,7 @@ function facts(overrides: Partial<AuthorizationFacts> = {}): AuthorizationFacts 
       allowedPurpose: 'community-wellbeing-research',
       commercialAllowed: false,
       withdrawalMode: 'exclude-withdrawn',
+      effectiveAt: '2026-11-16T12:00:00.000Z',
     },
     contributions,
     permissions,
