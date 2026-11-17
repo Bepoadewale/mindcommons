@@ -16,9 +16,11 @@
     {
       "binding": "DB",
       "database_name": "mindcommons-demo-d1",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "9b9dff3c-6743-4dab-8fb9-e2cebe0196f0",
       "migrations_dir": "database/migrations",
     },
   ],
-  "ai": { "binding": "AI" },
+  "ai": {
+    "binding": "AI",
+  },
 }

@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#14 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#16 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#14 source branches removed locally/remotely.
+- [x] Merged PR #1–#16 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -35,7 +35,8 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 ## Hosting and reviewer evidence
 
 - [x] Workers Static Assets entrypoint and local Worker/D1 integration merged through PR #14; all required CI checks passed.
-- [ ] Dedicated Cloudflare Worker with Static Assets and D1; Workers AI binding; free-tier verified.
+- [x] Dedicated D1 database `mindcommons-demo-d1` created and all three migrations applied; account has zero subscriptions and Workers Free is Cloudflare's default.
+- [ ] Dedicated Cloudflare Worker with Static Assets deployed to `workers.dev`; Workers AI binding and a live synthetic inference still need verification.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
 - [x] Eight-screen future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, all disclosures, assets, 390 px mobile width, no API calls, and axe WCAG 2.1 A/AA verified in Chromium. It is static and is not the live backend demo.
