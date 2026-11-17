@@ -148,3 +148,9 @@
 - Installed project-independent Android command-line tools and an Android 16 Google Play emulator locally; no Cloudflare or production account configuration changed.
 - Loaded the public production site in Chrome, confirmed the native “Install app” prompt, installed the MindCommons launcher shortcut, and opened it in standalone display mode. This validates emulator behavior; no physical Android handset was tested.
 - Updated current state, plan, checklist, project status and technical validation notes to distinguish emulator evidence from physical-device coverage. Documentation reconciliation remains in PR #25 and will be validated through the protected workflow.
+
+## 2026-11-17 — PR #25 merged and post-merge verification
+
+- PR #25 merged through protected `main` at `f3204445125900c0a02ffb9f5718aeaae107cf69`; all four required checks passed in run `44084396708`. GitHub removed the remote source branch; the local checkout is clean on `main` and its source branch was removed.
+- Post-merge CI run `44084803599` passed all four jobs, and Pages publish run `44084803637` succeeded. No application code or Cloudflare resources changed.
+- The technical demonstration criteria are complete, including Android emulator install and standalone launch. Physical-device testing remains unclaimed. The direct public MP4 satisfies the video deliverable; the owner may optionally replace its link with YouTube after uploading.
