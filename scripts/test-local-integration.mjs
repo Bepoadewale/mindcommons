@@ -6,19 +6,16 @@ const server = spawn(
   process.execPath,
   [
     'node_modules/wrangler/bin/wrangler.js',
-    'pages',
     'dev',
-    'dist',
+    '--local',
     '--ip',
     '127.0.0.1',
     '--port',
     '8789',
-    '--binding',
-    'DEMO_AI_MODE=mock',
-    '--binding',
-    'LOCAL_DEVELOPMENT=true',
-    '--binding',
-    'AI=local-placeholder',
+    '--var',
+    'DEMO_AI_MODE:mock',
+    '--var',
+    'LOCAL_DEVELOPMENT:true',
   ],
   {
     cwd: process.cwd(),
@@ -65,7 +62,7 @@ server.stderr.on('data', (chunk) => {
 
 async function waitUntilReady() {
   for (let attempt = 0; attempt < 40; attempt += 1) {
-    if (server.exitCode !== null) throw new Error(`Local Pages process exited: ${stderr}`);
+    if (server.exitCode !== null) throw new Error(`Local Worker process exited: ${stderr}`);
     try {
       const response = await fetch(`${base}/api/demo`);
       if (response.status === 200) return response;
@@ -74,7 +71,7 @@ async function waitUntilReady() {
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  throw new Error(`Local Pages API did not become ready: ${stderr}`);
+  throw new Error(`Local Worker API did not become ready: ${stderr}`);
 }
 
 function cookieFrom(response) {
@@ -97,7 +94,11 @@ async function api(path, { method = 'GET', cookie, body } = {}) {
 
 async function expectJson(response, status) {
   const body = await response.json();
-  assert.equal(response.status, status, JSON.stringify(body));
+  assert.equal(
+    response.status,
+    status,
+    `expected HTTP ${status}, received ${response.status}: ${JSON.stringify(body)}`,
+  );
   return body;
 }
 
@@ -310,7 +311,10 @@ try {
 
   const resetSessionId = resetCookie.slice(resetCookie.indexOf('=') + 1);
   executeLocalSql(
-    `INSERT INTO rate_limits(session_id, minute, request_count) VALUES ('${resetSessionId}', strftime('%Y-%m-%dT%H:%M','now'), 60) ON CONFLICT(session_id, minute) DO UPDATE SET request_count = 60`,
+    `INSERT INTO rate_limits(session_id, minute, request_count)
+     VALUES ('${resetSessionId}', strftime('%Y-%m-%dT%H:%M','now'), 60),
+            ('${resetSessionId}', strftime('%Y-%m-%dT%H:%M','now','+1 minute'), 60)
+     ON CONFLICT(session_id, minute) DO UPDATE SET request_count = 60`,
   );
   await expectJson(await api('/api/demo', { cookie: resetCookie }), 429);
 
@@ -344,7 +348,7 @@ try {
     `INSERT INTO demo_session_limits(day, session_count) VALUES (date('now'), 0) ON CONFLICT(day) DO UPDATE SET session_count = 0`,
   );
   console.log(
-    'Local Pages + D1 integration passed. Workers AI used the explicitly labeled deterministic mock; no live model call was made.',
+    'Local Worker + D1 integration passed. Workers AI used the explicitly labeled deterministic mock; no live model call was made.',
   );
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));

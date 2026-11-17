@@ -7,19 +7,16 @@ const server = spawn(
   process.execPath,
   [
     'node_modules/wrangler/bin/wrangler.js',
-    'pages',
     'dev',
-    'dist',
+    '--local',
     '--ip',
     '127.0.0.1',
     '--port',
     '8790',
-    '--binding',
-    'DEMO_AI_MODE=mock',
-    '--binding',
-    'LOCAL_DEVELOPMENT=true',
-    '--binding',
-    'AI=local-placeholder',
+    '--var',
+    'DEMO_AI_MODE:mock',
+    '--var',
+    'LOCAL_DEVELOPMENT:true',
   ],
   {
     cwd: process.cwd(),
@@ -65,7 +62,7 @@ server.stderr.on('data', (chunk) => {
 
 async function waitUntilReady() {
   for (let attempt = 0; attempt < 40; attempt += 1) {
-    if (server.exitCode !== null) throw new Error(`Local Pages process exited: ${stderr}`);
+    if (server.exitCode !== null) throw new Error(`Local Worker process exited: ${stderr}`);
     try {
       if ((await fetch(base)).status === 200) return;
     } catch {
@@ -73,7 +70,7 @@ async function waitUntilReady() {
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  throw new Error(`Local Pages application did not become ready: ${stderr}`);
+  throw new Error(`Local Worker application did not become ready: ${stderr}`);
 }
 
 let browser;
@@ -166,7 +163,7 @@ try {
     .waitFor();
   assert.deepEqual(pageErrors, [], `browser errors: ${pageErrors.join('; ')}`);
   console.log(
-    'Full-stack browser acceptance passed against local Pages Functions + D1. AI used a labeled mock; no live model call was made.',
+    'Full-stack browser acceptance passed against the local Worker + D1. AI used a labeled mock; no live model call was made.',
   );
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));

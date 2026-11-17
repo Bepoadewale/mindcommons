@@ -6,15 +6,15 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#11 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#13 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#11 source branches removed locally/remotely.
+- [x] Merged PR #1–#13 source branches removed locally/remotely.
 
 ## Phase 0
 
 - [x] Mac, toolchain, GitHub identity and Keychain credential availability checked.
 - [x] Official Mozilla RFP and SRHIN host challenge reviewed.
-- [x] Official Cloudflare Pages Functions, D1 pricing, Workers limits and AI pricing reviewed.
+- [x] Official Cloudflare Pages, Workers Static Assets, D1 pricing, Workers limits and AI pricing reviewed; the implementation now follows the current new-project recommendation.
 - [x] DavDeploy read-only review and reusable lessons documented; existing repositories unchanged.
 - [x] Research existing solutions, Nigeria data protection and research ethics context documented.
 
@@ -34,7 +34,8 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 ## Hosting and reviewer evidence
 
-- [ ] Dedicated Cloudflare Pages and D1 resources; Workers AI binding; free-tier verified.
+- [~] Workers Static Assets entrypoint and local Worker/D1 integration pass on `feat/workers-static-assets`; PR CI and merge are pending.
+- [ ] Dedicated Cloudflare Worker with Static Assets and D1; Workers AI binding; free-tier verified.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
 - [x] Eight-screen future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, all disclosures, assets, 390 px mobile width, no API calls, and axe WCAG 2.1 A/AA verified in Chromium. It is static and is not the live backend demo.
