@@ -200,3 +200,9 @@
 - Immediately before deployment, Wrangler confirmed account `1630257815c70704ad812cd52c284ca2`, the named D1 database with no pending migrations, and the dedicated `mindcommons-mozilla-demo` Worker. No billing plan or unrelated resource was changed. Deployed Worker version `b01d3f96-d72a-41a2-b751-88dff3c7adc9` and published the new static asset.
 - Worker landing page and both Worker MP4s returned HTTPS 200. The captioned Worker copy was downloaded, probed and decoded; browser verification confirmed the landing page links to the new and preserved original MP4 with zero browser errors. New video public links are independently available at Worker and GitHub Pages.
 - Refreshed `STATE.md`, `CHECKLIST.md`, `PLAN.md`, evidence links, project status, reviewer guide, technical validation and session history in a documentation follow-up PR.
+
+## 2026-11-17 — PR #35 final evidence reconciliation
+
+- PR #35 merged through protected `main` at `b659a0a60f3cea6d8dfc293d951e9bd82742e2b7`; all required PR checks passed in run `44136713915`. Post-merge CI run `44137169473` and Pages publish `44137169692` passed.
+- Deleted local and remote source branch `docs/final-video-publication-evidence`; local checkout is synchronized on `main`.
+- The current public application, both worker videos, both Pages videos, and vision page had already been verified following PR #34; this merge records those verified links and boundaries in the project evidence package.
