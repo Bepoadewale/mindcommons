@@ -121,4 +121,11 @@
 - PR #21 merged through protected `main` at `17168133d780795eefe9c00568af85b59850efc4`; all four required CI checks passed in run `44073097271`. GitHub removed the remote source branch, and the local source branch was removed after confirming the merge.
 - Post-merge CI run `44073475285` passed all four jobs; GitHub Pages publish run `44073475314` succeeded.
 - Updated the checklist, status, and fellowship evidence with Pages deployment and video URL results. No production infrastructure changed.
-- `adb` and Android emulator tooling are not installed, so physical Android installability remains unverified. Next: update this remaining acceptance item and technical RFP status through PR #22, then continue any independently verifiable PWA checks.
+- `adb` and Android emulator tooling are not installed, so physical Android installability remains unverified. PR #22 records this external limitation and the production browser checks.
+
+## 2026-11-17 — PR #22 and post-merge validation
+
+- PR #22 merged through protected `main` at `9297ff2770647d189d0081654f98c8d5d8bdaec0`; all four required checks passed in run `44074505904`. GitHub removed the source branch, and local checkout returned to `main`.
+- Post-merge CI run `44074890893` passed all four jobs; GitHub Pages publish run `44074890621` succeeded.
+- The PWA evidence distinguishes production browser and offline checks from Android installation. No Android device or emulator is available in this environment.
+- Next: update persistent records for PR #22 through PR #23. Android install validation awaits access to a device; the owner plans to upload the MP4 to YouTube later.

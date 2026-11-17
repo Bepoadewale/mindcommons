@@ -5,7 +5,7 @@ Last updated: 2026-11-17
 ## Verified complete
 
 - Public repository: https://github.com/Bepoadewale/mindcommons, Apache-2.0, Issues enabled, protected PR-only `main` with four required checks and no solo-approval requirement.
-- PRs #1–#21 merged through GitHub; PR #21 merge `1716813` passed all four required checks in run `44073097271`. Its local and remote source branches were removed. Existing DavDeploy repositories and pull requests were not changed.
+- PRs #1–#22 merged through GitHub; PR #22 merge `9297ff2` passed all four required checks in run `44074505904`. Its local and remote source branches were removed. Existing DavDeploy repositories and pull requests were not changed.
 - Research, Mozilla RFP alignment, architecture, governance, security, and reusable DavDeploy lessons are documented.
 - Core synthetic demo includes community rules/proposals, separate individual permissions, fixed research request, deterministic fail-closed authorization, fixed AI job, provenance/audit, hypothetical benefit commitment, isolated/resettable sessions, and a future-vision wireframe.
 - Dedicated Cloudflare D1 database `mindcommons-demo-d1` exists in WEUR (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) with all three migrations applied.
@@ -22,6 +22,8 @@ PR #20 (`fix/pages-vision-build-order`) merged at `0899d29`. It adds a productio
 
 PR #21 (`docs/pages-fallback-evidence`) merged at `1716813`; all four required checks passed in run `44073097271`, and GitHub removed its source branch. Post-merge CI run `44073475285` and Pages publish run `44073475314` both succeeded.
 
+PR #22 (`docs/android-validation-status`) merged at `9297ff2`; all four required checks passed in run `44074505904`, and GitHub removed its source branch. Post-merge CI run `44074890893` and Pages publish run `44074890621` both succeeded. It records production PWA checks and distinguishes them from physical Android installation, which remains unverified.
+
 ## Known limits
 
 - Physical Android installation remains unverified (`adb` unavailable); browser-based mobile layout and accessibility checks pass.
@@ -32,4 +34,4 @@ PR #21 (`docs/pages-fallback-evidence`) merged at `1716813`; all four required c
 ## Next executable work
 
 1. Complete Android PWA installation validation if an Android device becomes available; `adb` and an emulator are not installed in this environment.
-2. Continue reviewing documented limitations and keep the public links healthy. The owner plans to upload the MP4 to YouTube later; the production landing page already links to the public Worker MP4.
+2. The owner plans to upload the MP4 to YouTube later; after receiving its URL, update the landing page through the normal PR workflow. Until then the public direct MP4 links work.
