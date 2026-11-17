@@ -10,15 +10,15 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 - [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed. Hosted release does not include these changes yet.
 - [x] PR #40 merged: seven-step reviewer journey and deterministic no-inference policy preview. 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
 - [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; hosted Worker UI has not changed.
-- [ ] Final status/evidence reconciliation remains. Production deployment is blocked because Cloudflare subscription/billing read returned HTTP 403 for both configured token services; the official endpoint requires `Billing Read` or `Billing Write`. Do not deploy without successful current billing verification.
+- [x] Final status and evidence reconciliation merged in PRs #41 and #42; both passed required checks and post-merge CI/Pages workflows. The production deployment itself remains blocked because Cloudflare subscription/billing reads returned HTTP 403 for both configured token services; the official endpoint requires `Billing Read` or `Billing Write`. Do not deploy without successful current billing verification.
 
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#40 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #40 post-merge CI and Pages publish passed.
+- [x] PRs #1–#42 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
 - [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
-- [x] Current branch `npm run test:e2e` passed 7/7; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
+- [x] PR #40 `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
 
 ## Governance and technical contribution
 
