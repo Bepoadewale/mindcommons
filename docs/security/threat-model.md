@@ -16,7 +16,7 @@ Prototype policy versions, fictional permission records, authorization results, 
 
 ## Implemented controls and verification status
 
-- Server-controlled opaque session, two-hour expiry and isolation; at most 500 new synthetic sessions per UTC day; no client-supplied authority.
+- Server-controlled opaque session, two-hour expiry and isolation; at most 500 new synthetic sessions per UTC day. In this public synthetic scenario, visitors can switch among fictional seats through the API. The server stores the selected seat in that visitor's session and checks it for each action, but does not authenticate a real person's identity or authority. This demonstrates policy enforcement logic, not production identity or governance security.
 - Strict schemas, body-size and text limits; fixed job IDs/model IDs; no script upload or arbitrary prompt execution.
 - Fail-closed authorization before AI; separate policy and individual permission checks; negative tests spy on AI binding.
 - Same-origin mutation checks, no cross-origin credential support, security headers, safe text rendering, no secrets in browser.
@@ -27,4 +27,4 @@ Prototype policy versions, fictional permission records, authorization results, 
 
 ## Residual risks and scope
 
-Public demos remain vulnerable to denial of service and service outages. Free-plan limits are account-level and may be shared with other projects. This prototype has no verified real identity, community authority, clinical controls, independent security audit, or patient-data suitability. A live provider executes model inference outside the community's infrastructure. A governance record cannot technically force deletion from copied datasets or model weights.
+Public demos remain vulnerable to denial of service and service outages. Free-plan limits are account-level and may be shared with other projects. Demo roles are intentionally switchable and must never be treated as verified researcher or community-representative identity. Production use needs independently designed authentication, authorization, representative selection and appeal processes. This prototype has no verified real identity, community authority, clinical controls, independent security audit, or patient-data suitability. A live provider executes model inference outside the community's infrastructure. A governance record cannot technically force deletion from copied datasets or model weights.
