@@ -8,7 +8,7 @@ PR #19 is merged and deployed. The API returns only user-facing model text, omit
 
 The independent future-product visualization is public at <https://bepoadewale.github.io/mindcommons/>. It is a static eight-screen wireframe with no API or AI behavior. The same 90.44-second, 1920×1080 H.264 screen capture is mirrored at <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>; the Pages publish passed, and both URLs were checked unauthenticated. The media URL returned HTTPS 200, `video/mp4`, and 3,759,462 bytes.
 
-Local checks include 23 unit tests, 4 fixture-backed reviewer browser tests, 3 vision browser tests, local Worker + D1 integration, a full-stack browser journey using an explicitly labeled deterministic mock, accessibility scans, type checks, lint, production/vision builds, and documentation validation. The live recording script requires actual non-empty Workers AI output and denies the commercial request. Physical Android installation is unverified.
+Local checks include 23 unit tests, 4 fixture-backed reviewer browser tests, 3 vision browser tests, local Worker + D1 integration, a full-stack browser journey using an explicitly labeled deterministic mock, accessibility scans, type checks, lint, production/vision builds, and documentation validation. Production Chromium also verified the manifest and service-worker registration, 192/512 px icons, a 390 px viewport without horizontal overflow, and graceful offline API failure; API responses were not present in the public asset cache. The live recording script requires actual non-empty Workers AI output and denies the commercial request. Physical Android installation prompt and installed-app behavior remain unverified because `adb` and an emulator are unavailable.
 
 The GitHub Pages workflow for PR #19 failed (`44070661332`) because it built only `dist-vision`, while the validator also verifies production `dist/index.html` remains present and separate. PR #20 added `npm run build` before `npm run build:vision`, passed all four required checks, and merged at `0899d29`. Post-merge Pages publish run `44072149990` succeeded. The public vision page and mirrored video were then checked without authentication. The production Worker video URL remains linked from the live product landing page.
 
@@ -16,6 +16,6 @@ The owner chose to keep the broad account-scoped Cloudflare token in macOS Keych
 
 ## Next executable work
 
-1. Update persistent evidence for the PR #20 merge and public Pages verification through a small PR.
-2. Continue remaining acceptance work, especially Android installation validation and other documented limitations.
+1. Complete Android PWA installation validation if an Android device becomes available; `adb` and an emulator are not installed in this environment.
+2. Continue checking the documented limitations and keep the public artifacts available.
 3. The owner can replace the landing page's MP4 destination with a YouTube URL after uploading; until then the production Worker video remains public.

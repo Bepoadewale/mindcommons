@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#20 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#21 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#20 source branches removed locally/remotely.
+- [x] Merged PR #1–#21 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -29,7 +29,8 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [x] Local mock execution and denied-before-inference behavior verified; production inference is separately verified, not inferred from mock tests.
 - [x] Model/job/policy provenance, audit history and honest integrity limits.
 - [x] Demonstration benefit commitment and synthetic evidence, visibly hypothetical.
-- [~] Responsive UI, PWA manifest/icons, bounded offline behavior and axe WCAG 2.1 A/AA passed; Android installation/device check pending.
+- [x] Production PWA manifest and service worker load; 192 px and 512 px icons return 200; 390 px viewport has no horizontal overflow; offline API request fails clearly without caching API data; axe WCAG 2.1 A/AA passes.
+- [~] Physical Android installation prompt and installed-app behavior remain unverified because no Android device or emulator is available.
 - [x] Positive/negative governance, consent, API integration and browser paths verified locally.
 - [x] Threat model, limits, fixed input validation, quotas and rate controls documented/implemented.
 
