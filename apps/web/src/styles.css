@@ -797,6 +797,25 @@ select:disabled {
   font-size: 11px;
   line-height: 1.5;
 }
+
+.contributor-permission-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.contributor-permission {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--line, #d9e2dc);
+  border-radius: 0.9rem;
+  background: var(--surface-soft, #f7f9f7);
+}
+
+.contributor-permission .permission-history {
+  margin-top: 0;
+}
 .field-grid {
   display: grid;
   grid-template-columns: 1.3fr 0.8fr;

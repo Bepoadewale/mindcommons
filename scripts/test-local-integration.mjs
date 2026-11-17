@@ -13,13 +13,13 @@ const server = spawn(
     '--port',
     '8789',
     '--var',
-    'DEMO_AI_MODE:mock',
+    'DEMO_AI_MODE:mock-delay',
     '--var',
     'LOCAL_DEVELOPMENT:true',
   ],
   {
     cwd: process.cwd(),
-    stdio: ['ignore', 'ignore', 'pipe'],
+    stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, FORCE_COLOR: '0' },
     detached: process.platform !== 'win32',
   },
@@ -55,10 +55,32 @@ async function stopServer() {
 }
 
 let stderr = '';
+const inferenceStartWaiters = [];
 server.stderr.setEncoding('utf8');
-server.stderr.on('data', (chunk) => {
+const captureServerOutput = (chunk) => {
   stderr = (stderr + chunk).slice(-3000);
-});
+  if (chunk.includes('LOCAL_MOCK_INFERENCE_STARTED')) {
+    inferenceStartWaiters.shift()?.();
+  }
+};
+server.stdout.setEncoding('utf8');
+server.stdout.on('data', captureServerOutput);
+server.stderr.on('data', captureServerOutput);
+
+function waitForMockInferenceStart() {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      const index = inferenceStartWaiters.indexOf(onStarted);
+      if (index >= 0) inferenceStartWaiters.splice(index, 1);
+      reject(new Error(`Local mock inference did not signal its start: ${stderr}`));
+    }, 8000);
+    const onStarted = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    inferenceStartWaiters.push(onStarted);
+  });
+}
 
 async function waitUntilReady() {
   for (let attempt = 0; attempt < 40; attempt += 1) {
@@ -133,9 +155,22 @@ try {
   assert.equal(initial.demoRole, 'community_representative');
   assert.equal(initial.policy.version, 1);
   assert.equal(initial.proposal.status, 'reviewed');
+  assert.equal(initial.permissions.length, 3);
+  assert.equal(initial.policy.withdrawalMode, 'exclude-withdrawn');
+  assert.equal(initial.proposal.withdrawalMode, 'require-all');
   assert.deepEqual(
-    initial.permissionHistory.map(({ version, status, action }) => ({ version, status, action })),
-    [{ version: 1, status: 'granted', action: 'created' }],
+    initial.permissionHistory.map(({ permission_id, version, status, action }) => ({
+      permission_id,
+      version,
+      status,
+      action,
+    })),
+    ['contributor-a', 'contributor-b', 'contributor-c'].map((contributorId) => ({
+      permission_id: `${contributorId}:community-wellbeing-research`,
+      version: 1,
+      status: 'granted',
+      action: 'created',
+    })),
   );
 
   await expectJson(
@@ -223,19 +258,26 @@ try {
     await api('/api/consent', {
       method: 'POST',
       cookie: initialCookie,
-      body: { action: 'withdraw' },
+      body: { action: 'withdraw', contributorId: 'contributor-b' },
     }),
     200,
   );
   assert.equal(withdrawnPermission.version, 2);
   const afterWithdrawal = await (await api('/api/demo', { cookie: initialCookie })).json();
-  assert.equal(afterWithdrawal.permission.status, 'withdrawn');
+  assert.equal(
+    afterWithdrawal.permissions.find(({ permission_id }) =>
+      permission_id.startsWith('contributor-b:'),
+    ).status,
+    'withdrawn',
+  );
   assert.deepEqual(
-    afterWithdrawal.permissionHistory.map(({ version, status, action }) => ({
-      version,
-      status,
-      action,
-    })),
+    afterWithdrawal.permissionHistory
+      .filter(({ permission_id }) => permission_id.startsWith('contributor-b:'))
+      .map(({ version, status, action }) => ({
+        version,
+        status,
+        action,
+      })),
     [
       { version: 2, status: 'withdrawn', action: 'withdrawn' },
       { version: 1, status: 'granted', action: 'created' },
@@ -245,7 +287,49 @@ try {
     await api('/api/role', { method: 'POST', cookie: initialCookie, body: { role: 'researcher' } }),
     200,
   );
-  const withdrawn = await expectJson(
+  const partial = await expectJson(
+    await api('/api/research/run', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+    }),
+    200,
+  );
+  assert.deepEqual(partial.inputContributionIds, ['response-a', 'response-c']);
+  assert.deepEqual(partial.excludedContributions, [
+    {
+      contributionId: 'response-b',
+      contributorId: 'contributor-b',
+      reason: 'individual-permission-not-active',
+    },
+  ]);
+
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  const approvedDifferentRule = await expectJson(
+    await api('/api/policy/decision', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { proposalId: 'proposal-v2', decision: 'approve' },
+    }),
+    200,
+  );
+  assert.equal(approvedDifferentRule.policyVersion, 2);
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: initialCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const blockedByNewRule = await expectJson(
     await api('/api/research/run', {
       method: 'POST',
       cookie: initialCookie,
@@ -253,7 +337,12 @@ try {
     }),
     403,
   );
-  assert.ok(withdrawn.decision.reasons.includes('individual-permission-not-active'));
+  assert.ok(
+    blockedByNewRule.decision.reasons.includes(
+      'community-policy-requires-all-contributors-to-have-active-permission',
+    ),
+  );
+  assert.deepEqual(blockedByNewRule.decision.eligibleContributionIds, []);
 
   await expectJson(
     await api('/api/role', {
@@ -265,13 +354,13 @@ try {
   );
   const initialSessionId = initialCookie.slice(initialCookie.indexOf('=') + 1);
   executeLocalSql(
-    `UPDATE individual_permissions SET version = 50 WHERE session_id = '${initialSessionId}' AND permission_id = 'participant-a'`,
+    `UPDATE individual_permissions SET version = 50 WHERE session_id = '${initialSessionId}' AND permission_id = 'contributor-a:community-wellbeing-research'`,
   );
   await expectJson(
     await api('/api/consent', {
       method: 'POST',
       cookie: initialCookie,
-      body: { action: 'grant' },
+      body: { action: 'grant', contributorId: 'contributor-a' },
     }),
     429,
   );
@@ -289,12 +378,73 @@ try {
     1,
     "one visitor must not see another visitor's state changes",
   );
-  assert.equal(secondSession.permission.status, 'granted');
+  assert.equal(secondSession.permissions.length, 3);
+  assert.ok(secondSession.permissions.every(({ status }) => status === 'granted'));
   assert.deepEqual(
-    secondSession.permissionHistory.map(({ version, status }) => ({ version, status })),
-    [{ version: 1, status: 'granted' }],
+    secondSession.permissionHistory.map(({ permission_id, version, status }) => ({
+      permission_id,
+      version,
+      status,
+    })),
+    ['contributor-a', 'contributor-b', 'contributor-c'].map((contributorId) => ({
+      permission_id: `${contributorId}:community-wellbeing-research`,
+      version: 1,
+      status: 'granted',
+    })),
     "one visitor must not see another visitor's permission history",
   );
+
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const inferenceStarted = waitForMockInferenceStart();
+  const inFlightResearch = api('/api/research/run', {
+    method: 'POST',
+    cookie: secondCookie,
+    body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+  });
+  await inferenceStarted;
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: { role: 'community_member' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/consent', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: { action: 'withdraw', contributorId: 'contributor-c' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const concurrentResponse = await inFlightResearch;
+  const withheld = await expectJson(concurrentResponse, 409);
+  assert.equal(withheld.status, 'withheld');
+  assert.equal(withheld.output, undefined);
+  assert.match(withheld.message, /result was withheld and was not released/);
+  const concurrentState = await (await api('/api/demo', { cookie: secondCookie })).json();
+  assert.equal(concurrentState.runs[0].status, 'failed');
+  assert.equal(concurrentState.runs[0].output, null);
+  assert.ok(
+    concurrentState.runs[0].reasons.includes('authorization-changed-before-output-release'),
+  );
+  assert.ok(concurrentState.events.some((event) => event.action === 'research-result-withheld'));
 
   const resetResponse = await api('/api/demo', { method: 'DELETE', cookie: initialCookie });
   const reset = await expectJson(resetResponse, 200);
@@ -302,14 +452,20 @@ try {
   const resetCookie = cookieFrom(resetResponse);
   const resetState = await (await api('/api/demo', { cookie: resetCookie })).json();
   assert.equal(resetState.proposal.status, 'reviewed');
-  assert.equal(resetState.permission.status, 'granted');
+  assert.ok(resetState.permissions.every(({ status }) => status === 'granted'));
   assert.deepEqual(
-    resetState.permissionHistory.map(({ version, status, action }) => ({
+    resetState.permissionHistory.map(({ permission_id, version, status, action }) => ({
+      permission_id,
       version,
       status,
       action,
     })),
-    [{ version: 1, status: 'granted', action: 'created' }],
+    ['contributor-a', 'contributor-b', 'contributor-c'].map((contributorId) => ({
+      permission_id: `${contributorId}:community-wellbeing-research`,
+      version: 1,
+      status: 'granted',
+      action: 'created',
+    })),
   );
   await expectJson(
     await api('/api/benefit', {
@@ -344,6 +500,14 @@ try {
   assert.equal(approvedState.policy.version, 2);
   assert.equal(approvedState.proposal.status, 'approved');
 
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: secondCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
   const rejected = await expectJson(
     await api('/api/policy/decision', {
       method: 'POST',
@@ -403,7 +567,7 @@ try {
     'Local Worker + D1 integration passed. Workers AI used the explicitly labeled deterministic mock; no live model call was made.',
   );
 } catch (error) {
-  console.error(error instanceof Error ? error.message : String(error));
+  console.error(error instanceof Error ? error.stack : String(error));
   process.exitCode = 1;
 } finally {
   await stopServer();

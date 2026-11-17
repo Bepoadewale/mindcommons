@@ -1,4 +1,8 @@
 import { PermissionActionSchema } from '../../packages/contracts/src';
+import {
+  permissionIdFor,
+  SYNTHETIC_CONTRIBUTIONS,
+} from '../../packages/governance/src/authorization';
 import type { Context } from '../types';
 import {
   audit,
@@ -19,12 +23,17 @@ export async function onRequestPost(context: Context): Promise<Response> {
   if (!body.ok) return json({ error: body.reason }, body.reason === 'body_too_large' ? 413 : 400);
   const parsed = PermissionActionSchema.safeParse(body.value);
   if (!parsed.success) return json({ error: 'invalid_request' }, 400);
+  const contribution = SYNTHETIC_CONTRIBUTIONS.find(
+    (record) => record.contributorId === parsed.data.contributorId,
+  );
+  if (!contribution) return json({ error: 'unknown_contributor' }, 400);
+  const permissionId = permissionIdFor(contribution.contributorId, contribution.purpose);
   const state = parsed.data.action === 'withdraw' ? 'withdrawn' : 'granted';
   const current = await context.env.DB.prepare(
     `SELECT version FROM individual_permissions
-     WHERE session_id = ?1 AND permission_id = 'participant-a'`,
+     WHERE session_id = ?1 AND permission_id = ?2`,
   )
-    .bind(session.sessionId)
+    .bind(session.sessionId, permissionId)
     .first<{ version: number }>();
   if (!current) return json({ error: 'permission_record_unavailable' }, 503);
   if (current.version >= 50)
@@ -41,19 +50,28 @@ export async function onRequestPost(context: Context): Promise<Response> {
   const results = await context.env.DB.batch([
     context.env.DB.prepare(
       `UPDATE individual_permissions SET status = ?1, version = version + 1, updated_at = ?2
-       WHERE session_id = ?3 AND permission_id = 'participant-a' AND version = ?4`,
-    ).bind(state, timestamp, session.sessionId, current.version),
+       WHERE session_id = ?3 AND permission_id = ?4 AND version = ?5`,
+    ).bind(state, timestamp, session.sessionId, permissionId, current.version),
     context.env.DB.prepare(
       `INSERT INTO individual_permission_history(
          session_id, permission_id, version, community_id, purpose, status, expires_at,
          action, actor, correlation_id, recorded_at
        )
        SELECT session_id, permission_id, version, community_id, purpose, status, expires_at,
-         ?1, 'demo:community_member', ?2, ?3
+         ?1, ?2, ?3, ?4
        FROM individual_permissions
-       WHERE session_id = ?4 AND permission_id = 'participant-a' AND version = ?5 AND status = ?6
+       WHERE session_id = ?5 AND permission_id = ?6 AND version = ?7 AND status = ?8
        ON CONFLICT(session_id, permission_id, version) DO NOTHING`,
-    ).bind(state, correlationId, timestamp, session.sessionId, current.version + 1, state),
+    ).bind(
+      state,
+      `demo:${parsed.data.contributorId}`,
+      correlationId,
+      timestamp,
+      session.sessionId,
+      permissionId,
+      current.version + 1,
+      state,
+    ),
   ]);
   if (results[0]?.meta.changes !== 1 || results[1]?.meta.changes !== 1)
     return json({ error: 'permission_update_conflict' }, 409);
@@ -61,12 +79,17 @@ export async function onRequestPost(context: Context): Promise<Response> {
   await audit(
     context.env.DB,
     session.sessionId,
-    'demo:community_member',
+    `demo:${parsed.data.contributorId}`,
     `individual-permission-${state}`,
     state,
     null,
     null,
     correlationId,
   );
-  return json({ status: state, version: current.version + 1, correlationId });
+  return json({
+    contributorId: parsed.data.contributorId,
+    status: state,
+    version: current.version + 1,
+    correlationId,
+  });
 }

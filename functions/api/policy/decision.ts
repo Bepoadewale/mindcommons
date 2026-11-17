@@ -22,10 +22,15 @@ export async function onRequestPost(context: Context): Promise<Response> {
   if (!parsed.success) return json({ error: 'invalid_request' }, 400);
 
   const proposal = await context.env.DB.prepare(
-    'SELECT status, proposed_purpose, proposed_commercial_allowed FROM proposals WHERE session_id = ?1 AND proposal_id = ?2',
+    'SELECT status, proposed_purpose, proposed_commercial_allowed, withdrawal_mode FROM proposals WHERE session_id = ?1 AND proposal_id = ?2',
   )
     .bind(session.sessionId, parsed.data.proposalId)
-    .first<{ status: string; proposed_purpose: string; proposed_commercial_allowed: number }>();
+    .first<{
+      status: string;
+      proposed_purpose: string;
+      proposed_commercial_allowed: number;
+      withdrawal_mode: 'exclude-withdrawn' | 'require-all';
+    }>();
   if (!proposal || proposal.status !== 'reviewed')
     return json({ error: 'proposal_not_reviewable' }, 409);
 
@@ -38,29 +43,45 @@ export async function onRequestPost(context: Context): Promise<Response> {
   const timestamp = now();
   const correlationId = createCorrelationId();
   if (parsed.data.decision === 'approve') {
-    await context.env.DB.batch([
+    const results = await context.env.DB.batch([
       context.env.DB.prepare(
         "UPDATE proposals SET status = 'approved', decided_at = ?1 WHERE session_id = ?2 AND proposal_id = ?3 AND status = 'reviewed'",
       ).bind(timestamp, session.sessionId, parsed.data.proposalId),
       context.env.DB.prepare(
-        "UPDATE policies SET status = 'superseded' WHERE session_id = ?1 AND status = 'active'",
-      ).bind(session.sessionId),
+        "UPDATE policies SET status = 'superseded' WHERE session_id = ?1 AND version = ?2 AND status = 'active'",
+      ).bind(session.sessionId, active.version),
       context.env.DB.prepare(
-        "INSERT INTO policies(session_id, version, status, allowed_purpose, commercial_allowed, effective_at) VALUES (?1, ?2, 'active', ?3, ?4, ?5)",
+        `INSERT INTO policies(session_id, version, status, allowed_purpose, commercial_allowed, effective_at, withdrawal_mode)
+         SELECT ?1, ?2, 'active', ?3, ?4, ?5, ?6
+         WHERE EXISTS (
+           SELECT 1 FROM proposals WHERE session_id = ?1 AND proposal_id = ?7
+             AND status = 'approved' AND decided_at = ?5
+         )
+         ON CONFLICT(session_id, version) DO NOTHING`,
       ).bind(
         session.sessionId,
         active.version + 1,
         proposal.proposed_purpose,
         proposal.proposed_commercial_allowed,
         timestamp,
+        proposal.withdrawal_mode,
+        parsed.data.proposalId,
       ),
     ]);
+    if (
+      results[0]?.meta.changes !== 1 ||
+      results[1]?.meta.changes !== 1 ||
+      results[2]?.meta.changes !== 1
+    ) {
+      return json({ error: 'proposal_decision_conflict' }, 409);
+    }
   } else {
-    await context.env.DB.prepare(
+    const result = await context.env.DB.prepare(
       "UPDATE proposals SET status = 'rejected', decided_at = ?1 WHERE session_id = ?2 AND proposal_id = ?3 AND status = 'reviewed'",
     )
       .bind(timestamp, session.sessionId, parsed.data.proposalId)
       .run();
+    if (result.meta.changes !== 1) return json({ error: 'proposal_decision_conflict' }, 409);
   }
   const latest = await context.env.DB.prepare(
     "SELECT version FROM policies WHERE session_id = ?1 AND status = 'active'",

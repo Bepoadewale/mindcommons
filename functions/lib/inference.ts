@@ -2,11 +2,19 @@ import type { AIInferenceBinding } from '../../packages/governance/src/authoriza
 import type { Env } from '../types';
 
 export function inferenceFor(env: Env): { binding: AIInferenceBinding; mode: 'live' | 'mock' } {
-  if (env.DEMO_AI_MODE === 'mock' && env.LOCAL_DEVELOPMENT === 'true') {
+  if (
+    (env.DEMO_AI_MODE === 'mock' || env.DEMO_AI_MODE === 'mock-delay') &&
+    env.LOCAL_DEVELOPMENT === 'true'
+  ) {
+    const delayed = env.DEMO_AI_MODE === 'mock-delay';
     return {
       mode: 'mock',
       binding: {
         async run() {
+          if (delayed) {
+            console.info('LOCAL_MOCK_INFERENCE_STARTED');
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
           return {
             themes: [
               {

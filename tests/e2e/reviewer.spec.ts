@@ -15,33 +15,39 @@ const demo = {
     status: 'active',
     allowed_purpose: 'community-wellbeing-research',
     commercialAllowed: false,
+    withdrawalMode: 'exclude-withdrawn',
   },
   proposal: {
     proposal_id: 'proposal-v2',
     status: 'reviewed',
-    title: 'Keep community wellbeing research in scope',
+    title: 'Require every contributor to permit the research request',
     proposed_purpose: 'community-wellbeing-research',
     proposedCommercialAllowed: false,
+    withdrawalMode: 'require-all',
   },
-  permission: {
+  contributions: ['a', 'b', 'c'].map((letter) => ({
+    contributionId: `response-${letter}`,
+    contributorId: `contributor-${letter}`,
+    purpose: 'community-wellbeing-research',
+  })),
+  permissions: ['a', 'b', 'c'].map((letter) => ({
+    permission_id: `contributor-${letter}:community-wellbeing-research`,
     purpose: 'community-wellbeing-research',
     status: 'granted',
     expires_at: '2026-11-30T12:00:00.000Z',
     version: 1,
-  },
-  permissionHistory: [
-    {
-      permission_id: 'participant-a',
-      version: 1,
-      purpose: 'community-wellbeing-research',
-      status: 'granted',
-      expires_at: '2026-11-30T12:00:00.000Z',
-      action: 'created',
-      actor: 'demo-service',
-      correlation_id: 'fixture-correlation-1',
-      recorded_at: '2026-11-16T12:00:00.000Z',
-    },
-  ],
+  })),
+  permissionHistory: ['a', 'b', 'c'].map((letter) => ({
+    permission_id: `contributor-${letter}:community-wellbeing-research`,
+    version: 1,
+    purpose: 'community-wellbeing-research',
+    status: 'granted',
+    expires_at: '2026-11-30T12:00:00.000Z',
+    action: 'created',
+    actor: 'demo-service',
+    correlation_id: `fixture-correlation-${letter}`,
+    recorded_at: '2026-11-16T12:00:00.000Z',
+  })),
   benefit: {
     title: 'Share an accessible summary of findings',
     owner: 'Fictional research team',
@@ -55,10 +61,10 @@ const demo = {
 
 test.beforeEach(async ({ page }) => {
   let role = 'community_representative';
-  let permission = { ...demo.permission };
+  let permissions = demo.permissions.map((permission) => ({ ...permission }));
   let permissionHistory = [...demo.permissionHistory];
   await page.route('**/api/demo', async (route) =>
-    route.fulfill({ json: { ...demo, demoRole: role, permission, permissionHistory } }),
+    route.fulfill({ json: { ...demo, demoRole: role, permissions, permissionHistory } }),
   );
   await page.route('**/api/role', async (route) => {
     role = route.request().postDataJSON().role;
@@ -71,25 +77,32 @@ test.beforeEach(async ({ page }) => {
     }),
   );
   await page.route('**/api/consent', async (route) => {
-    const action = route.request().postDataJSON().action as 'grant' | 'withdraw';
+    const { action, contributorId } = route.request().postDataJSON() as {
+      action: 'grant' | 'withdraw';
+      contributorId: string;
+    };
     const status = action === 'withdraw' ? 'withdrawn' : 'granted';
+    const permissionId = `${contributorId}:community-wellbeing-research`;
+    const permission = permissions.find((item) => item.permission_id === permissionId)!;
     const version = permission.version + 1;
     const recordedAt = '2026-11-17T12:00:00.000Z';
-    permission = { ...permission, status, version };
+    permissions = permissions.map((item) =>
+      item.permission_id === permissionId ? { ...item, status, version } : item,
+    );
     permissionHistory = [
       {
-        ...demo.permissionHistory[0],
+        ...demo.permissionHistory.find((record) => record.permission_id === permissionId)!,
         status,
         version,
         action: status,
-        actor: 'demo:community_member',
+        actor: `demo:${contributorId}`,
         correlation_id: `fixture-correlation-${version}`,
         recorded_at: recordedAt,
       },
       ...permissionHistory,
     ];
     await route.fulfill({
-      json: { status, version, correlationId: `fixture-correlation-${version}` },
+      json: { contributorId, status, version, correlationId: `fixture-correlation-${version}` },
     });
   });
 });
@@ -106,8 +119,13 @@ test('public reviewer can understand the scenario and see separate rule and perm
   await expect(page.getByText('Fictional community scenario')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'A separate say for each person' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Approve policy' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Permission history' })).toBeVisible();
-  await expect(page.getByText('Version 1 · granted')).toBeVisible();
+  const contributorHistory = page.getByRole('region', {
+    name: 'Fictional contributor A permission history',
+  });
+  await expect(
+    contributorHistory.getByRole('heading', { name: 'Permission history' }),
+  ).toBeVisible();
+  await expect(page.getByText('Version 1 · granted').first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'View the open source' })).toHaveAttribute(
     'href',
     'https://github.com/Bepoadewale/mindcommons',
@@ -123,13 +141,17 @@ test('public reviewer can understand the scenario and see separate rule and perm
   expect(videoResponse.headers()['content-type']).toContain('video/mp4');
 });
 
-test('permission withdrawal creates a visible new history version', async ({ page }) => {
+test('a contributor withdrawal creates a visible history version for that contributor', async ({
+  page,
+}) => {
   await page.goto('/');
   await page.getByLabel('Acting as').selectOption('community_member');
-  await page.getByRole('button', { name: 'Withdraw permission' }).click();
+  await page.getByRole('button', { name: 'Withdraw Fictional contributor B permission' }).click();
   await expect(page.getByText('Version 2 · withdrawn')).toBeVisible();
-  await expect(page.getByText('Recorded by community_member')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Grant permission' })).toBeVisible();
+  await expect(page.getByText('Recorded by contributor-b')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Grant Fictional contributor B permission' }),
+  ).toBeVisible();
 });
 
 test('proposed future screens are labeled by implementation stage', async ({ page }) => {
