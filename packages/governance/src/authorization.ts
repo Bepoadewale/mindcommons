@@ -96,7 +96,7 @@ export function communityAgreementFromFacts(facts: AuthorizationFacts): Communit
           ...(policy.commercialAllowed ? (['commercial-advertising'] as const) : []),
         ]
       : [],
-    authorizedResearcherIds: facts.actorRole === 'researcher' ? ['demo:researcher'] : [],
+    authorizedResearcherIds: ['demo:researcher'],
     commercialUseAllowed: policy?.commercialAllowed ?? false,
     withdrawalMode: policy?.withdrawalMode ?? 'require-all',
     contributions: facts.contributions.map((contribution) => {
@@ -143,7 +143,7 @@ export function authorizeResearch(facts: AuthorizationFacts): AuthorizationDecis
   const evaluation = evaluateCommunityAIAgreement(
     agreement,
     {
-      researcherId: facts.actorRole === 'researcher' ? 'demo:researcher' : 'unauthorized-role',
+      researcherId: 'demo:researcher',
       purpose: facts.purpose,
       jobType: facts.jobType,
       modelId: DEMO_MODEL_ID,

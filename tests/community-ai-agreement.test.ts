@@ -102,4 +102,15 @@ describe('portable Community AI Agreement protocol', () => {
       ).reasons,
     ).toContain('job-type-not-allowlisted-by-agreement');
   });
+
+  it('rejects duplicate contribution identifiers rather than processing a record ambiguously', () => {
+    const duplicateRequest = {
+      ...request,
+      contributionIds: ['synthetic-response-1', 'synthetic-response-1'],
+    };
+    expect(evaluateCommunityAIAgreement(sampleAgreement, duplicateRequest, now)).toMatchObject({
+      allowed: false,
+      reasons: ['duplicate-contribution-identifiers'],
+    });
+  });
 });

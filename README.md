@@ -12,6 +12,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 - An allowed operation can call a configured model; a denied operation must not call it.
 - A decision and its provenance can be inspected afterward.
 - A community benefit commitment can be tracked without claiming it has been delivered.
+- A portable Community AI Agreement is checked by MindCommons and by a separate minimal Worker example.
 
 ## Current status
 
@@ -20,6 +21,8 @@ The demo is publicly hosted at the URL below. Its server checks synthetic indivi
 ## Architecture direction
 
 The implementation uses a React and TypeScript single-page application, a Cloudflare Worker with Static Assets, D1, and a Workers AI binding. Static assets are served without Worker invocation; authorization runs in the API Worker. Local tests use an explicit deterministic mock; the hosted demo calls the configured Workers AI model for its approved synthetic job. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally and as a static GitHub Pages site; it contains no backend or inference behavior.
+
+The [Community AI Agreement](packages/community-ai-agreement/README.md) provides a versioned JSON Schema and a deterministic TypeScript evaluator. The current synthetic agreement and schema are inspectable at `/api/agreement` and `/api/agreement/schema` in the live demo. The [separate Worker example](examples/portable-ai-worker/README.md) demonstrates reuse outside the MindCommons application. This protocol cannot control unrestricted copies of data or models outside participating services.
 
 ## Develop and verify
 

@@ -115,6 +115,21 @@ export function evaluateCommunityAIAgreement(
 
   const agreement = agreementResult.data;
   const request = requestResult.data;
+  if (
+    new Set(agreement.contributions.map((contribution) => contribution.contributionId)).size !==
+      agreement.contributions.length ||
+    new Set(request.contributionIds).size !== request.contributionIds.length
+  ) {
+    return {
+      allowed: false,
+      agreementId: agreement.agreementId,
+      policyVersion: null,
+      reasons: ['duplicate-contribution-identifiers'],
+      eligibleContributionIds: [],
+      permissionVersions: [],
+      excludedContributions: [],
+    };
+  }
   const reasons: string[] = [];
   const excludedContributions: AgreementEvaluation['excludedContributions'] = [];
   const eligibleContributionIds: string[] = [];
