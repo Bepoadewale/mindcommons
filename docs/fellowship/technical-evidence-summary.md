@@ -14,7 +14,7 @@ SRHIN's challenge describes mental-health data from African communities being us
 - A conditional D1 result-release guard that withholds a result when the applicable policy, permissions, researcher session or required benefit facts change during inference.
 - A portable reference evaluator and a separately testable Worker consumer. Agreement conformance tests cover withdrawal, policy changes, benefit states, malformed/future agreements, denial-before-inference and output withholding.
 - A session-scoped JSON decision receipt that records authorization and execution evidence without exporting model output or raw narratives. The receipt endpoint and D1 migration are verified locally; they are not yet part of the hosted Worker release.
-- A guided reviewer walkthrough with a deterministic preview computed from the current agreement snapshot. It displays eligible/excluded contributions and authorization reasons without invoking AI; the server repeats authorization when a visitor explicitly submits the fixed job. Browser tests cover permission, policy and benefit changes. This UI branch has local evidence and awaits PR checks; it is not in the hosted release.
+- A guided reviewer walkthrough with a deterministic preview computed from the current agreement snapshot. It displays eligible/excluded contributions and authorization reasons without invoking AI; the server repeats authorization when a visitor explicitly submits the fixed job. Browser tests cover permission, policy and benefit changes. PR #40 is merged and its required checks passed; the feature is not in the hosted Worker release.
 - Fictional benefit workflow states: community agreement, research-team acceptance, evidence submission and community review. Recording these states does not establish delivery or payment.
 
 ## Demonstrable enforcement and architecture
@@ -27,12 +27,12 @@ The browser sends a fixed job request to a Cloudflare Worker. The Worker reads s
 
 - Public Apache-2.0 repository: <https://github.com/Bepoadewale/mindcommons>
 - Local commands: `npm ci`, `npm run verify`, `npm run test:e2e`, `npm run test:e2e:fullstack`, and `npm run test:agreement`.
-- PR #39 local verification: 55 unit tests passed; Worker/D1 local integration passed with mock inference; seven browser tests passed; full-stack local browser acceptance passed; typecheck, lint, builds, format and documentation validation passed. The current reviewer-journey branch passes eight browser tests and full verification locally; its PR checks are pending.
+- PR #39 local verification: 55 unit tests passed; Worker/D1 local integration passed with mock inference; seven browser tests passed; full-stack local browser acceptance passed; typecheck, lint, builds, format and documentation validation passed. PR #40 adds eight browser tests and full verification; all required PR checks passed in run `44191296886`. Its post-merge CI run `44192355625` and static Pages publication run `44192355348` passed.
 - Existing hosted demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>.
 - Existing static future-vision wireframe: <https://bepoadewale.github.io/mindcommons/>. It is a static concept page without the backend or AI.
 - Captioned 1080p screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> and independent Pages copy at <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>.
 
-PR #39 has passed all required GitHub checks and merged to `main`. The public demo and video have not been updated to include the receipt or required-benefit gate. Do not describe these as hosted until a production migration and Worker release are separately authorized and verified.
+PRs #39 and #40 have passed required GitHub checks and merged to `main`. The public Worker and video have not been updated to include the receipt, required-benefit gate or policy preview. Do not describe these as hosted until current billing status is verifiably checked, migrations are applied and the Worker release is separately deployed and validated.
 
 ## Limitations and unresolved decisions
 

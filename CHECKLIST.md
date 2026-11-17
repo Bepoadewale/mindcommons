@@ -8,16 +8,16 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 - [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; the delayed-inference API integration verified withholding. PR checks and post-merge CI passed. Hosted behavior for this new code remains unverified because no production migration or deploy was performed.
 - [x] PR #38 merged: consent explanation, governance design framework, data-flow audit and cross-session API tests. Required checks and post-merge CI/Pages publication passed.
 - [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed. Hosted release does not include these changes yet.
-- [x] Seven-step reviewer journey and deterministic no-inference policy preview are locally verified on `feat/guided-reviewer-journey`; 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
-- [~] PR/CI for the guided reviewer experience is pending; hosted UI has not changed.
-- [ ] Final status/evidence reconciliation and production reconciliation remain; do not deploy absent verified free-tier/billing preflight.
+- [x] PR #40 merged: seven-step reviewer journey and deterministic no-inference policy preview. 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
+- [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; hosted Worker UI has not changed.
+- [ ] Final status/evidence reconciliation remains. Production deployment is blocked because Cloudflare subscription/billing read returned HTTP 403 for both configured token services; the official endpoint requires `Billing Read` or `Billing Write`. Do not deploy without successful current billing verification.
 
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#39 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #39 post-merge CI run `44187884229` and Pages run `44187884186` passed.
+- [x] PRs #1–#40 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #40 post-merge CI and Pages publish passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
-- [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; current branch `npm run verify` passed with 55 unit tests and local integration.
+- [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
 - [x] Current branch `npm run test:e2e` passed 7/7; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
 
 ## Governance and technical contribution
