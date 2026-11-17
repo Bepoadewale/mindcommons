@@ -1059,7 +1059,7 @@ select:disabled {
   margin-top: 27px;
 }
 .vision-status-key span {
-  font-size: 9px;
+  font-size: 12px;
   color: #6d786b;
 }
 .key-dot {
@@ -1170,10 +1170,62 @@ select:disabled {
   margin: 0 0 7px;
 }
 .vision-card p {
-  font-size: 9px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.65;
   color: #727c70;
   margin: 0;
+}
+.vision-preview {
+  margin-top: 14px;
+  border-top: 1px solid #e2e6dc;
+}
+.vision-preview summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 0 2px;
+  color: #354533;
+  font-size: 12px;
+  font-weight: 600;
+}
+.vision-preview summary::-webkit-details-marker {
+  display: none;
+}
+.vision-preview summary::after {
+  content: '+';
+  color: #55714b;
+  font-size: 18px;
+  line-height: 1;
+}
+.vision-preview[open] summary::after {
+  content: '−';
+}
+.vision-preview-content {
+  padding: 11px 12px 12px;
+  border-radius: 7px;
+  background: #f5f6f0;
+}
+.vision-preview-content .panel-label {
+  font-size: 9px;
+}
+.vision-preview-content ul {
+  display: grid;
+  gap: 8px;
+  margin: 11px 0;
+  padding-left: 18px;
+  color: #394736;
+}
+.vision-preview-content li {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.vision-preview-content > p {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #515e4e;
 }
 .vision-boundary {
   padding-top: 34px;
@@ -1475,7 +1527,7 @@ select:disabled {
     flex-wrap: wrap;
   }
   .vision-status-key span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .vision-grid {
     grid-template-columns: 1fr;
@@ -1498,7 +1550,7 @@ select:disabled {
   .vision-boundary > p {
     grid-column: 2;
     margin: 0;
-    font-size: 9px;
+    font-size: 11px;
   }
   .vision-shell .topbar > .button {
     font-size: 9px;

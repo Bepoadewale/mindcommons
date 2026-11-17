@@ -36,7 +36,7 @@ npm run dev
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: not deployed yet
 - Technical video: not recorded yet
-- Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization only; no API or AI execution)
+- Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
 
 ## Privacy, research, and governance limits
 
