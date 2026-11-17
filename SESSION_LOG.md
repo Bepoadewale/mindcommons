@@ -154,3 +154,9 @@
 - PR #25 merged through protected `main` at `f3204445125900c0a02ffb9f5718aeaae107cf69`; all four required checks passed in run `44084396708`. GitHub removed the remote source branch; the local checkout is clean on `main` and its source branch was removed.
 - Post-merge CI run `44084803599` passed all four jobs, and Pages publish run `44084803637` succeeded. No application code or Cloudflare resources changed.
 - The technical demonstration criteria are complete, including Android emulator install and standalone launch. Physical-device testing remains unclaimed. The direct public MP4 satisfies the video deliverable; the owner may optionally replace its link with YouTube after uploading.
+
+## 2026-11-17 — PR #26 merged and final evidence audit
+
+- PR #26 merged through protected `main` at `222716db47c74d5209bed54e2a85c6986edd2a55`; all four required checks passed in run `44085615391`. Its source branch was deleted locally and remotely.
+- Post-merge CI run `44085988459` passed all four jobs, and Pages publish run `44085988289` succeeded. The Worker demo, Worker MP4, Pages vision page, and mirrored MP4 each returned HTTPS 200 in a post-deployment check.
+- The RFP evidence map was reviewed against the current official PDF. Its broad paraphrases need explicit source passages and accurate section-level links; PR #27 corrects this without writing personal application responses. No application or Cloudflare changes were made.

@@ -5,7 +5,7 @@ Last updated: 2026-11-17
 ## Verified complete
 
 - Public repository: https://github.com/Bepoadewale/mindcommons, Apache-2.0, Issues enabled, protected PR-only `main` with four required checks and no solo-approval requirement.
-- PRs #1–#25 merged through GitHub. PR #25 merge `f320444` passed all four required checks in run `44084396708`; post-merge CI run `44084803599` and Pages publish run `44084803637` both succeeded. GitHub removed its remote branch, and the local branch was removed. Existing DavDeploy repositories and pull requests were not changed.
+- PRs #1–#26 merged through GitHub. PR #26 merge `222716d` passed all four required checks in run `44085615391`; post-merge CI run `44085988459` and Pages publish run `44085988289` both succeeded. GitHub removed its remote branch, and only `main` remains locally and remotely. Existing DavDeploy repositories and pull requests were not changed.
 - Research, Mozilla RFP alignment, architecture, governance, security, and reusable DavDeploy lessons are documented.
 - Core synthetic demo includes community rules/proposals, separate individual permissions, fixed research request, deterministic fail-closed authorization, fixed AI job, provenance/audit, hypothetical benefit commitment, isolated/resettable sessions, and a future-vision wireframe.
 - Dedicated Cloudflare D1 database `mindcommons-demo-d1` exists in WEUR (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) with all three migrations applied.
@@ -32,6 +32,8 @@ The repository's current branch protection and Pages settings were rechecked thr
 
 PR #25 (`docs/reconcile-current-evidence`) merged at `f320444`; its required checks passed in run `44084396708`. Post-merge CI run `44084803599` and Pages publish run `44084803637` both succeeded. It records the verified Android emulator installation and corrects stale implementation/deployment documentation. No application code or Cloudflare resource changed.
 
+PR #26 (`docs/record-pr25-final-state`) merged at `222716d`; all four required checks passed in run `44085615391`. Post-merge CI run `44085988459` and Pages publish run `44085988289` both succeeded. It records PR #25's completion and clarifies that the public MP4 already satisfies the technical-video deliverable; YouTube is optional.
+
 ## Known limits
 
 - Physical Android-device behavior has not been checked; emulator installability and standalone launch passed.
@@ -41,4 +43,4 @@ PR #25 (`docs/reconcile-current-evidence`) merged at `f320444`; its required che
 
 ## Next executable work
 
-The technical prototype acceptance criteria are complete. The owner may later provide a YouTube URL; if so, update the live landing-page destination through the normal PR workflow. Until then the public direct MP4 links work. No real community pilot, clinical validation, or patient-data handling is claimed or implied.
+The technical prototype acceptance criteria are complete. The RFP passage-to-evidence map is documented in `docs/fellowship/rfp-alignment.md`; no personal application responses were generated. The owner may later provide a YouTube URL; if so, update the live landing-page destination through the normal PR workflow. Until then the public direct MP4 links work. No real community pilot, clinical validation, or patient-data handling is claimed or implied.
