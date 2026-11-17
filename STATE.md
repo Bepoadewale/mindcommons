@@ -17,9 +17,9 @@ Last updated: 2026-11-18
 
 ## Next executable tasks
 
-1. Finish current-state documentation in `docs/current-deployment-preflight` through a PR, then remove its local/remote branch after merge.
-2. Reconcile production evidence. PRs #37–#40 are merged, but their changes are not in the Worker release. The exact account/Worker/D1 were verified read-only; remote migrations 0007 and 0008 remain pending.
-3. Do not migrate or deploy until the Cloudflare account subscription/billing read succeeds. The endpoint returned HTTP 403 for both configured tokens. The official API requires `Billing Read` (or `Billing Write`) for this read; no resource mutation was attempted. If that read remains unavailable, leave the production release pending and state the exact blocker.
+1. Production migration/deployment is blocked until the Cloudflare subscription API is readable with `Billing Read` or the owner independently verifies current billing in the account dashboard and confirms it. Both configured token services returned HTTP 403. Keep migrations 0007 and 0008 pending and make no remote mutation until the no-charge/free-tier preflight can be completed.
+2. The hosted Worker is still the earlier release (`b01d3f96-d72a-41a2-b751-88dff3c7adc9`); merged PRs #37–#40 are verified locally and on CI but are not represented by the live Worker or current video. After billing verification, apply only additive migrations to the confirmed MindCommons D1, deploy only the confirmed MindCommons Worker, and verify production benefit denial/acceptance, receipt isolation, guided preview, and HTTPS routes.
+3. Optional owner tasks: upload the verified MP4 to YouTube and share the URL if desired; arrange physical Android testing if useful. Any participant co-design, host relationship, ethics/safeguarding review and pilot are post-selection/host-dependent and are not completed or claimed.
 
 ## Verified complete
 
