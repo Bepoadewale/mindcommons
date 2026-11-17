@@ -779,42 +779,102 @@ export default function App() {
 
 export function Vision({ standalone = false }: { standalone?: boolean }) {
   const screens = [
-    [
-      '01',
-      'Community onboarding',
-      'A community describes its purpose, chosen languages, representatives, and how people can ask questions or raise concerns.',
-      'PROPOSED',
-    ],
-    [
-      '02',
-      'Governance proposals',
-      'Members review a proposed research use, see what changes, and record the process that makes a decision legitimate.',
-      'PROPOSED',
-    ],
-    [
-      '03',
-      'Consent and permissions',
-      'People inspect and change their own choices in accessible language, separately from collective rules.',
-      'PROPOSED',
-    ],
-    [
-      '04',
-      'Research requests',
-      'Researchers submit a fixed, purpose-limited job with a dataset, model, intended output, and community benefit commitment.',
-      'PROTOTYPE',
-    ],
-    [
-      '05',
-      'Model activity',
-      'A community inspects which approved models ran, under which policy version, and what results were shared.',
-      'PROTOTYPE',
-    ],
-    [
-      '06',
-      'Benefits and accountability',
-      'Commitments have an owner, due date, evidence, review, and a path for concerns or remedy.',
-      'PROPOSED',
-    ],
+    {
+      num: '01',
+      title: 'Community onboarding',
+      description:
+        'A community describes its purpose, chosen languages, representatives, and how people can ask questions or raise concerns.',
+      status: 'PROPOSED',
+      preview: [
+        'Community purpose and boundaries',
+        'Chosen languages and access needs',
+        'Representative roles and questions channel',
+      ],
+    },
+    {
+      num: '02',
+      title: 'Governance proposals',
+      description:
+        'Members review a proposed research use, see what changes, and record the process that makes a decision legitimate.',
+      status: 'PROPOSED',
+      preview: [
+        'Research purpose and requested change',
+        'Review process and decision evidence',
+        'Conditions, dissent, and next review date',
+      ],
+    },
+    {
+      num: '03',
+      title: 'Consent and permissions',
+      description:
+        'People inspect and change their own choices in accessible language, separately from collective rules.',
+      status: 'PROPOSED',
+      preview: [
+        'Allowed purposes and restrictions',
+        'Permission expiry and version history',
+        'Withdrawal route and confirmation',
+      ],
+    },
+    {
+      num: '04',
+      title: 'Research requests',
+      description:
+        'Researchers submit a fixed, purpose-limited job with a dataset, model, intended output, and community benefit commitment.',
+      status: 'PROTOTYPE',
+      preview: [
+        'Purpose and fixed job type',
+        'Community rule and permission checks',
+        'Decision reasons before execution',
+      ],
+    },
+    {
+      num: '05',
+      title: 'Model activity',
+      description:
+        'A community inspects which approved models ran, under which policy version, and what results were shared.',
+      status: 'PROTOTYPE',
+      preview: [
+        'Model and dataset identifiers',
+        'Policy version and authorization decision',
+        'Execution status and result reference',
+      ],
+    },
+    {
+      num: '06',
+      title: 'Benefit commitments',
+      description:
+        'Shared commitments show who is responsible, when they are due, and what evidence is ready for community review.',
+      status: 'PROPOSED',
+      preview: [
+        'Agreed benefit and accountable owner',
+        'Due date and review status',
+        'Evidence shared with the community',
+      ],
+    },
+    {
+      num: '07',
+      title: 'Community transparency',
+      description:
+        'A public-facing record summarizes active rules, approved uses, policy changes, and available research outputs.',
+      status: 'PROPOSED',
+      preview: [
+        'Current rules and their version',
+        'Approved and denied use summaries',
+        'Shared findings and update history',
+      ],
+    },
+    {
+      num: '08',
+      title: 'Accountability and complaints',
+      description:
+        'People can raise a concern, request review, and see who is responsible for following up and responding.',
+      status: 'PROPOSED',
+      preview: [
+        'Concern or review request',
+        'Responsible contact and response timeline',
+        'Follow-up status and available remedy',
+      ],
+    },
   ];
   return (
     <div className="site-shell vision-shell">
@@ -873,7 +933,7 @@ export function Vision({ standalone = false }: { standalone?: boolean }) {
           </div>
         </section>
         <section className="vision-grid section-wrap">
-          {screens.map(([num, title, text, status]) => (
+          {screens.map(({ num, title, description, status, preview }) => (
             <article className="vision-card" key={num}>
               <div className="vision-card-top">
                 <span>{num}</span>
@@ -899,7 +959,19 @@ export function Vision({ standalone = false }: { standalone?: boolean }) {
                 </div>
               </div>
               <h2>{title}</h2>
-              <p>{text}</p>
+              <p>{description}</p>
+              <details className="vision-preview">
+                <summary>Explore concept</summary>
+                <div className="vision-preview-content">
+                  <span className="panel-label">PROPOSED SCREEN CONTENT</span>
+                  <ul>
+                    {preview.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <p>This is a design idea for co-design, not a working control.</p>
+                </div>
+              </details>
             </article>
           ))}
         </section>

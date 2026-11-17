@@ -36,6 +36,9 @@ const js = readdirSync(join(output, 'assets'))
 if (!js.includes('FUTURE PRODUCT VISUALIZATION')) {
   errors.push('Static output is missing the future-product visualization.');
 }
+if (!js.includes('Community transparency') || !js.includes('Accountability and complaints')) {
+  errors.push('Static output is missing a required community-facing future screen.');
+}
 if (js.includes('/api/') || js.includes('@cf/') || js.includes('serviceWorker')) {
   errors.push('Static wireframe must not include API, model, or service-worker behavior.');
 }

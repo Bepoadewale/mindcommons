@@ -14,6 +14,8 @@ test('public static wireframe is clear about implemented and proposed screens', 
     page.getByRole('heading', { name: /A commons takes more than a screen/i }),
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Community onboarding' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Community transparency' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Accountability and complaints' })).toBeVisible();
   await expect(page.getByText('PROTOTYPE').first()).toBeVisible();
   await expect(page.getByText('PROPOSED').first()).toBeVisible();
   await expect(page.getByText('static preview only')).toBeVisible();
@@ -22,12 +24,16 @@ test('public static wireframe is clear about implemented and proposed screens', 
     'https://github.com/Bepoadewale/mindcommons',
   );
   await expect(page.getByRole('link', { name: 'Working prototype' })).toHaveCount(0);
+  expect(await page.locator('details').count()).toBe(8);
+  await page.locator('details').first().locator('summary').click();
+  await expect(page.getByText('Chosen languages and access needs')).toBeVisible();
   expect(apiRequests).toEqual([]);
 });
 
 test('static wireframe fits an Android-sized viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./');
+  await page.locator('details').last().locator('summary').click();
   const widths = await page.evaluate(() => ({
     scroll: document.documentElement.scrollWidth,
     viewport: window.innerWidth,
