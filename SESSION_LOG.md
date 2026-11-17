@@ -207,11 +207,19 @@
 - Deleted local and remote source branch `docs/final-video-publication-evidence`; local checkout is synchronized on `main`.
 - The current public application, both worker videos, both Pages videos, and vision page had already been verified following PR #34; this merge records those verified links and boundaries in the project evidence package.
 
-# 2026-11-18 — Benefit prerequisites and agreement v2 (PR in progress)
+# 2026-11-18 — Benefit prerequisites and agreement v2 (PR #37 merged)
 
 - Confirmed actual baseline HEAD `94a29551aed4d9caff4262d52a54fb036386c008`, clean on protected `main`, and reviewed persistent goal state, README, agreement evaluator, policy/research/benefit APIs, D1 migrations, app, tests and security docs. No DavDeploy work or remote Cloudflare mutation.
 - Added a compatibility-preserving Community AI Agreement `2.0.0`: explicit required benefit IDs and optional expiry. Version `1.0.0` remains accepted with its original informational benefit semantics. Evaluator now rejects future-effective/expired agreements, duplicates, unsupported/malformed versions and missing or contradictory required benefit states.
 - Added additive local D1 migration 0007 to configure required benefit IDs per policy/proposal. Default synthetic policy stays permissive; the reviewed proposal adds `benefit-findings`. Research authorization loads current benefit facts, denies before inference until community agreement and research-team acceptance, and permits later delivery. Fictional research teams can withdraw acceptance before evidence delivery.
 - Added output-release SQL conditions for the policy's required-benefit configuration and the precise benefit record snapshot. Local integration confirms a state change during delayed inference withholds the result and records no output.
 - Updated the demo explanation, protocol migration notes, and this resumable state. Generated the v1/v2 JSON Schema. Local results: `npm run verify` passed (44 unit tests, local Worker/D1 integration, build and docs); `npm run test:e2e` passed 6/6; `npm run test:e2e:fullstack` passed with deterministic mock AI. No live model call occurred.
-- Current branch `feat/benefit-prerequisite-enforcement`; PR/check/merge status pending. Next: inspect and commit, verify GitHub auth, push/open PR, watch required CI, merge only if green, clean merged branches, then proceed to consent/governance/privacy work. Do not deploy this branch absent current, successful free-tier/billing verification.
+- PR #37 merged through protected `main` at `b0e321f62e5c6f8bc45922ae3760832566f2b586`. All required checks passed in run `44180211781`; post-merge CI `44181005785` and static vision publish `44181005834` passed. Local and remote feature branches were deleted after GitHub confirmed merge.
+- No production D1 migration or Worker deployment was performed; current free-tier/billing verification was not attempted for this local-only change.
+
+# 2026-11-18 — Consent, governance and privacy improvements (local branch)
+
+- Created `feat/consent-governance-privacy` from the merged main. Added an open native-details consent explainer covering synthetic information, fictional purpose/requester, hosted model boundary, separate policy/individual checks, withdrawal effect and limits. Added visible keyboard focus styling.
+- Added a governance options matrix and explicit decisions reserved for future authorized co-design; created the conditional SRHIN June 2027–May 2028 roadmap. No outreach or participant activity occurred.
+- Added a Mermaid data-flow/trust-boundary diagram, clarified session expiry versus physical cleanup, model-provider boundary, API/service-worker caching behavior and limits of result withholding. Added API tests that query another session's identifier and attempt to pass it in a research request.
+- Local verification: `npm run verify` passed (44 unit tests, API integration, build and docs), `npm run test:e2e` passed 7/7 including keyboard interaction and automated WCAG 2.1 A/AA checks scoped to the consent explainer, and `npm run test:e2e:fullstack` passed with deterministic mock AI. PR/CI pending; no production changes made.

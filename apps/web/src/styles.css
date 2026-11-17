@@ -755,6 +755,38 @@ select:disabled {
   font-size: 10px;
   font-weight: 600;
 }
+.consent-explainer {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid #c7d8b9;
+  border-radius: 0.8rem;
+  background: #f4f7f1;
+  color: #263329;
+}
+.consent-explainer summary {
+  color: #1f3929;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.consent-explainer summary:focus-visible {
+  outline: 3px solid #365d3d;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.consent-explainer ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  padding-left: 1.2rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+.consent-explainer p {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
 .permission-actions {
   margin-top: 16px;
 }

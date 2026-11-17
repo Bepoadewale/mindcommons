@@ -603,6 +603,38 @@ export default function App() {
                     Each synthetic contribution has a separate permission for its stated purpose.
                     Collective policy cannot override an individual's refusal.
                   </p>
+                  <details className="consent-explainer" open>
+                    <summary>What this fictional permission covers</summary>
+                    <ul>
+                      <li>
+                        <strong>Information:</strong> one short synthetic survey contribution; no
+                        real personal or mental-health narrative is accepted.
+                      </li>
+                      <li>
+                        <strong>Purpose and requester:</strong> a fictional researcher requests a
+                        fixed community-wellbeing theme review.
+                      </li>
+                      <li>
+                        <strong>Processing:</strong> if allowed, only eligible fictional snippets
+                        reach the configured model service; the hosted demo uses Cloudflare Workers
+                        AI. Local tests use a labelled mock.
+                      </li>
+                      <li>
+                        <strong>Two checks:</strong> the active community rule and this
+                        contributor's own purpose-specific permission must both allow the operation.
+                      </li>
+                      <li>
+                        <strong>Withdrawal:</strong> it changes future authorization. It cannot
+                        recall information already sent to an external model provider or remove
+                        copies from model weights.
+                      </li>
+                    </ul>
+                    <p>
+                      This is an interface demonstration, not legally valid consent or a real
+                      participant choice. A future community process must decide what information,
+                      purposes, explanations and withdrawal remedies are appropriate.
+                    </p>
+                  </details>
                   <div className="contributor-permission-list">
                     {data.permissions.map((permission) => {
                       const contributorId = permission.permission_id.split(':')[0];

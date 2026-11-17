@@ -188,6 +188,17 @@ test('public reviewer can understand the scenario and see separate rule and perm
   ).toBeVisible();
   await expect(page.getByText('Fictional community scenario')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'A separate say for each person' })).toBeVisible();
+  const consentExplanation = page.locator('.consent-explainer');
+  await expect(
+    consentExplanation.getByText(/one short synthetic survey contribution/i),
+  ).toBeVisible();
+  await expect(
+    consentExplanation.getByText(/hosted demo uses Cloudflare Workers AI/i),
+  ).toBeVisible();
+  await expect(
+    consentExplanation.getByText(/cannot recall information already sent/i),
+  ).toBeVisible();
+  await expect(consentExplanation.getByText(/not legally valid consent/i)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Approve policy' })).toBeVisible();
   const contributorHistory = page.getByRole('region', {
     name: 'Fictional contributor A permission history',
@@ -218,6 +229,41 @@ test('public reviewer can understand the scenario and see separate rule and perm
     expect(videoResponse.ok()).toBe(true);
     expect(videoResponse.headers()['content-type']).toContain('video/mp4');
   }
+});
+
+test('consent explanation works by keyboard and meets automated WCAG 2.1 A/AA checks', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const explanation = page.locator('.consent-explainer');
+  const summary = explanation.getByText('What this fictional permission covers');
+  await summary.focus();
+  await expect(summary).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(explanation.locator('ul')).toBeHidden();
+  await page.keyboard.press('Enter');
+  await expect(explanation.locator('ul')).toBeVisible();
+
+  await page.addScriptTag({
+    path: new URL('../../node_modules/axe-core/axe.min.js', import.meta.url).pathname,
+  });
+  const violations = await page.evaluate(async () => {
+    const browser = window as unknown as Window & {
+      axe: {
+        run: (
+          context: Element,
+          options: { runOnly: string[] },
+        ) => Promise<{ violations: Array<{ id: string; impact: string | null }> }>;
+      };
+    };
+    const element = document.querySelector('.consent-explainer');
+    if (!element) throw new Error('Consent explanation not found');
+    const results = await browser.axe.run(element, {
+      runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+    });
+    return results.violations.map(({ id, impact }) => `${id}:${impact}`);
+  });
+  expect(violations).toEqual([]);
 });
 
 test('a contributor withdrawal creates a visible history version for that contributor', async ({
