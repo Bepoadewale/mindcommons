@@ -27,7 +27,7 @@
     "demo:record": "node scripts/record-live-demo.mjs",
     "test:integration": "node scripts/test-local-integration.mjs",
     "agreement:schema": "node --experimental-strip-types scripts/export-agreement-schema.ts",
-    "test:e2e:fullstack": "node scripts/test-local-browser.mjs",
+    "test:e2e:fullstack": "npm run build && node scripts/test-local-browser.mjs",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run build:vision && node scripts/validate-vision-build.mjs && npm run build && npm run db:migrate:local && npm run test:integration && node scripts/validate-docs.mjs",
     "worker:dev": "wrangler dev --local --ip 127.0.0.1 --port 8788 --var DEMO_AI_MODE:mock --var LOCAL_DEVELOPMENT:true",
     "db:migrate:local": "wrangler d1 migrations apply mindcommons-demo-d1 --local",

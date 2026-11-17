@@ -2,7 +2,7 @@
 
 **Status on 2026-11-17:** MindCommons is a public technical prototype, not an awarded Mozilla project, established cooperative, SRHIN partnership, or real community pilot. It uses fictional community records and synthetic research material only.
 
-PR #37 (benefit prerequisites and Agreement v2) and PR #38 (consent explanation, governance options and privacy documentation) are merged to protected `main`; their required checks passed and post-merge CI/Pages publish succeeded. Neither PR has been deployed to the hosted Worker. The current feature branch adds the receipt endpoint/migration and portable conformance suite; these have local test evidence only and are not yet merged or hosted.
+PR #37 (benefit prerequisites and Agreement v2), PR #38 (consent explanation, governance options and privacy documentation), and PR #39 (receipt endpoint/migration and portable conformance suite) are merged to protected `main`; required checks and post-merge CI/Pages publish succeeded. None has been deployed to the hosted Worker. The current feature branch adds a guided reviewer walkthrough and deterministic policy preview; local `npm run verify`, 8/8 reviewer browser tests, and full-stack Worker/D1 browser acceptance pass with mock inference. PR/CI are pending.
 
 ## What works
 

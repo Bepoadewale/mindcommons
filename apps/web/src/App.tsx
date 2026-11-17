@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  evaluateCommunityAIAgreement,
+  type CommunityAIAgreement,
+} from '../../../packages/community-ai-agreement/src';
 
 type Role = 'community_representative' | 'researcher' | 'community_member';
 type EventRecord = {
@@ -157,6 +161,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 
 export default function App() {
   const [data, setData] = useState<DemoState | null>(null);
+  const [agreement, setAgreement] = useState<CommunityAIAgreement | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -169,8 +174,11 @@ export default function App() {
 
   const refresh = useCallback(async () => {
     try {
+      // /api/demo may create the session cookie. Load it before requesting other session data.
       const state = await request<DemoState>('/api/demo');
+      const currentAgreement = await request<CommunityAIAgreement>('/api/agreement');
       setData(state);
+      setAgreement(currentAgreement);
       setError('');
     } catch {
       setError('The demo service is not available right now. Try again when the API is reachable.');
@@ -191,6 +199,19 @@ export default function App() {
 
   const role = data?.demoRole;
   const latestRun = useMemo(() => data?.runs[0] ?? null, [data]);
+  const requestPreview = useMemo(() => {
+    if (!agreement) return null;
+    return evaluateCommunityAIAgreement(agreement, {
+      researcherId: 'demo:researcher',
+      purpose,
+      jobType: 'theme-classification',
+      modelId: agreement.modelUse.allowedModelIds[0] ?? 'model-not-configured',
+      contributionIds: agreement.contributions.map((item) => item.contributionId),
+      operation: 'inference',
+      outputAudience: 'community',
+      clinicalUse: false,
+    });
+  }, [agreement, purpose]);
 
   async function act(action: () => Promise<ActionResponse>, successMessage: string) {
     setBusy(true);
@@ -460,6 +481,43 @@ export default function App() {
             </div>
           </div>
 
+          <nav className="reviewer-journey" aria-label="Guided reviewer walkthrough">
+            <div className="journey-heading">
+              <span className="workspace-kicker">A 3-MINUTE WALKTHROUGH</span>
+              <p>
+                Follow the links in order. The policy preview is deterministic and makes no model
+                call. Inference happens only when you choose the research action.
+              </p>
+            </div>
+            <ol>
+              <li>
+                <a href="#community-rule">Read the community rule</a>
+              </li>
+              <li>
+                <a href="#individual-permission">Change one fictional permission</a>
+              </li>
+              <li>
+                <a href="#research-request">Preview and submit the fixed request</a>
+              </li>
+              <li>
+                <a href="#community-rule">Approve a different collective rule</a>
+              </li>
+              <li>
+                <a href="#community-benefit">See the benefit prerequisite</a>
+              </li>
+              <li>
+                <a href="#research-request">Recheck eligibility before inference</a>
+              </li>
+              <li>
+                <a href="#decision-record">Inspect activity and receipt evidence</a>
+              </li>
+            </ol>
+            <p className="journey-reset-note">
+              Use <strong>Reset demo</strong> to start again with a fresh fictional session. A run
+              marked eligible in the preview is still checked again by the server when submitted.
+            </p>
+          </nav>
+
           {(error || notice) && (
             <div
               className={`feedback ${error ? 'feedback-error' : 'feedback-success'}`}
@@ -499,7 +557,7 @@ export default function App() {
               </div>
 
               <div className="workspace-grid">
-                <article className="panel policy-panel">
+                <article className="panel policy-panel" id="community-rule" tabIndex={-1}>
                   <div className="panel-topline">
                     <span className="panel-icon icon-leaf" aria-hidden="true">
                       ✳
@@ -590,7 +648,11 @@ export default function App() {
                   </p>
                 </article>
 
-                <article className="panel permission-panel">
+                <article
+                  className="panel permission-panel"
+                  id="individual-permission"
+                  tabIndex={-1}
+                >
                   <div className="panel-topline">
                     <span className="panel-icon icon-person" aria-hidden="true">
                       ◉
@@ -725,7 +787,7 @@ export default function App() {
                   </p>
                 </article>
 
-                <article className="panel research-panel">
+                <article className="panel research-panel" id="research-request" tabIndex={-1}>
                   <div className="panel-topline">
                     <span className="panel-icon icon-research" aria-hidden="true">
                       ⌕
@@ -759,6 +821,42 @@ export default function App() {
                       Job type<span className="readonly-field">Theme classification · fixed</span>
                     </label>
                   </div>
+                  {requestPreview && (
+                    <div className="authorization-preview" role="status">
+                      <div className="preview-heading">
+                        <span className="status-pill status-experimental">
+                          PREVIEW ONLY · NO MODEL CALL
+                        </span>
+                        <strong>
+                          {role !== 'researcher'
+                            ? 'Switch to the fictional researcher seat to submit'
+                            : requestPreview.allowed
+                              ? 'This agreement snapshot would allow the request'
+                              : 'This agreement snapshot would deny the request'}
+                        </strong>
+                      </div>
+                      {requestPreview.reasons.length > 0 && (
+                        <ul>
+                          {requestPreview.reasons.map((reason) => (
+                            <li key={reason}>{reason.replaceAll('-', ' ')}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {requestPreview.excludedContributions.length > 0 && (
+                        <p>
+                          Excluded from an otherwise eligible request:{' '}
+                          {requestPreview.excludedContributions
+                            .map(
+                              (item) =>
+                                `${item.contributionId} (${item.reason.replaceAll('-', ' ')})`,
+                            )
+                            .join('; ')}
+                          .
+                        </p>
+                      )}
+                      <p>Submitting still triggers a fresh server-side authorization check.</p>
+                    </div>
+                  )}
                   {role === 'researcher' ? (
                     <button
                       className="button button-dark run-button"
@@ -850,7 +948,7 @@ export default function App() {
                   )}
                 </article>
 
-                <article className="panel benefit-panel">
+                <article className="panel benefit-panel" id="community-benefit" tabIndex={-1}>
                   <div className="panel-topline">
                     <span className="panel-icon icon-benefit" aria-hidden="true">
                       ↗
@@ -1041,7 +1139,12 @@ export default function App() {
                 </article>
               </div>
 
-              <section className="activity-section" aria-labelledby="activity-title">
+              <section
+                className="activity-section"
+                id="decision-record"
+                tabIndex={-1}
+                aria-labelledby="activity-title"
+              >
                 <div className="activity-heading">
                   <div>
                     <div className="panel-label">DECISION RECORD</div>
