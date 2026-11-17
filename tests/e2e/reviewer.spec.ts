@@ -73,6 +73,15 @@ test('public reviewer can understand the scenario and see separate rule and perm
     'href',
     'https://github.com/Bepoadewale/mindcommons',
   );
+  await expect(page.getByRole('link', { name: 'Watch the project demo' })).toHaveAttribute(
+    'href',
+    '/mindcommons-demo.mp4',
+  );
+  const videoResponse = await page.request.head(
+    new URL('/mindcommons-demo.mp4', page.url()).toString(),
+  );
+  expect(videoResponse.ok()).toBe(true);
+  expect(videoResponse.headers()['content-type']).toContain('video/mp4');
 });
 
 test('proposed future screens are labeled by implementation stage', async ({ page }) => {

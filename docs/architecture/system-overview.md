@@ -12,7 +12,7 @@ flowchart LR
   W -->|decision and bounded result| V
 ```
 
-The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference has been verified, but a live response initially used its bounded output budget for reasoning and returned no visible answer. The pending model-setting fix must be redeployed and verified before the displayed inference result is treated as complete. Local tests use a deterministic mock explicitly enabled for development.
+The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference and visible output have been verified. The Worker request sets `enable_thinking: false`; a first 180-token call without this setting produced no visible answer. The current branch strips reasoning metadata from the returned/stored output and treats an empty user-facing answer as a failed run. Local tests use a deterministic mock explicitly enabled for development.
 
 ## Trust boundaries
 

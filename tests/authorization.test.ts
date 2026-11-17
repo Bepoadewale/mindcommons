@@ -120,6 +120,32 @@ describe('AI execution boundary', () => {
     expect(result.status).toBe('denied');
     expect(run).not.toHaveBeenCalled();
   });
+
+  it('returns only visible model text and excludes reasoning output', async () => {
+    const run = vi.fn(async () => ({
+      choices: [
+        {
+          message: {
+            content: '```json\n{"themes":["fictional theme"]}\n```',
+            reasoning_content: 'private reasoning',
+          },
+        },
+      ],
+    }));
+    const result = await executeResearch(facts(), { run } as unknown as AIInferenceBinding);
+    expect(result).toMatchObject({
+      status: 'completed',
+      output: { text: '```json\n{"themes":["fictional theme"]}\n```' },
+    });
+    expect(JSON.stringify(result)).not.toContain('private reasoning');
+  });
+
+  it('does not mark an empty model answer as a completed run', async () => {
+    const run = vi.fn(async () => ({ choices: [{ message: { content: '' } }] }));
+    await expect(
+      executeResearch(facts(), { run } as unknown as AIInferenceBinding),
+    ).rejects.toThrow('The model returned no user-facing answer.');
+  });
 });
 
 describe('strict request contracts', () => {

@@ -1,6 +1,6 @@
 # Demonstration video outline
 
-**Recording status:** a 106.96-second, 1280×720 draft was captured from the production application in Chromium. Review found that the live model response had an empty visible answer, so the draft is not committed or public evidence. Re-record after the reasoning-mode fix is deployed at 1920×1080, confirm the model returns visible text, and then publish the replacement. The recording is silent and contains no participant footage or narration.
+**Recording status:** a 90.44-second, 1920×1080 Chromium capture has been made against the production application. It shows a real visible Workers AI result, a server-side commercial-use denial, and the synthetic benefit/audit views. It is silent and contains no participant footage or narration. The pending response change only removes model metadata and presents the same answer more clearly; the MP4 should be checked against the deployed demo and replaced only if the visible flow differs materially.
 
 1. **0:00–0:15:** Explain that communities can contribute information while having limited say in later AI uses. Introduce MindCommons as an early technical prototype, not a real cooperative.
 2. **0:15–0:35:** Show a synthetic community rule and explain how it became effective in the demo.
