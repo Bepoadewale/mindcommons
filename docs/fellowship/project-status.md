@@ -2,6 +2,8 @@
 
 **Status on 2026-11-17:** MindCommons is a public technical prototype, not an awarded Mozilla project, established cooperative, SRHIN partnership, or real community pilot. It uses fictional community records and synthetic research material only.
 
+PR #37 (benefit prerequisites and Agreement v2) and PR #38 (consent explanation, governance options and privacy documentation) are merged to protected `main`; their required checks passed and post-merge CI/Pages publish succeeded. Neither PR has been deployed to the hosted Worker. The current feature branch adds the receipt endpoint/migration and portable conformance suite; these have local test evidence only and are not yet merged or hosted.
+
 ## What works
 
 - Public application: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>. Worker version `b01d3f96-d72a-41a2-b751-88dff3c7adc9` serves the release after PR #34. D1 migrations 0005 and 0006 are applied to the dedicated `mindcommons-demo-d1` database (`9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`). The Worker has D1 and Workers AI bindings and uses the `workers.dev` hostname only.
@@ -9,6 +11,7 @@
 - The synthetic Community AI Agreement has a machine-readable JSON Schema, shared TypeScript/Zod contract, and deterministic reference evaluator. The MindCommons API uses the evaluator; a separate minimal Worker example also consumes the agreement in tests. The agreement cannot control services that ignore it, uncontrolled dataset/model copies, or already released results.
 - A fresh live benefit scenario recorded the fictional community representative's agreement, the fictional research team's acceptance, a fixed synthetic evidence marker, and an accepted community review. It makes no real payment or delivery claim.
 - Main CI run `44134751119` passed all four required checks after PR #34. Local verification passed 38 unit tests, six reviewer browser tests, three static vision tests, local Worker/D1 integration, and output-release concurrency cases. Mocked local inference is not counted as a live model call.
+- Fellowship follow-up branch local verification on 2026-11-17 passed `npm run verify` (55 unit tests plus local Worker/D1 integration), `npm run test:e2e` (7/7), `npm run test:e2e:fullstack`, and `npm run test:agreement` (27/27). Tests use a deterministic mock where AI is invoked. This branch has not yet passed GitHub CI and does not change production.
 - Android 16 Google Play emulator checks verified the Chrome install prompt, launcher shortcut and standalone launch. No physical-device test has been done.
 
 ## Public evidence
@@ -31,4 +34,4 @@
 
 ## Next work
 
-The requested governance, Community AI Agreement, fictional benefit workflow, reviewer video, and production evidence are implemented and verified. Optional future work includes a physical Android device check, a YouTube upload if desired, and community-led co-design, ethics/safeguarding review and any pilot. These require real external collaboration and are not claimed as completed. The Mozilla application itself remains separate; these documents are technical evidence and planning material, not personal application responses.
+Complete protected PR/CI for conformance and receipt work, then guide the reviewer through benefit gating and decision evidence and reconcile the public status and evidence links. The hosted Worker predates PRs #37–#39; remote migrations and deployment require fresh successful free-tier/billing verification, exact-resource preflight and no-charge confirmation. Do not imply the new benefit gate or receipt is live before production verification. Optional future tasks include physical Android device testing and owner-led YouTube upload. Community co-design, ethics/safeguarding review and any pilot depend on an authorized host relationship and are not claimed as completed. The Mozilla application remains separate.

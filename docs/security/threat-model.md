@@ -23,6 +23,7 @@ Prototype policy versions, fictional permission records, authorization results, 
 - Application-level rate limits (60 requests/minute/session), a 500-session/day cap and a 100-call/day AI cap; local API tests exercise each cap. No automatic upgrade or paid fallback.
 - Do not log submitted narratives; synthetic-only corpus; no API caching or browser persistence of sensitive records.
 - Append-oriented decision events with correlation IDs, without claiming tamper resistance.
+- Session-scoped decision receipt export validates a structured snapshot and omits cookies, session identifiers, raw narratives and model output. Foreign-session run IDs return 404. Receipts are ordinary D1 records, not signed, immutable, independently certified or legally conclusive.
 - Locked dependencies, CI least privilege, secret scanning, build and browser tests.
 
 ## Data flow and trust boundaries

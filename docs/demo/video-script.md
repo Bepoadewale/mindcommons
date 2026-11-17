@@ -42,3 +42,7 @@ ffmpeg -i <playwright-recording.webm> -map 0:v:0 -an -c:v libx264 -preset slow -
 ```
 
 The checked-in MP4 is also decoded and probed with `ffprobe`; after publishing, open each unauthenticated Worker and GitHub Pages URL and verify HTTPS 200 plus `video/mp4`. Do not describe deterministic local mock runs as live inference evidence.
+
+## Proposed follow-up recording (not yet recorded)
+
+If the receipt and benefit-gate changes are merged and safely deployed, make a new capture rather than editing or replacing the verified files above. The original and current captioned files remain preserved. Target a concise 90–120 second 1080p recording that accurately shows: (1) fictional community rule and individual permission; (2) preview of a contributor withdrawal with eligible records; (3) the same fixed request denied because a required accessible-results obligation has not been agreed and accepted; (4) fictional community agreement and research-team acceptance; (5) actual bounded AI execution only after authorization, or an honest service-limit/error state; (6) downloading and inspecting a receipt that reports inference mode and release outcome without exposing output or narrative; and (7) repository reuse and the proposed, host-dependent co-design roadmap. Explain that the external provider has already received inputs before any post-inference withholding, and that simulated seats do not prove identity or authority. Do not record an un-deployed feature as public or use mock footage as live-model evidence.

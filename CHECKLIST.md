@@ -6,16 +6,17 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 
 - [x] PR #37 merged: benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. The initial policy remains permissive. Local API integration denies before inference until community agreement and research-team acceptance; the same request can proceed after acceptance.
 - [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; the delayed-inference API integration verified withholding. PR checks and post-merge CI passed. Hosted behavior for this new code remains unverified because no production migration or deploy was performed.
-- [~] Consent explanation, governance design framework, data-flow audit and cross-session API tests are in branch `feat/consent-governance-privacy`; local verification passed. PR and GitHub checks are pending.
-- [ ] Portable v2 conformance, safe decision receipt, guided reviewer journey, completed SRHIN roadmap/evidence summary, and production reconciliation remain.
+- [x] PR #38 merged: consent explanation, governance design framework, data-flow audit and cross-session API tests. Required checks and post-merge CI/Pages publication passed.
+- [~] Portable Agreement v2 conformance and session-scoped decision receipt are implemented on `feat/decision-receipts-conformance`; local verification and browser suites passed. PR and GitHub checks are pending; hosted release does not include these changes yet.
+- [ ] Guided reviewer journey, final RFP/status/evidence reconciliation, revised demo script, and production reconciliation remain.
 
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
 - [x] PRs #1–#35 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #35 post-merge CI run `44137169473` and Pages run `44137169692` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
-- [x] Local `npm run verify` passed with 38 unit tests and Worker/D1 integration.
-- [x] `npm run test:e2e` passed 6/6; `npm run test:e2e:fullstack` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3.
+- [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; current branch `npm run verify` passed with 55 unit tests and local integration.
+- [x] Current branch `npm run test:e2e` passed 7/7; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
 
 ## Governance and technical contribution
 

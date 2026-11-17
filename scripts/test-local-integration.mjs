@@ -249,6 +249,34 @@ try {
   assert.equal(allowed.inferenceMode, 'mock');
   assert.equal(allowed.provider, 'Local deterministic test double');
   assert.equal(allowed.synthetic, true);
+  const allowedReceiptResponse = await api(`/api/research/receipt?runId=${allowed.runId}`, {
+    cookie: initialCookie,
+  });
+  const allowedReceipt = await expectJson(allowedReceiptResponse, 200);
+  assert.equal(allowedReceiptResponse.headers.get('cache-control'), 'no-store');
+  assert.match(
+    allowedReceiptResponse.headers.get('content-disposition') ?? '',
+    /mindcommons-decision-receipt\.json/,
+  );
+  assert.equal(allowedReceipt.decisionId, allowed.runId);
+  assert.equal(allowedReceipt.correlationId, allowed.correlationId);
+  assert.equal(allowedReceipt.authorization.outcome, 'allowed');
+  assert.equal(allowedReceipt.execution.inferenceAttempted, true);
+  assert.equal(allowedReceipt.execution.outputReleased, true);
+  assert.deepEqual(
+    allowedReceipt.contributions.map(({ contributionId, includedInJob }) => ({
+      contributionId,
+      includedInJob,
+    })),
+    ['response-a', 'response-b', 'response-c'].map((contributionId) => ({
+      contributionId,
+      includedInJob: true,
+    })),
+  );
+  const serializedReceipt = JSON.stringify(allowedReceipt);
+  for (const excludedField of ['sessionId', 'cookie', '"output":', 'fictional peer group']) {
+    assert.equal(serializedReceipt.includes(excludedField), false, excludedField);
+  }
 
   const denied = await expectJson(
     await api('/api/research/run', {
@@ -410,6 +438,10 @@ try {
   );
   assert.equal(secondSession.permissions.length, 3);
   assert.ok(secondSession.permissions.every(({ status }) => status === 'granted'));
+  await expectJson(
+    await api(`/api/research/receipt?runId=${allowed.runId}`, { cookie: secondCookie }),
+    404,
+  );
   assert.deepEqual(
     secondSession.permissionHistory.map(({ permission_id, version, status }) => ({
       permission_id,
@@ -737,6 +769,21 @@ try {
     403,
   );
   assert.ok(benefitNotAgreed.decision.reasons.includes('required-benefit-not-agreed'));
+  const deniedBenefitReceipt = await expectJson(
+    await api(`/api/research/receipt?runId=${benefitNotAgreed.runId}`, {
+      cookie: benefitGateCookie,
+    }),
+    200,
+  );
+  assert.equal(deniedBenefitReceipt.authorization.outcome, 'denied');
+  assert.equal(deniedBenefitReceipt.execution.inferenceAttempted, false);
+  assert.equal(deniedBenefitReceipt.execution.outputReleased, false);
+  assert.equal(
+    deniedBenefitReceipt.requiredBenefitConditions.find(
+      ({ obligationId }) => obligationId === 'benefit-findings',
+    )?.requiredBeforeExecution,
+    true,
+  );
   const deniedRunState = await (await api('/api/demo', { cookie: benefitGateCookie })).json();
   assert.equal(deniedRunState.runs[0].status, 'denied');
   assert.equal(deniedRunState.runs[0].model_id, null);
@@ -836,6 +883,15 @@ try {
   );
   const benefitWithheld = await expectJson(await inFlightWithBenefit, 409);
   assert.equal(benefitWithheld.status, 'withheld');
+  const withheldReceipt = await expectJson(
+    await api(`/api/research/receipt?runId=${benefitWithheld.runId}`, {
+      cookie: benefitGateCookie,
+    }),
+    200,
+  );
+  assert.equal(withheldReceipt.execution.status, 'withheld');
+  assert.equal(withheldReceipt.execution.inferenceAttempted, true);
+  assert.equal(withheldReceipt.execution.outputReleased, false);
   const benefitWithheldState = await (await api('/api/demo', { cookie: benefitGateCookie })).json();
   assert.equal(benefitWithheldState.runs[0].status, 'failed');
   assert.equal(benefitWithheldState.runs[0].output, null);

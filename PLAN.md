@@ -19,13 +19,13 @@ Use a small full-stack web application on Cloudflare Workers with Static Assets:
 
 See [architecture decisions](docs/architecture/decisions.md). Revisit only when authoritative documentation or a measured incompatibility changes the evidence.
 
-## Fellowship technical-strengthening track (started 2026-11-18)
+## Fellowship technical-strengthening track (started 2026-11-17)
 
 The code audit found that benefit stages were persisted but never affected authorization. Preserve the existing implementation and address the narrow gap in ordered PRs:
 
 1. **Benefit prerequisites and agreement validity — merged in PR #37:** retain schema `1.0.0` semantics, introduce schema `2.0.0` with explicit required benefit IDs and optional expiry, propagate per-policy prerequisites from D1, test denial before inference and conditional output withholding. Keep the initial policy permissive. No production migration/deploy has occurred.
-2. **Consent and governance clarity — local verification passed; PR pending:** explain the fictional processing lifecycle and withdrawal limits in the existing UI; document alternative governance arrangements and host-dependent decisions without claiming community validation.
-3. **Privacy and protocol evidence — partially underway:** review data flows/cache/session boundaries and add a trust-boundary diagram; strengthen portable agreement conformance and produce a safe current-session decision receipt next.
-4. **Reviewer and fellowship evidence:** guide reviewers through policy, individual permission, benefit gate and evidence; improve keyboard/screen-reader/contrast evidence; prepare SRHIN's June 2027–May 2028 co-design roadmap and technical evidence summary.
+2. **Consent and governance clarity — merged in PR #38:** explain the fictional processing lifecycle and withdrawal limits in the existing UI; document alternative governance arrangements, cross-session rejection tests, trust boundaries and host-dependent decisions without claiming community validation.
+3. **Privacy and protocol evidence — local verification passed on current branch:** add receipt schema/migration, session-scoped export, portable consumer conformance coverage and developer integration guidance. The receipt records live/mock mode and omits outputs and raw narratives. PR/CI/merge are still pending.
+4. **Reviewer and fellowship evidence:** guide reviewers through policy, individual permission, benefit gate and receipt; improve keyboard/screen-reader/contrast evidence; prepare SRHIN's June 2027–May 2028 co-design roadmap and technical evidence summary. The roadmap and reserved-decision document exist; update traceability/status and prepare a truthful revised video script.
 
 No production deployment is part of these local PRs. Any deployment requires a fresh, successful account/resource and free-tier/billing preflight; an unavailable billing read is a stop condition for remote mutations.

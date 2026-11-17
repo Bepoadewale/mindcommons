@@ -837,6 +837,15 @@ export default function App() {
                       {latest?.output !== undefined && latest.output !== null && (
                         <pre>{displayInferenceOutput(latest.output)}</pre>
                       )}
+                      {latestRun?.run_id && (
+                        <a
+                          className="receipt-link"
+                          href={`/api/research/receipt?runId=${encodeURIComponent(latestRun.run_id)}`}
+                          download="mindcommons-decision-receipt.json"
+                        >
+                          Download this session’s decision receipt (JSON)
+                        </a>
+                      )}
                     </div>
                   )}
                 </article>

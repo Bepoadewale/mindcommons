@@ -5,6 +5,7 @@ import { onRequestPost as updateConsent } from './api/consent';
 import { onRequestDelete as resetDemo, onRequestGet as loadDemo } from './api/demo';
 import { onRequestPost as decidePolicy } from './api/policy/decision';
 import { onRequestPost as runResearch } from './api/research/run';
+import { onRequestGet as getResearchReceipt } from './api/research/receipt';
 import { onRequestPost as selectRole } from './api/role';
 import { json } from './lib/http';
 import type { Context, Env } from './types';
@@ -21,6 +22,7 @@ const routes: Record<string, Record<string, Handler>> = {
   '/api/demo': { DELETE: resetDemo, GET: loadDemo },
   '/api/policy/decision': { POST: decidePolicy },
   '/api/research/run': { POST: runResearch },
+  '/api/research/receipt': { GET: getResearchReceipt },
   '/api/role': { POST: selectRole },
 };
 

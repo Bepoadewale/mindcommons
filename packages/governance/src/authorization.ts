@@ -217,6 +217,7 @@ function publicInferenceOutput(output: unknown): unknown {
 export async function executeResearch(
   facts: AuthorizationFacts,
   inference: AIInferenceBinding,
+  onInferenceStart?: () => Promise<void>,
 ): Promise<ResearchExecution> {
   const decision = authorizeResearch(facts);
   if (!decision.allowed) return { status: 'denied', decision };
@@ -227,6 +228,7 @@ export async function executeResearch(
     .map((contribution) => `${contribution.contributionId}: ${contribution.text}`)
     .join('\n');
 
+  await onInferenceStart?.();
   const modelOutput = await inference.run(DEMO_MODEL_ID, {
     messages: [
       {

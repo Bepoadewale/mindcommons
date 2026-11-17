@@ -11,6 +11,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 - A server-side, deterministic policy check authorizes a fixed research operation.
 - An allowed operation can call a configured model; a denied operation must not call it.
 - A decision and its provenance can be inspected afterward.
+- A session-scoped JSON decision receipt records the policy and permission snapshot, required benefits, authorization reasons, inference attempt and release outcome without exporting model output or raw narratives.
 - A fictional benefit commitment can be agreed, accepted by the research team, evidenced and reviewed without claiming real-world delivery.
 - A version 2 policy may make selected benefit terms prerequisites to inference; version 1 agreements keep their original behavior.
 - A portable Community AI Agreement is checked by MindCommons and by a separate minimal Worker example.
@@ -34,7 +35,9 @@ npm ci
 npm run dev
 ```
 
-`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Worker runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` checks the built UI against the local Worker and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run test:vision-static` builds and browser-tests the GitHub Pages vision-only artifact. `npm run verify` also checks that artifact, and runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
+`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Worker runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:agreement` runs portable agreement and receipt conformance tests without Cloudflare credentials. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` checks the built UI against the local Worker and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run test:vision-static` builds and browser-tests the GitHub Pages vision-only artifact. `npm run verify` also checks that artifact, and runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
+
+For the protocol consumer example, see [`examples/portable-ai-worker/`](examples/portable-ai-worker/README.md). It shows caller authentication as an independent service responsibility, deterministic agreement evaluation before model execution, and an output-release recheck. The local conformance suite compares that consumer with the MindCommons evaluator. An agreement is not proof of representative authority and cannot constrain services that do not implement it.
 
 ## Public links
 
