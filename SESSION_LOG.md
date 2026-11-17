@@ -175,3 +175,4 @@
 - Deployed Worker version `de7c9b35-6837-44a9-bd4a-a08c6550f64f` to the existing `workers.dev` hostname with the existing D1/AI/assets bindings.
 - Live Chromium verified history v1 (granted), v2 (withdrawn), v3 (granted); a withdrawn-permission request returned 403 before inference; one synthetic authorized request completed with non-empty Cloudflare Workers AI output; commercial advertising returned 403 before inference; no browser errors. Landing page and GitHub Pages vision page both returned HTTPS 200.
 - `npm run verify`, `npm run test:e2e` (5 tests), and `npm run test:e2e:fullstack` passed locally. Local model behavior uses the explicitly labeled deterministic mock.
+- PR #29 merged deployment-state documentation through protected `main` at `587b474`; all four required checks passed in run `44099865420`. Post-merge CI run `44100300343` and Pages run `44100300240` passed, and its source branch was removed.

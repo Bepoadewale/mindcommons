@@ -5,7 +5,7 @@ Last updated: 2026-11-17
 ## Verified complete
 
 - Public repository: https://github.com/Bepoadewale/mindcommons, Apache-2.0, Issues enabled, protected PR-only `main` with four required checks and no solo-approval requirement.
-- PRs #1–#28 merged through GitHub. PR #28 merged at `0c80c29`; all four required checks passed in run `44097549991`, post-merge CI run `44097992360` and Pages run `44097992452` succeeded. Its source branch is deleted; only `main` remains locally and remotely. Existing DavDeploy repositories and pull requests were not changed.
+- PRs #1–#29 merged through GitHub. PR #28 merged at `0c80c29`; all four required checks passed in run `44097549991`, post-merge CI run `44097992360` and Pages run `44097992452` succeeded. PR #29 records its final deployment evidence and passed all checks; post-merge CI run `44100300343` and Pages run `44100300240` succeeded. Source branches are deleted; only `main` remains locally and remotely. Existing DavDeploy repositories and pull requests were not changed.
 - Research, Mozilla RFP alignment, architecture, governance, security, and reusable DavDeploy lessons are documented.
 - Core synthetic demo includes community rules/proposals, separate individual permissions, fixed research request, deterministic fail-closed authorization, fixed AI job, provenance/audit, hypothetical benefit commitment, isolated/resettable sessions, and a future-vision wireframe.
 - Dedicated Cloudflare D1 database `mindcommons-demo-d1` exists in WEUR (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) with all four migrations applied.
