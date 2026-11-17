@@ -18,3 +18,14 @@ Use a small full-stack web application on Cloudflare Workers with Static Assets:
 ## Routine decisions
 
 See [architecture decisions](docs/architecture/decisions.md). Revisit only when authoritative documentation or a measured incompatibility changes the evidence.
+
+## Fellowship technical-strengthening track (started 2026-11-18)
+
+The code audit found that benefit stages were persisted but never affected authorization. Preserve the existing implementation and address the narrow gap in ordered PRs:
+
+1. **Benefit prerequisites and agreement validity — in progress:** retain schema `1.0.0` semantics, introduce schema `2.0.0` with explicit required benefit IDs and optional expiry, propagate per-policy prerequisites from D1, test denial before inference and conditional output withholding. Keep the initial policy permissive.
+2. **Consent and governance clarity:** explain the fictional processing lifecycle and withdrawal limits in the existing UI; document alternative governance arrangements and host-dependent decisions without claiming community validation.
+3. **Privacy and protocol evidence:** review data flows/cache/session boundaries, add a data-flow diagram, strengthen portable agreement conformance and produce a safe current-session decision receipt.
+4. **Reviewer and fellowship evidence:** guide reviewers through policy, individual permission, benefit gate and evidence; improve keyboard/screen-reader/contrast evidence; prepare SRHIN's June 2027–May 2028 co-design roadmap and technical evidence summary.
+
+No production deployment is part of these local PRs. Any deployment requires a fresh, successful account/resource and free-tier/billing preflight; an unavailable billing read is a stop condition for remote mutations.

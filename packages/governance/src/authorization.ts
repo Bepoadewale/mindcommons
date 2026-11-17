@@ -62,6 +62,7 @@ export interface AuthorizationFacts {
     commercialAllowed: boolean;
     withdrawalMode: WithdrawalMode;
     effectiveAt: string;
+    requiredBenefitObligationIds?: string[];
   } | null;
   contributions: SyntheticContribution[];
   permissions: PermissionFact[];
@@ -85,12 +86,14 @@ export function communityAgreementFromFacts(facts: AuthorizationFacts): Communit
     facts.permissions.map((permission) => [permission.permissionId, permission]),
   );
   const agreement: CommunityAIAgreement = {
-    schemaVersion: '1.0.0',
+    schemaVersion: '2.0.0',
     agreementId: `${facts.communityId}:policy:${policy?.version ?? 'none'}`,
     communityId: facts.communityId,
     policyVersion: policy?.version ?? 1,
     status: policy?.status ?? 'superseded',
     effectiveAt: policy?.effectiveAt ?? null,
+    expiresAt: null,
+    requiredBenefitObligationIds: policy?.requiredBenefitObligationIds ?? [],
     permittedPurposes: policy
       ? [
           policy.allowedPurpose as ResearchPurpose,

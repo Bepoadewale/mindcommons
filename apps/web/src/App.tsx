@@ -62,6 +62,7 @@ type DemoState = {
     allowed_purpose: string;
     commercialAllowed: boolean;
     withdrawalMode: string;
+    requiredBenefitObligationIds: string[];
   };
   proposal: {
     proposal_id: string;
@@ -70,6 +71,7 @@ type DemoState = {
     proposed_purpose: string;
     proposedCommercialAllowed: boolean;
     withdrawalMode: string;
+    requiredBenefitObligationIds: string[];
   };
   contributions: ContributionRecord[];
   permissions: PermissionRecord[];
@@ -532,9 +534,18 @@ export default function App() {
                     </div>
                     <h4>{data.proposal.title}</h4>
                     <p>
-                      If approved, the same research request will require active permission from
-                      every contributor; one withdrawal will block the full job.
+                      If approved, every contributor must have active permission and the research
+                      team must first accept the accessible-results commitment. Its delivery may
+                      happen later, by the agreed due date.
                     </p>
+                    <div className="rule-row">
+                      <span>Benefit terms required by this proposal</span>
+                      <strong>
+                        {data.proposal.requiredBenefitObligationIds.includes('benefit-findings')
+                          ? 'Community agreement + team acceptance before execution'
+                          : 'No benefit prerequisite'}
+                      </strong>
+                    </div>
                     {data.proposal.status === 'reviewed' ? (
                       role === 'community_representative' ? (
                         <div className="button-row">
@@ -812,6 +823,11 @@ export default function App() {
                     acceptance, evidence, and community review. It is not a real payment or
                     delivered benefit.
                   </p>
+                  <p className="inline-note" role="status">
+                    {data.policy.requiredBenefitObligationIds.includes('benefit-findings')
+                      ? 'This active policy blocks research until this commitment is agreed by the fictional community representative and accepted by the fictional research team. Delivery is due later.'
+                      : 'The active policy currently treats this as an accountability record. The reviewed proposal would make community agreement and research-team acceptance prerequisites to inference.'}
+                  </p>
                   <div className="benefit-owner">
                     <div className="owner-avatar">FC</div>
                     <div>
@@ -890,6 +906,23 @@ export default function App() {
                       }
                     >
                       Accept as fictional research team
+                    </button>
+                  ) : null}
+                  {role === 'researcher' &&
+                  data.benefit.accepted_at &&
+                  !data.benefit.evidence &&
+                  data.benefit.status === 'in_progress' ? (
+                    <button
+                      className="button button-outline"
+                      disabled={busy}
+                      onClick={() =>
+                        void updateBenefit(
+                          { action: 'withdraw-acceptance' },
+                          'The fictional research team withdrew its acceptance; required research is blocked again.',
+                        )
+                      }
+                    >
+                      Withdraw team acceptance
                     </button>
                   ) : null}
                   {role === 'researcher' &&

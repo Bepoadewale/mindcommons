@@ -2,6 +2,12 @@
 
 Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future work.
 
+## Fellowship-strengthening follow-up (branch-local until PR merge)
+
+- [~] Benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. Local API verification shows pre-inference denial until community agreement and research-team acceptance, and denial when required data are missing or inconsistent.
+- [~] Conditional result release checks that required benefit facts remain unchanged during model execution; a local delayed-inference integration path verifies withholding. GitHub CI and hosted behavior for this new code are not yet verified.
+- [ ] Consent explanation, portable v2 conformance, decision receipt, governance design framework, privacy/data-flow audit, reviewer journey improvements, and SRHIN-specific roadmap/evidence summary remain to be completed.
+
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.

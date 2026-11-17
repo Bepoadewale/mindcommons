@@ -1,6 +1,23 @@
 # Current execution state
 
-Last updated: 2026-11-17
+Last updated: 2026-11-18
+
+## Active fellowship-strengthening work
+
+- Baseline confirmed at `94a29551aed4d9caff4262d52a54fb036386c008`; branch `feat/benefit-prerequisite-enforcement` is implementing the first audit-confirmed gap. Main remains unchanged and the working tree changes are not yet committed or merged.
+- Confirmed gap: benefit agreement/acceptance/evidence/review were recorded, but the research API did not enforce benefit prerequisites. Agreement v1 did not define gating semantics, so it must remain unchanged.
+- Implemented locally: Agreement v2 with explicit required benefit IDs and expiry, effective-date and duplicate-identifier validation, fail-closed missing/contradictory obligation reasons, D1 migration 0007 for opt-in per-policy prerequisites, policy approval propagation, pre-inference D1 fact loading, conditional output-release recheck, fictional acceptance withdrawal, reviewer-facing explanations, and a portable migration note.
+- The default demo policy still has no required benefit prerequisite. A reviewed fictional policy proposal opts into `benefit-findings`; a request is denied before inference until the fictional community agreement and research-team acceptance exist. Local API integration also changes acceptance during delayed inference and verifies output withholding.
+- Local verification currently passed: `npm run verify` (44 unit tests plus Worker/D1 integration and docs checks), `npm run test:e2e` (6/6), and `npm run test:e2e:fullstack` (labeled mock AI). These results are local only; GitHub CI and merge are pending.
+- No remote migration, Worker deployment, Cloudflare mutation, or billing claim has been made. Per current assignment, deployment waits for account/resource and current billing verification; deployment is not needed to complete this local PR.
+
+## Next executable tasks
+
+1. Finish PR 1 review, confirm all tests and schema generation, push the feature branch, open the PR, watch required checks, merge only after all checks pass, then remove its merged source branches.
+2. Improve consent explanation and document configurable governance options; conduct the targeted privacy/data-flow audit.
+3. Add portable Agreement v2 conformance cases and a safe session-scoped decision receipt.
+4. Improve the guided reviewer journey and accessibility evidence; refresh SRHIN-specific post-selection roadmap and technical evidence summary.
+5. Reconcile production evidence without deploying unless current free-tier/billing state is verifiable and every deployment preflight is satisfied.
 
 ## Verified complete
 

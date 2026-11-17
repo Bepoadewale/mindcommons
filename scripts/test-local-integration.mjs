@@ -172,7 +172,7 @@ try {
   assert.equal(initialAgreement.benefitObligations[0].status, 'proposed');
   const agreementSchema = await expectJson(await api('/api/agreement/schema'), 200);
   assert.equal(agreementSchema.$schema, 'https://json-schema.org/draft/2020-12/schema');
-  assert.ok(agreementSchema.properties.authorizedResearcherIds);
+  assert.ok(agreementSchema.oneOf.some((variant) => variant.properties.authorizedResearcherIds));
   assert.deepEqual(
     initial.permissionHistory.map(({ permission_id, version, status, action }) => ({
       permission_id,
@@ -692,6 +692,142 @@ try {
   const rejectedState = await (await api('/api/demo', { cookie: secondCookie })).json();
   assert.equal(rejectedState.proposal.status, 'rejected');
   assert.equal(rejectedState.policy.version, 1);
+
+  // A separate, synthetic session demonstrates a benefit prerequisite as an
+  // authorization rule: no model call before acceptance, then the same request works.
+  const benefitGateResponse = await api('/api/demo');
+  const benefitGateCookie = cookieFrom(benefitGateResponse);
+  await benefitGateResponse.json();
+  await expectJson(
+    await api('/api/policy/decision', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { proposalId: 'proposal-v2', decision: 'approve' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const benefitNotAgreed = await expectJson(
+    await api('/api/research/run', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+    }),
+    403,
+  );
+  assert.ok(benefitNotAgreed.decision.reasons.includes('required-benefit-not-agreed'));
+  const deniedRunState = await (await api('/api/demo', { cookie: benefitGateCookie })).json();
+  assert.equal(deniedRunState.runs[0].status, 'denied');
+  assert.equal(deniedRunState.runs[0].model_id, null);
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { action: 'agree' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const benefitNotAccepted = await expectJson(
+    await api('/api/research/run', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+    }),
+    403,
+  );
+  assert.ok(benefitNotAccepted.decision.reasons.includes('required-benefit-not-accepted'));
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { action: 'accept' },
+    }),
+    200,
+  );
+  const benefitAcceptedRequest = await expectJson(
+    await api('/api/research/run', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+    }),
+    200,
+  );
+  assert.equal(benefitAcceptedRequest.status, 'completed');
+  assert.deepEqual(benefitAcceptedRequest.inputContributionIds, [
+    'response-a',
+    'response-b',
+    'response-c',
+  ]);
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { action: 'withdraw-acceptance' },
+    }),
+    403,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+
+  const inFlightWithBenefit = api('/api/research/run', {
+    method: 'POST',
+    cookie: benefitGateCookie,
+    body: { purpose: 'community-wellbeing-research', jobType: 'theme-classification' },
+  });
+  await waitForMockInferenceStart();
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: benefitGateCookie,
+      body: { action: 'withdraw-acceptance' },
+    }),
+    200,
+  );
+  const benefitWithheld = await expectJson(await inFlightWithBenefit, 409);
+  assert.equal(benefitWithheld.status, 'withheld');
+  const benefitWithheldState = await (await api('/api/demo', { cookie: benefitGateCookie })).json();
+  assert.equal(benefitWithheldState.runs[0].status, 'failed');
+  assert.equal(benefitWithheldState.runs[0].output, null);
+  assert.ok(
+    benefitWithheldState.runs[0].reasons.includes('authorization-changed-before-output-release'),
+  );
 
   const page = await fetch(`${base}/vision/`);
   assert.equal(page.status, 200, 'the public future-vision route should resolve');

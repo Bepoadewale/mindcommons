@@ -6,6 +6,7 @@ import {
   CommunityAIAgreementSchema,
   communityAIAgreementJsonSchema,
   evaluateCommunityAIAgreement,
+  type CommunityAIAgreement,
 } from '../packages/community-ai-agreement/src';
 
 const request = {
@@ -19,6 +20,29 @@ const request = {
   clinicalUse: false,
 } as const;
 const now = new Date('2026-11-17T12:00:00.000Z');
+const withRequiredBenefit = (): Extract<CommunityAIAgreement, { schemaVersion: '2.0.0' }> =>
+  ({
+    ...structuredClone(sampleAgreement),
+    schemaVersion: '2.0.0' as const,
+    expiresAt: null,
+    requiredBenefitObligationIds: ['accessible-results'],
+    benefitObligations: [
+      {
+        obligationId: 'accessible-results',
+        description: 'Share accessible fictional results with the community.',
+        accountableParty: 'Fictional research team',
+        dueAt: '2027-01-15T00:00:00.000Z',
+        status: 'proposed' as const,
+        agreedByCommunity: false,
+        agreedBy: null,
+        acceptedByResearchTeam: false,
+        acceptedBy: null,
+        evidence: null,
+        reviewOutcome: null,
+        reviewedBy: null,
+      },
+    ],
+  }) as Extract<CommunityAIAgreement, { schemaVersion: '2.0.0' }>;
 
 describe('portable Community AI Agreement protocol', () => {
   it('publishes a machine-readable schema and validates the fictional agreement fixture', async () => {
@@ -112,5 +136,58 @@ describe('portable Community AI Agreement protocol', () => {
       allowed: false,
       reasons: ['duplicate-contribution-identifiers'],
     });
+  });
+
+  it('does not reinterpret version 1 benefits as execution prerequisites', () => {
+    expect(evaluateCommunityAIAgreement(sampleAgreement, request, now).allowed).toBe(true);
+  });
+
+  it('blocks version 2 execution until required benefits are agreed and accepted', () => {
+    const agreement = withRequiredBenefit();
+    expect(evaluateCommunityAIAgreement(agreement, request, now)).toMatchObject({
+      allowed: false,
+      reasons: ['required-benefit-not-agreed'],
+    });
+    agreement.benefitObligations[0]!.status = 'agreed';
+    agreement.benefitObligations[0]!.agreedByCommunity = true;
+    agreement.benefitObligations[0]!.agreedBy = 'fictional-community-decision';
+    expect(evaluateCommunityAIAgreement(agreement, request, now).reasons).toContain(
+      'required-benefit-not-accepted',
+    );
+    agreement.benefitObligations[0]!.status = 'accepted';
+    agreement.benefitObligations[0]!.acceptedByResearchTeam = true;
+    agreement.benefitObligations[0]!.acceptedBy = 'fictional-research-team';
+    expect(evaluateCommunityAIAgreement(agreement, request, now).allowed).toBe(true);
+  });
+
+  it('fails closed when a required benefit is missing or its states contradict each other', () => {
+    const missing = withRequiredBenefit();
+    missing.benefitObligations = [];
+    expect(evaluateCommunityAIAgreement(missing, request, now).reasons).toContain(
+      'required-benefit-missing',
+    );
+    const inconsistent = withRequiredBenefit();
+    inconsistent.benefitObligations[0]!.acceptedByResearchTeam = true;
+    expect(evaluateCommunityAIAgreement(inconsistent, request, now).reasons).toContain(
+      'required-benefit-state-invalid',
+    );
+  });
+
+  it('rejects future-effective, expired, duplicate-identifier and unsupported-version agreements', () => {
+    const future = { ...sampleAgreement, effectiveAt: '2026-11-18T00:00:00.000Z' };
+    expect(evaluateCommunityAIAgreement(future, request, now).reasons).toContain(
+      'no-effective-community-agreement',
+    );
+    const expired = { ...withRequiredBenefit(), expiresAt: '2026-11-17T11:59:59.000Z' };
+    expect(evaluateCommunityAIAgreement(expired, request, now).reasons).toContain(
+      'community-agreement-expired',
+    );
+    const duplicate = { ...sampleAgreement, authorizedResearcherIds: ['x', 'x'] };
+    expect(evaluateCommunityAIAgreement(duplicate, request, now).reasons).toContain(
+      'duplicate-contribution-identifiers',
+    );
+    expect(
+      evaluateCommunityAIAgreement({ ...sampleAgreement, schemaVersion: '3.0.0' }, request, now),
+    ).toMatchObject({ allowed: false, reasons: ['agreement-or-request-invalid'] });
   });
 });

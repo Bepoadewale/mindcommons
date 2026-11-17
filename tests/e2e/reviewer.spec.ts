@@ -16,6 +16,7 @@ const demo = {
     allowed_purpose: 'community-wellbeing-research',
     commercialAllowed: false,
     withdrawalMode: 'exclude-withdrawn',
+    requiredBenefitObligationIds: [],
   },
   proposal: {
     proposal_id: 'proposal-v2',
@@ -24,6 +25,7 @@ const demo = {
     proposed_purpose: 'community-wellbeing-research',
     proposedCommercialAllowed: false,
     withdrawalMode: 'require-all',
+    requiredBenefitObligationIds: ['benefit-findings'],
   },
   contributions: ['a', 'b', 'c'].map((letter) => ({
     contributionId: `response-${letter}`,
@@ -127,6 +129,7 @@ test.beforeEach(async ({ page }) => {
     const body = route.request().postDataJSON() as
       | { action: 'agree' }
       | { action: 'accept' }
+      | { action: 'withdraw-acceptance' }
       | { action: 'submit-evidence'; evidence: string }
       | { action: 'review'; outcome: 'accepted' | 'changes-requested' };
     if (body.action === 'agree') {
@@ -141,6 +144,13 @@ test.beforeEach(async ({ page }) => {
         accepted_at: '2026-11-17T12:01:00.000Z',
         accepted_by: 'demo:researcher',
         status: 'in_progress',
+      };
+    } else if (body.action === 'withdraw-acceptance') {
+      benefit = {
+        ...benefit,
+        accepted_at: null,
+        accepted_by: null,
+        status: 'proposed',
       };
     } else if (body.action === 'submit-evidence') {
       benefit = {

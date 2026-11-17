@@ -22,7 +22,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
   if (!parsed.success) return json({ error: 'invalid_request' }, 400);
 
   const proposal = await context.env.DB.prepare(
-    'SELECT status, proposed_purpose, proposed_commercial_allowed, withdrawal_mode FROM proposals WHERE session_id = ?1 AND proposal_id = ?2',
+    'SELECT status, proposed_purpose, proposed_commercial_allowed, withdrawal_mode, required_benefit_ids_json FROM proposals WHERE session_id = ?1 AND proposal_id = ?2',
   )
     .bind(session.sessionId, parsed.data.proposalId)
     .first<{
@@ -30,6 +30,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
       proposed_purpose: string;
       proposed_commercial_allowed: number;
       withdrawal_mode: 'exclude-withdrawn' | 'require-all';
+      required_benefit_ids_json: string;
     }>();
   if (!proposal || proposal.status !== 'reviewed')
     return json({ error: 'proposal_not_reviewable' }, 409);
@@ -51,8 +52,8 @@ export async function onRequestPost(context: Context): Promise<Response> {
         "UPDATE policies SET status = 'superseded' WHERE session_id = ?1 AND version = ?2 AND status = 'active'",
       ).bind(session.sessionId, active.version),
       context.env.DB.prepare(
-        `INSERT INTO policies(session_id, version, status, allowed_purpose, commercial_allowed, effective_at, withdrawal_mode)
-         SELECT ?1, ?2, 'active', ?3, ?4, ?5, ?6
+        `INSERT INTO policies(session_id, version, status, allowed_purpose, commercial_allowed, effective_at, withdrawal_mode, required_benefit_ids_json)
+         SELECT ?1, ?2, 'active', ?3, ?4, ?5, ?6, ?8
          WHERE EXISTS (
            SELECT 1 FROM proposals WHERE session_id = ?1 AND proposal_id = ?7
              AND status = 'approved' AND decided_at = ?5
@@ -66,6 +67,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
         timestamp,
         proposal.withdrawal_mode,
         parsed.data.proposalId,
+        proposal.required_benefit_ids_json,
       ),
     ]);
     if (

@@ -73,6 +73,18 @@ export async function onRequestPost(context: Context): Promise<Response> {
     auditAction = 'benefit-accepted-by-research-team';
     auditDecision = 'fictional-research-team-acceptance';
     nextStatus = 'in_progress';
+  } else if (action === 'withdraw-acceptance') {
+    if (!isResearcher) return json({ error: 'researcher_required' }, 403);
+    if (!current.accepted_at || current.evidence || current.status !== 'in_progress')
+      return json({ error: 'benefit_acceptance_not_withdrawable' }, 409);
+    statement = context.env.DB.prepare(
+      `UPDATE benefit_commitments SET accepted_at = NULL, accepted_by = NULL, status = 'proposed'
+       WHERE session_id = ?1 AND commitment_id = 'benefit-findings'
+         AND status = 'in_progress' AND accepted_at IS NOT NULL AND evidence IS NULL`,
+    ).bind(session.sessionId);
+    auditAction = 'benefit-acceptance-withdrawn';
+    auditDecision = 'fictional-research-team-acceptance-withdrawn';
+    nextStatus = 'agreed';
   } else if (action === 'submit-evidence') {
     if (!isResearcher) return json({ error: 'researcher_required' }, 403);
     if (!current.accepted_at || !['in_progress', 'reviewed'].includes(current.status))
