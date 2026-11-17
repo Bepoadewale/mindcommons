@@ -53,8 +53,8 @@ async function createDemoSession(context: Context): Promise<string | null> {
        VALUES (?1, 1, 'active', ?2, 0, ?3, 'exclude-withdrawn')`,
     ).bind(sessionId, DEMO_PURPOSE, timestamp),
     context.env.DB.prepare(
-      `INSERT INTO proposals(proposal_id, session_id, status, title, proposed_purpose, proposed_commercial_allowed, created_at, withdrawal_mode)
-       VALUES ('proposal-v2', ?1, 'reviewed', 'Require every contributor to permit the research request', ?2, 0, ?3, 'require-all')`,
+      `INSERT INTO proposals(proposal_id, session_id, status, title, proposed_purpose, proposed_commercial_allowed, created_at, withdrawal_mode, required_benefit_ids_json)
+       VALUES ('proposal-v2', ?1, 'reviewed', 'Require every contributor and research team to accept the accessible-results commitment', ?2, 0, ?3, 'require-all', '["benefit-findings"]')`,
     ).bind(sessionId, DEMO_PURPOSE, timestamp),
     context.env.DB.prepare(
       `INSERT INTO benefit_commitments(commitment_id, session_id, title, owner, due_at, evidence, status)
@@ -130,7 +130,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
       .bind(sessionId)
       .first<{ actor_role: string; expires_at: string }>(),
     context.env.DB.prepare(
-      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
+      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, required_benefit_ids_json FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
     )
       .bind(sessionId)
       .first<{
@@ -139,9 +139,10 @@ export async function onRequestGet(context: Context): Promise<Response> {
         allowed_purpose: string;
         commercial_allowed: number;
         withdrawal_mode: 'exclude-withdrawn' | 'require-all';
+        required_benefit_ids_json: string;
       }>(),
     context.env.DB.prepare(
-      'SELECT proposal_id, status, title, proposed_purpose, proposed_commercial_allowed, withdrawal_mode FROM proposals WHERE session_id = ?1 ORDER BY created_at DESC LIMIT 1',
+      'SELECT proposal_id, status, title, proposed_purpose, proposed_commercial_allowed, withdrawal_mode, required_benefit_ids_json FROM proposals WHERE session_id = ?1 ORDER BY created_at DESC LIMIT 1',
     )
       .bind(sessionId)
       .first<{
@@ -151,6 +152,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
         proposed_purpose: string;
         proposed_commercial_allowed: number;
         withdrawal_mode: 'exclude-withdrawn' | 'require-all';
+        required_benefit_ids_json: string;
       }>(),
     context.env.DB.prepare(
       'SELECT permission_id, purpose, status, expires_at, version FROM individual_permissions WHERE session_id = ?1 ORDER BY permission_id',
@@ -204,11 +206,13 @@ export async function onRequestGet(context: Context): Promise<Response> {
       ...policy,
       commercialAllowed: Boolean(policy.commercial_allowed),
       withdrawalMode: policy.withdrawal_mode,
+      requiredBenefitObligationIds: JSON.parse(policy.required_benefit_ids_json),
     },
     proposal: proposal && {
       ...proposal,
       proposedCommercialAllowed: Boolean(proposal.proposed_commercial_allowed),
       withdrawalMode: proposal.withdrawal_mode,
+      requiredBenefitObligationIds: JSON.parse(proposal.required_benefit_ids_json),
     },
     contributions: SYNTHETIC_CONTRIBUTIONS.map(({ contributionId, contributorId, purpose }) => ({
       contributionId,

@@ -11,6 +11,7 @@ import {
 } from '../../../packages/governance/src/authorization';
 import type { Context } from '../../types';
 import { inferenceFor } from '../../lib/inference';
+import { readRequiredBenefitIds } from '../../lib/benefit-prerequisites';
 import {
   audit,
   createCorrelationId,
@@ -28,6 +29,20 @@ type PolicyRow = {
   commercial_allowed: number;
   withdrawal_mode: 'exclude-withdrawn' | 'require-all';
   effective_at: string;
+  required_benefit_ids_json: string;
+};
+type BenefitRow = {
+  title: string;
+  owner: string;
+  due_at: string;
+  evidence: string | null;
+  status: string;
+  agreed_at: string | null;
+  agreed_by: string | null;
+  accepted_at: string | null;
+  accepted_by: string | null;
+  review_outcome: 'accepted' | 'changes-requested' | null;
+  reviewed_by: string | null;
 };
 function contributionDecisionEvidence(decision: {
   eligibleContributionIds: string[];
@@ -70,9 +85,9 @@ export async function onRequestPost(context: Context): Promise<Response> {
       400,
     );
 
-  const [policy, permissionRows] = await Promise.all([
+  const [policy, permissionRows, benefit] = await Promise.all([
     context.env.DB.prepare(
-      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
+      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at, required_benefit_ids_json FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
     )
       .bind(session.sessionId)
       .first<PolicyRow>(),
@@ -81,6 +96,11 @@ export async function onRequestPost(context: Context): Promise<Response> {
     )
       .bind(session.sessionId)
       .all<PersistedPermission>(),
+    context.env.DB.prepare(
+      'SELECT title, owner, due_at, evidence, status, agreed_at, agreed_by, accepted_at, accepted_by, review_outcome, reviewed_by FROM benefit_commitments WHERE session_id = ?1 AND commitment_id = ?2',
+    )
+      .bind(session.sessionId, 'benefit-findings')
+      .first<BenefitRow>(),
   ]);
   const runId = crypto.randomUUID();
   const correlationId = createCorrelationId();
@@ -96,6 +116,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
           commercialAllowed: Boolean(policy.commercial_allowed),
           withdrawalMode: policy.withdrawal_mode,
           effectiveAt: policy.effective_at,
+          requiredBenefitObligationIds: readRequiredBenefitIds(policy.required_benefit_ids_json),
         }
       : null,
     contributions: SYNTHETIC_CONTRIBUTIONS,
@@ -106,6 +127,33 @@ export async function onRequestPost(context: Context): Promise<Response> {
       expiresAt: permission.expires_at,
       version: permission.version,
     })),
+    benefitObligations: benefit
+      ? [
+          {
+            obligationId: 'benefit-findings',
+            description: benefit.title,
+            accountableParty: benefit.owner,
+            dueAt: benefit.due_at,
+            status:
+              benefit.status === 'reviewed'
+                ? 'community-reviewed'
+                : benefit.evidence
+                  ? 'evidence-recorded'
+                  : benefit.status === 'in_progress'
+                    ? 'accepted'
+                    : benefit.agreed_at
+                      ? 'agreed'
+                      : 'proposed',
+            agreedByCommunity: Boolean(benefit.agreed_at),
+            agreedBy: benefit.agreed_by,
+            acceptedByResearchTeam: Boolean(benefit.accepted_at),
+            acceptedBy: benefit.accepted_by,
+            evidence: benefit.evidence,
+            reviewOutcome: benefit.review_outcome,
+            reviewedBy: benefit.reviewed_by,
+          },
+        ]
+      : [],
     purpose,
     jobType: parsed.data.jobType,
     now: new Date(),
@@ -248,12 +296,14 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   // This conditional UPDATE is the result-release boundary: it persists output only if
   // the same researcher, policy version, and every used permission remain effective.
-  const guardBindings: (string | number)[] = [
+  const guardBindings: (string | number | null)[] = [
     session.sessionId,
     facts.activePolicy!.version,
     facts.activePolicy!.withdrawalMode,
     facts.activePolicy!.allowedPurpose,
     facts.activePolicy!.commercialAllowed ? 1 : 0,
+    facts.activePolicy!.effectiveAt,
+    JSON.stringify(facts.activePolicy!.requiredBenefitObligationIds ?? []),
     session.sessionId,
     completedAt,
   ];
@@ -262,12 +312,38 @@ export async function onRequestPost(context: Context): Promise<Response> {
       SELECT 1 FROM policies p WHERE p.session_id = ?9 AND p.status = 'active'
         AND p.version = ?10 AND p.withdrawal_mode = ?11
         AND p.allowed_purpose = ?12 AND p.commercial_allowed = ?13
+        AND p.effective_at = ?14 AND p.required_benefit_ids_json = ?15
     )
     AND EXISTS (
-      SELECT 1 FROM sessions s WHERE s.session_id = ?14
-        AND s.actor_role = 'researcher' AND s.expires_at > ?15
+      SELECT 1 FROM sessions s WHERE s.session_id = ?16
+        AND s.actor_role = 'researcher' AND s.expires_at > ?17
     )`;
-  let nextBinding = 16;
+  let nextBinding = 18;
+  for (const obligationId of facts.activePolicy!.requiredBenefitObligationIds ?? []) {
+    const start = nextBinding;
+    guardSql += `
+      AND EXISTS (
+        SELECT 1 FROM benefit_commitments bc WHERE bc.session_id = ?${start}
+          AND bc.commitment_id = ?${start + 1} AND bc.agreed_at IS ?${start + 2}
+          AND bc.agreed_by IS ?${start + 3} AND bc.accepted_at IS ?${start + 4}
+          AND bc.accepted_by IS ?${start + 5} AND bc.status = ?${start + 6}
+          AND bc.evidence IS ?${start + 7} AND bc.review_outcome IS ?${start + 8}
+          AND bc.reviewed_by IS ?${start + 9}
+      )`;
+    guardBindings.push(
+      session.sessionId,
+      obligationId,
+      benefit?.agreed_at ?? null,
+      benefit?.agreed_by ?? null,
+      benefit?.accepted_at ?? null,
+      benefit?.accepted_by ?? null,
+      benefit?.status ?? '',
+      benefit?.evidence ?? null,
+      benefit?.review_outcome ?? null,
+      benefit?.reviewed_by ?? null,
+    );
+    nextBinding += 10;
+  }
   for (let index = 0; index < usedContributions.length; index += 1) {
     const contribution = usedContributions[index];
     const permission = usedPermissions[index]!;
@@ -340,7 +416,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
         status: 'withheld',
         error: 'authorization_changed_before_output_release',
         message:
-          'A contributor permission or community policy changed while the model was running. Its result was withheld and was not released.',
+          'A contributor permission, community policy, or required benefit condition changed while the model was running. Its result was withheld and was not released.',
         correlationId,
         synthetic: true,
       },

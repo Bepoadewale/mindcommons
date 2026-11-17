@@ -34,6 +34,7 @@ export const ChangeDemoRoleSchema = z.object({ role: DemoRoleSchema }).strict();
 export const BenefitActionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('agree') }).strict(),
   z.object({ action: z.literal('accept') }).strict(),
+  z.object({ action: z.literal('withdraw-acceptance') }).strict(),
   z
     .object({
       action: z.literal('submit-evidence'),

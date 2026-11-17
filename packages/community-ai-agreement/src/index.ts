@@ -21,7 +21,7 @@ const ContributionSchema = z
   })
   .strict();
 
-export const CommunityAIAgreementSchema = z
+const CommunityAIAgreementV1Schema = z
   .object({
     schemaVersion: z.literal('1.0.0'),
     agreementId: z.string().min(1).max(120),
@@ -72,6 +72,19 @@ export const CommunityAIAgreementSchema = z
   })
   .strict();
 
+const CommunityAIAgreementV2Schema = CommunityAIAgreementV1Schema.omit({
+  schemaVersion: true,
+}).extend({
+  schemaVersion: z.literal('2.0.0'),
+  expiresAt: z.iso.datetime().nullable(),
+  requiredBenefitObligationIds: z.array(z.string().min(1).max(100)).max(100),
+});
+
+export const CommunityAIAgreementSchema = z.discriminatedUnion('schemaVersion', [
+  CommunityAIAgreementV1Schema,
+  CommunityAIAgreementV2Schema,
+]);
+
 export type CommunityAIAgreement = z.infer<typeof CommunityAIAgreementSchema>;
 
 export const AgreementEvaluationRequestSchema = z
@@ -120,11 +133,22 @@ export function evaluateCommunityAIAgreement(
 
   const agreement = agreementResult.data;
   const request = requestResult.data;
-  if (
+  const duplicateIdentifiers =
     new Set(agreement.contributions.map((contribution) => contribution.contributionId)).size !==
       agreement.contributions.length ||
-    new Set(request.contributionIds).size !== request.contributionIds.length
-  ) {
+    new Set(agreement.authorizedResearcherIds).size !== agreement.authorizedResearcherIds.length ||
+    new Set(agreement.permittedPurposes).size !== agreement.permittedPurposes.length ||
+    new Set(agreement.modelUse.allowedModelIds).size !==
+      agreement.modelUse.allowedModelIds.length ||
+    new Set(agreement.modelUse.allowedJobTypes).size !==
+      agreement.modelUse.allowedJobTypes.length ||
+    new Set(agreement.benefitObligations.map((item) => item.obligationId)).size !==
+      agreement.benefitObligations.length ||
+    new Set(request.contributionIds).size !== request.contributionIds.length ||
+    (agreement.schemaVersion === '2.0.0' &&
+      new Set(agreement.requiredBenefitObligationIds).size !==
+        agreement.requiredBenefitObligationIds.length);
+  if (duplicateIdentifiers) {
     return {
       allowed: false,
       agreementId: agreement.agreementId,
@@ -142,8 +166,21 @@ export function evaluateCommunityAIAgreement(
     agreement.contributions.map((contribution) => [contribution.contributionId, contribution]),
   );
 
-  if (agreement.status !== 'active' || !agreement.effectiveAt) {
+  const effectiveTime = agreement.effectiveAt ? Date.parse(agreement.effectiveAt) : Number.NaN;
+  if (
+    agreement.status !== 'active' ||
+    !Number.isFinite(effectiveTime) ||
+    effectiveTime > now.getTime()
+  ) {
     reasons.push('no-effective-community-agreement');
+  }
+  if (
+    agreement.schemaVersion === '2.0.0' &&
+    agreement.expiresAt !== null &&
+    (!Number.isFinite(Date.parse(agreement.expiresAt)) ||
+      Date.parse(agreement.expiresAt) <= now.getTime())
+  ) {
+    reasons.push('community-agreement-expired');
   }
   if (!agreement.authorizedResearcherIds.includes(request.researcherId)) {
     reasons.push('researcher-not-authorized-by-agreement');
@@ -174,6 +211,35 @@ export function evaluateCommunityAIAgreement(
   }
   if (request.clinicalUse && !agreement.modelUse.clinicalUseAllowed) {
     reasons.push('clinical-use-prohibited-by-agreement');
+  }
+
+  if (agreement.schemaVersion === '2.0.0') {
+    const benefitsById = new Map(
+      agreement.benefitObligations.map((obligation) => [obligation.obligationId, obligation]),
+    );
+    for (const obligationId of agreement.requiredBenefitObligationIds) {
+      const obligation = benefitsById.get(obligationId);
+      if (!obligation) {
+        reasons.push('required-benefit-missing');
+        continue;
+      }
+      const agreedState = obligation.status !== 'proposed';
+      const acceptedState = ['accepted', 'evidence-recorded', 'community-reviewed'].includes(
+        obligation.status,
+      );
+      if (
+        obligation.agreedByCommunity !== agreedState ||
+        obligation.acceptedByResearchTeam !== acceptedState ||
+        (obligation.acceptedByResearchTeam && !obligation.agreedByCommunity) ||
+        (obligation.agreedByCommunity && !obligation.agreedBy) ||
+        (obligation.acceptedByResearchTeam && !obligation.acceptedBy)
+      ) {
+        reasons.push('required-benefit-state-invalid');
+        continue;
+      }
+      if (!obligation.agreedByCommunity) reasons.push('required-benefit-not-agreed');
+      else if (!obligation.acceptedByResearchTeam) reasons.push('required-benefit-not-accepted');
+    }
   }
 
   for (const contributionId of request.contributionIds) {

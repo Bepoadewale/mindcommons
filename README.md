@@ -12,6 +12,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 - An allowed operation can call a configured model; a denied operation must not call it.
 - A decision and its provenance can be inspected afterward.
 - A fictional benefit commitment can be agreed, accepted by the research team, evidenced and reviewed without claiming real-world delivery.
+- A version 2 policy may make selected benefit terms prerequisites to inference; version 1 agreements keep their original behavior.
 - A portable Community AI Agreement is checked by MindCommons and by a separate minimal Worker example.
 
 ## Current status

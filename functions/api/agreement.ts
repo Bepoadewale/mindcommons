@@ -5,6 +5,7 @@ import {
 } from '../../packages/governance/src/authorization';
 import { json, requireSession } from '../lib/http';
 import type { Context } from '../types';
+import { readRequiredBenefitIds } from '../lib/benefit-prerequisites';
 
 type PolicyRow = {
   version: number;
@@ -13,6 +14,7 @@ type PolicyRow = {
   commercial_allowed: number;
   withdrawal_mode: 'exclude-withdrawn' | 'require-all';
   effective_at: string;
+  required_benefit_ids_json: string;
 };
 type PermissionRow = {
   permission_id: string;
@@ -41,7 +43,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
 
   const [policy, permissions, benefit] = await Promise.all([
     context.env.DB.prepare(
-      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
+      "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at, required_benefit_ids_json FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
     )
       .bind(session.sessionId)
       .first<PolicyRow>(),
@@ -68,6 +70,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
           commercialAllowed: Boolean(policy.commercial_allowed),
           withdrawalMode: policy.withdrawal_mode,
           effectiveAt: policy.effective_at,
+          requiredBenefitObligationIds: readRequiredBenefitIds(policy.required_benefit_ids_json),
         }
       : null,
     contributions: SYNTHETIC_CONTRIBUTIONS,
