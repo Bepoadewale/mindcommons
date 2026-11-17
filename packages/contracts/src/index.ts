@@ -31,9 +31,19 @@ export const PermissionActionSchema = z
   })
   .strict();
 export const ChangeDemoRoleSchema = z.object({ role: DemoRoleSchema }).strict();
-export const BenefitEvidenceSchema = z
-  .object({ evidence: z.enum(['accessible-summary-prepared', 'community-review-scheduled']) })
-  .strict();
+export const BenefitActionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('agree') }).strict(),
+  z.object({ action: z.literal('accept') }).strict(),
+  z
+    .object({
+      action: z.literal('submit-evidence'),
+      evidence: z.enum(['accessible-summary-prepared', 'community-review-scheduled']),
+    })
+    .strict(),
+  z
+    .object({ action: z.literal('review'), outcome: z.enum(['accepted', 'changes-requested']) })
+    .strict(),
+]);
 
 export type DemoRoleContract = z.infer<typeof DemoRoleSchema>;
 export type ResearchRequestContract = z.infer<typeof ResearchRequestSchema>;

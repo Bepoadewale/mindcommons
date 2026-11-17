@@ -59,7 +59,12 @@ export const CommunityAIAgreementSchema = z
               'community-reviewed',
             ]),
             agreedByCommunity: z.boolean(),
+            agreedBy: z.string().max(120).nullable(),
             acceptedByResearchTeam: z.boolean(),
+            acceptedBy: z.string().max(120).nullable(),
+            evidence: z.string().max(500).nullable(),
+            reviewOutcome: z.enum(['accepted', 'changes-requested']).nullable(),
+            reviewedBy: z.string().max(120).nullable(),
           })
           .strict(),
       )

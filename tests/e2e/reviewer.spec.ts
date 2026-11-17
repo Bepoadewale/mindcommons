@@ -54,6 +54,13 @@ const demo = {
     due_at: '2026-12-16T12:00:00.000Z',
     evidence: null,
     status: 'proposed',
+    agreed_at: null,
+    agreed_by: null,
+    accepted_at: null,
+    accepted_by: null,
+    review_outcome: null,
+    reviewed_at: null,
+    reviewed_by: null,
   },
   events: [],
   runs: [],
@@ -63,8 +70,19 @@ test.beforeEach(async ({ page }) => {
   let role = 'community_representative';
   let permissions = demo.permissions.map((permission) => ({ ...permission }));
   let permissionHistory = [...demo.permissionHistory];
+  let benefit = {
+    ...demo.benefit,
+    evidence: null as string | null,
+    agreed_at: null as string | null,
+    agreed_by: null as string | null,
+    accepted_at: null as string | null,
+    accepted_by: null as string | null,
+    review_outcome: null as 'accepted' | 'changes-requested' | null,
+    reviewed_at: null as string | null,
+    reviewed_by: null as string | null,
+  };
   await page.route('**/api/demo', async (route) =>
-    route.fulfill({ json: { ...demo, demoRole: role, permissions, permissionHistory } }),
+    route.fulfill({ json: { ...demo, demoRole: role, permissions, permissionHistory, benefit } }),
   );
   await page.route('**/api/role', async (route) => {
     role = route.request().postDataJSON().role;
@@ -104,6 +122,48 @@ test.beforeEach(async ({ page }) => {
     await route.fulfill({
       json: { contributorId, status, version, correlationId: `fixture-correlation-${version}` },
     });
+  });
+  await page.route('**/api/benefit', async (route) => {
+    const body = route.request().postDataJSON() as
+      | { action: 'agree' }
+      | { action: 'accept' }
+      | { action: 'submit-evidence'; evidence: string }
+      | { action: 'review'; outcome: 'accepted' | 'changes-requested' };
+    if (body.action === 'agree') {
+      benefit = {
+        ...benefit,
+        agreed_at: '2026-11-17T12:00:00.000Z',
+        agreed_by: 'demo:community_representative',
+      };
+    } else if (body.action === 'accept') {
+      benefit = {
+        ...benefit,
+        accepted_at: '2026-11-17T12:01:00.000Z',
+        accepted_by: 'demo:researcher',
+        status: 'in_progress',
+      };
+    } else if (body.action === 'submit-evidence') {
+      benefit = {
+        ...benefit,
+        evidence:
+          body.evidence === 'accessible-summary-prepared'
+            ? 'Synthetic summary draft prepared.'
+            : 'Synthetic review scheduled.',
+        status: 'in_progress',
+        review_outcome: null,
+        reviewed_at: null,
+        reviewed_by: null,
+      };
+    } else {
+      benefit = {
+        ...benefit,
+        review_outcome: body.outcome,
+        reviewed_at: '2026-11-17T12:02:00.000Z',
+        reviewed_by: 'demo:community_representative',
+        status: 'reviewed',
+      };
+    }
+    await route.fulfill({ json: { status: benefit.status, synthetic: true } });
   });
 });
 
@@ -159,6 +219,22 @@ test('a contributor withdrawal creates a visible history version for that contri
   await expect(
     page.getByRole('button', { name: 'Grant Fictional contributor B permission' }),
   ).toBeVisible();
+});
+
+test('fictional benefit commitment requires agreement, team acceptance, evidence and review', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Agree to commitment' }).click();
+  await expect(page.getByText('Agreed by demo:community_representative')).toBeVisible();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await page.getByRole('button', { name: 'Accept as fictional research team' }).click();
+  await page.getByRole('button', { name: 'Submit fictional evidence' }).click();
+  await expect(page.getByText('Synthetic summary draft prepared.')).toBeVisible();
+  await page.getByLabel('Acting as').selectOption('community_representative');
+  await page.getByRole('button', { name: 'Accept evidence marker' }).click();
+  await expect(page.getByText('accepted by demo:community_representative')).toBeVisible();
+  await expect(page.getByText('Evidence and review history are fictional records.')).toBeVisible();
 });
 
 test('proposed future screens are labeled by implementation stage', async ({ page }) => {

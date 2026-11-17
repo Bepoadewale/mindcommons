@@ -6,13 +6,15 @@
 flowchart LR
   V[Reviewer browser] -->|static files; served without Worker invocation| A[Workers Static Assets]
   V -->|same-origin API; anonymous demo session| W[TypeScript Worker]
-  W --> G[Deterministic authorization engine]
+  W --> G[Portable Community AI Agreement evaluator]
   W --> D[(D1: synthetic session, policy, permission, audit)]
-  G -->|allowed fixed job only| AI[Workers AI]
-  W -->|decision and bounded result| V
+  G -->|approved contribution IDs only| AI[Workers AI]
+  AI -->|candidate output| G
+  G -->|release only if policy and used permissions still match| W
+  W -->|decision, provenance and bounded result| V
 ```
 
-The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference and visible output have been verified. The Worker request sets `enable_thinking: false`; an earlier 180-token call without this setting produced no visible answer. The deployed API strips reasoning metadata from the returned/stored output and treats an empty user-facing answer as a failed run. Local tests use a deterministic mock explicitly enabled for development.
+The static user interface is not an authority boundary. The Worker adapts its session policy, researcher role and individual permissions into the portable agreement, then uses its deterministic evaluator before inference. It sends only approved contribution IDs to Workers AI. At the output-release boundary it atomically rechecks the active policy configuration/version, researcher session and exact versions of every used permission; if authorization changed during inference, it persists no output and records a withholding event. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference and visible output were verified before the current governance updates; those updates still require deployment and a new live check. Local tests use a deterministic mock explicitly enabled for development. A separate, undeployed Worker example consumes the same agreement evaluator.
 
 ## Trust boundaries
 
@@ -25,7 +27,7 @@ The static user interface is not an authority boundary. The Worker loads server-
 
 ## State and records
 
-Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, policy proposal and effective version, fictional individual permission with purpose/expiry/withdrawal state and versioned history, fixed research request, authorization decision, AI execution provenance, append-oriented audit event, and hypothetical benefit commitment. Permission history records the state, version, action, actor, timestamp and correlation ID; a session permits up to 50 versions. Existing sessions receive a baseline snapshot during migration; pre-migration permission transitions cannot be reconstructed. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
+Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, proposal and effective policy versions, each synthetic contribution's purpose-scoped permission and versioned history, fixed research requests, per-contribution authorization and exclusion evidence, AI execution provenance, append-oriented audit events, and a benefit obligation with fictional community agreement, research-team acceptance, evidence and community-review states. The portable agreement exposes this policy, model restrictions and benefit state as JSON. Permission history records the state, version, action, actor, timestamp and correlation ID; a session permits up to 50 versions. Existing sessions receive a baseline snapshot during migration; pre-migration permission transitions cannot be reconstructed. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
 
 Reset and expiry delete the synthetic session and its permission history through the database's cascading foreign key. This is a temporary reviewer record, not a durable community consent ledger.
 

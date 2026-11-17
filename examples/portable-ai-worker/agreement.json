@@ -48,7 +48,12 @@
       "dueAt": "2027-01-15T00:00:00.000Z",
       "status": "accepted",
       "agreedByCommunity": true,
-      "acceptedByResearchTeam": true
+      "agreedBy": "demo:community_representative",
+      "acceptedByResearchTeam": true,
+      "acceptedBy": "demo:researcher",
+      "evidence": "Synthetic illustration only; no real benefit delivered.",
+      "reviewOutcome": null,
+      "reviewedBy": null
     }
   ]
 }
