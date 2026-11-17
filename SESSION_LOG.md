@@ -136,3 +136,15 @@
 - Post-merge CI run `44075787907` passed all four jobs, and Pages publish run `44075788109` succeeded.
 - Rechecked the production MP4 and GitHub Pages MP4 after publication: both return unauthenticated HTTPS 200 with `video/mp4`. Repository is synchronized and clean on `main`; no MindCommons PR is open and only `main` remains locally/remotely.
 - Production PWA manifest, service worker, icons, mobile viewport and offline API behavior were browser-verified. Physical Android installation remains the only unchecked demo platform criterion because no device or emulator is available. The project owner plans to upload the MP4 to YouTube later.
+
+## 2026-11-17 — PR #24 and post-merge verification
+
+- PR #24 merged through protected `main` at `bd5caf97f342c4149956aae6a3a46b64debe0c2d`; all four required checks passed in run `44076402438`. Its local and remote source branches were removed.
+- Post-merge CI run `44076756011` and Pages publish run `44076756098` both succeeded. The project checkout is clean on `main`.
+- Auditing against the full goal exposed stale phase/status language in the execution plan, architecture decisions, live model research, and video evidence. PR #25 updates those records to the deployed, live-verified state; no application code or infrastructure changes are needed for that correction.
+
+## 2026-11-17 — Android emulator PWA validation and docs reconciliation
+
+- Installed project-independent Android command-line tools and an Android 16 Google Play emulator locally; no Cloudflare or production account configuration changed.
+- Loaded the public production site in Chrome, confirmed the native “Install app” prompt, installed the MindCommons launcher shortcut, and opened it in standalone display mode. This validates emulator behavior; no physical Android handset was tested.
+- Updated current state, plan, checklist, project status and technical validation notes to distinguish emulator evidence from physical-device coverage. Documentation reconciliation remains in PR #25 and will be validated through the protected workflow.

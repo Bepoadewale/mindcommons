@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#23 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#24 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#23 source branches removed locally/remotely.
+- [x] Merged PR #1–#24 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -30,7 +30,7 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [x] Model/job/policy provenance, audit history and honest integrity limits.
 - [x] Demonstration benefit commitment and synthetic evidence, visibly hypothetical.
 - [x] Production PWA manifest and service worker load; 192 px and 512 px icons return 200; 390 px viewport has no horizontal overflow; offline API request fails clearly without caching API data; axe WCAG 2.1 A/AA passes.
-- [~] Physical Android installation prompt and installed-app behavior remain unverified because no Android device or emulator is available.
+- [x] Android 16 Google Play emulator: Chrome offered the install prompt, added the MindCommons icon to the launcher, and launched the production app in standalone display mode. This is emulator evidence, not a physical-device test.
 - [x] Positive/negative governance, consent, API integration and browser paths verified locally.
 - [x] Threat model, limits, fixed input validation, quotas and rate controls documented/implemented.
 
