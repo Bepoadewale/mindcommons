@@ -74,3 +74,4 @@
 - Reviewed the AI boundary tests: a denied research execution returns `denied` and the injected inference mock is asserted not to be called. No live model call has occurred.
 - Cloudflare token remains active but account-wide and overprivileged; it has not been used for mutations. No Cloudflare resources were changed.
 - Official Cloudflare authorization docs clarify that creating a new Worker requires product-level Workers Admin, while deployment to an existing Worker can use per-Worker Editor. Updated `STATE.md` to require dashboard pre-creation of the named Worker instead of requesting account-wide Workers Admin.
+- PR #14 was merged through protected `main` at `1a4e62a1401bd3f41caccac572c7ea5e51ac801e`; run `44025530269` passed all four required jobs. GitHub removed the remote source branch and local checkout returned to synchronized `main`. Updating acceptance and current-status records in a follow-up PR.

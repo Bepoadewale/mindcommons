@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#13 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#14 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#13 source branches removed locally/remotely.
+- [x] Merged PR #1–#14 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -34,7 +34,7 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 ## Hosting and reviewer evidence
 
-- [~] Workers Static Assets entrypoint and local Worker/D1 integration pass on `feat/workers-static-assets`; PR CI and merge are pending.
+- [x] Workers Static Assets entrypoint and local Worker/D1 integration merged through PR #14; all required CI checks passed.
 - [ ] Dedicated Cloudflare Worker with Static Assets and D1; Workers AI binding; free-tier verified.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
