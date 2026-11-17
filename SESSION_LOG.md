@@ -128,4 +128,11 @@
 - PR #22 merged through protected `main` at `9297ff2770647d189d0081654f98c8d5d8bdaec0`; all four required checks passed in run `44074505904`. GitHub removed the source branch, and local checkout returned to `main`.
 - Post-merge CI run `44074890893` passed all four jobs; GitHub Pages publish run `44074890621` succeeded.
 - The PWA evidence distinguishes production browser and offline checks from Android installation. No Android device or emulator is available in this environment.
-- Next: update persistent records for PR #22 through PR #23. Android install validation awaits access to a device; the owner plans to upload the MP4 to YouTube later.
+- Android install validation awaits access to a device; the owner plans to upload the MP4 to YouTube later.
+
+## 2026-11-17 — PR #23 and final public checks
+
+- PR #23 merged through protected `main` at `835e64c44d56dc39b4337d37508953bd4346a7ab`; all four required checks passed in run `44075432696`. GitHub removed the source branch.
+- Post-merge CI run `44075787907` passed all four jobs, and Pages publish run `44075788109` succeeded.
+- Rechecked the production MP4 and GitHub Pages MP4 after publication: both return unauthenticated HTTPS 200 with `video/mp4`. Repository is synchronized and clean on `main`; no MindCommons PR is open and only `main` remains locally/remotely.
+- Production PWA manifest, service worker, icons, mobile viewport and offline API behavior were browser-verified. Physical Android installation remains the only unchecked demo platform criterion because no device or emulator is available. The project owner plans to upload the MP4 to YouTube later.
