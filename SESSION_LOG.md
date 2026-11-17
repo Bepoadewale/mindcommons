@@ -192,3 +192,11 @@
 - New silent captioned screen recording: `apps/web/public/mindcommons-demo-captioned.mp4`, H.264 CRF 18, 1920×1080, 25 fps, 92.84 seconds, 4,609,951 bytes. It contains timed explanatory text, not speech or closed captions. Existing 90.44-second uncaptioned `mindcommons-demo.mp4` is preserved unchanged.
 - Updated landing-page primary link, preserved-original link, Pages build validator, browser link test, reviewer guide, RFP mapping, existing-solutions comparison, technical validation and project status. New video Worker/Pages publication remains pending.
 - Next: run all local checks after these edits; create, review and merge the PR through required checks; verify both MP4 URLs and landing-page links on Worker and Pages; record run IDs and branch cleanup.
+
+## 2026-11-17 — PR #34 published video and final production checks
+
+- PR #34 merged through protected `main` at `9a31042feb34987bbae3c9b10140a900435e07bd`. Its four required checks passed in run `44134264751`; post-merge CI `44134751119` and Pages publish `44134751142` succeeded. The local and remote source branches were deleted; checkout is clean on `main`.
+- Pages vision returned HTTPS 200. Captioned and original video URLs on Pages both returned unauthenticated HTTPS 200 with `video/mp4`; the new file was downloaded, probed and decoded at 1920×1080, 25 fps, 92.84 seconds and 4,609,951 bytes.
+- Immediately before deployment, Wrangler confirmed account `1630257815c70704ad812cd52c284ca2`, the named D1 database with no pending migrations, and the dedicated `mindcommons-mozilla-demo` Worker. No billing plan or unrelated resource was changed. Deployed Worker version `b01d3f96-d72a-41a2-b751-88dff3c7adc9` and published the new static asset.
+- Worker landing page and both Worker MP4s returned HTTPS 200. The captioned Worker copy was downloaded, probed and decoded; browser verification confirmed the landing page links to the new and preserved original MP4 with zero browser errors. New video public links are independently available at Worker and GitHub Pages.
+- Refreshed `STATE.md`, `CHECKLIST.md`, `PLAN.md`, evidence links, project status, reviewer guide, technical validation and session history in a documentation follow-up PR.
