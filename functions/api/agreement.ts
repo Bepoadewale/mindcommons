@@ -21,12 +21,25 @@ type PermissionRow = {
   expires_at: string;
   version: number;
 };
+type BenefitRow = {
+  title: string;
+  owner: string;
+  due_at: string;
+  evidence: string | null;
+  status: string;
+  agreed_at: string | null;
+  agreed_by: string | null;
+  accepted_at: string | null;
+  accepted_by: string | null;
+  review_outcome: 'accepted' | 'changes-requested' | null;
+  reviewed_by: string | null;
+};
 
 export async function onRequestGet(context: Context): Promise<Response> {
   const session = await requireSession(context);
   if (session instanceof Response) return session;
 
-  const [policy, permissions] = await Promise.all([
+  const [policy, permissions, benefit] = await Promise.all([
     context.env.DB.prepare(
       "SELECT version, status, allowed_purpose, commercial_allowed, withdrawal_mode, effective_at FROM policies WHERE session_id = ?1 AND status = 'active' ORDER BY version DESC LIMIT 1",
     )
@@ -37,6 +50,11 @@ export async function onRequestGet(context: Context): Promise<Response> {
     )
       .bind(session.sessionId)
       .all<PermissionRow>(),
+    context.env.DB.prepare(
+      'SELECT title, owner, due_at, evidence, status, agreed_at, agreed_by, accepted_at, accepted_by, review_outcome, reviewed_by FROM benefit_commitments WHERE session_id = ?1 AND commitment_id = ?2',
+    )
+      .bind(session.sessionId, 'benefit-findings')
+      .first<BenefitRow>(),
   ]);
 
   const agreement = communityAgreementFromFacts({
@@ -60,6 +78,32 @@ export async function onRequestGet(context: Context): Promise<Response> {
       expiresAt: permission.expires_at,
       version: permission.version,
     })),
+    benefitObligations: benefit
+      ? [
+          {
+            obligationId: 'benefit-findings',
+            description: benefit.title,
+            accountableParty: benefit.owner,
+            dueAt: benefit.due_at,
+            status: benefit.reviewed_by
+              ? 'community-reviewed'
+              : benefit.evidence
+                ? 'evidence-recorded'
+                : benefit.accepted_at
+                  ? 'accepted'
+                  : benefit.agreed_at
+                    ? 'agreed'
+                    : 'proposed',
+            agreedByCommunity: Boolean(benefit.agreed_at),
+            agreedBy: benefit.agreed_by,
+            acceptedByResearchTeam: Boolean(benefit.accepted_at),
+            acceptedBy: benefit.accepted_by,
+            evidence: benefit.evidence,
+            reviewOutcome: benefit.review_outcome,
+            reviewedBy: benefit.reviewed_by,
+          },
+        ]
+      : [],
     purpose: DEMO_PURPOSE,
     jobType: 'theme-classification',
     now: new Date(),

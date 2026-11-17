@@ -10,7 +10,7 @@ import {
   type AIInferenceBinding,
 } from '../packages/governance/src/authorization';
 import {
-  BenefitEvidenceSchema,
+  BenefitActionSchema,
   ChangeDemoRoleSchema,
   PermissionActionSchema,
   ResearchRequestSchema,
@@ -275,12 +275,23 @@ describe('strict request contracts', () => {
     ).toBe(false);
   });
 
-  it('accepts only predefined fictional benefit evidence, never free-text participant data', () => {
+  it('accepts only fixed benefit-accountability actions and fictional evidence', () => {
+    expect(BenefitActionSchema.safeParse({ action: 'agree' }).success).toBe(true);
+    expect(BenefitActionSchema.safeParse({ action: 'accept' }).success).toBe(true);
     expect(
-      BenefitEvidenceSchema.safeParse({ evidence: 'accessible-summary-prepared' }).success,
+      BenefitActionSchema.safeParse({
+        action: 'submit-evidence',
+        evidence: 'accessible-summary-prepared',
+      }).success,
     ).toBe(true);
     expect(
-      BenefitEvidenceSchema.safeParse({ evidence: 'participant Alice said ...' }).success,
+      BenefitActionSchema.safeParse({ action: 'review', outcome: 'changes-requested' }).success,
+    ).toBe(true);
+    expect(
+      BenefitActionSchema.safeParse({
+        action: 'submit-evidence',
+        evidence: 'participant Alice said ...',
+      }).success,
     ).toBe(false);
   });
 });

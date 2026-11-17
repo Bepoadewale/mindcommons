@@ -11,7 +11,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 - A server-side, deterministic policy check authorizes a fixed research operation.
 - An allowed operation can call a configured model; a denied operation must not call it.
 - A decision and its provenance can be inspected afterward.
-- A community benefit commitment can be tracked without claiming it has been delivered.
+- A fictional benefit commitment can be agreed, accepted by the research team, evidenced and reviewed without claiming real-world delivery.
 - A portable Community AI Agreement is checked by MindCommons and by a separate minimal Worker example.
 
 ## Current status

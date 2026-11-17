@@ -80,6 +80,13 @@ type DemoState = {
     due_at: string;
     evidence: string | null;
     status: string;
+    agreed_at: string | null;
+    agreed_by: string | null;
+    accepted_at: string | null;
+    accepted_by: string | null;
+    review_outcome: 'accepted' | 'changes-requested' | null;
+    reviewed_at: string | null;
+    reviewed_by: string | null;
   };
   events: EventRecord[];
   runs: RunRecord[];
@@ -152,7 +159,9 @@ export default function App() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [purpose, setPurpose] = useState('community-wellbeing-research');
-  const [benefitEvidence, setBenefitEvidence] = useState('accessible-summary-prepared');
+  const [benefitEvidence, setBenefitEvidence] = useState<
+    'accessible-summary-prepared' | 'community-review-scheduled'
+  >('accessible-summary-prepared');
   const [latest, setLatest] = useState<ActionResponse | null>(null);
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
 
@@ -244,14 +253,14 @@ export default function App() {
     );
   }
 
-  async function recordBenefit() {
+  async function updateBenefit(body: Record<string, string>, message: string) {
     await act(
       () =>
         request('/api/benefit', {
           method: 'POST',
-          body: JSON.stringify({ evidence: benefitEvidence }),
+          body: JSON.stringify(body),
         }),
-      'A fictional evidence marker was added to this demo commitment.',
+      message,
     );
   }
 
@@ -791,8 +800,9 @@ export default function App() {
                   <div className="panel-label">COMMUNITY BENEFIT</div>
                   <h3>{data.benefit.title}</h3>
                   <p>
-                    A proposed commitment attached to this synthetic research scenario. No work or
-                    payment has been delivered.
+                    A fictional commitment moves through community agreement, research-team
+                    acceptance, evidence, and community review. It is not a real payment or
+                    delivered benefit.
                   </p>
                   <div className="benefit-owner">
                     <div className="owner-avatar">FC</div>
@@ -800,23 +810,95 @@ export default function App() {
                       <strong>{data.benefit.owner}</strong>
                       <span>Fictional accountable owner</span>
                     </div>
-                    <span className="benefit-status">{data.benefit.status}</span>
+                    <span className="benefit-status">
+                      {data.benefit.reviewed_at
+                        ? 'community-reviewed'
+                        : data.benefit.review_outcome === 'changes-requested'
+                          ? 'changes-requested'
+                          : data.benefit.evidence
+                            ? 'evidence-recorded'
+                            : data.benefit.accepted_at
+                              ? 'accepted'
+                              : data.benefit.agreed_at
+                                ? 'agreed'
+                                : data.benefit.status}
+                    </span>
                   </div>
                   <div className="rule-row">
                     <span>Proposed due date</span>
                     <strong>{new Date(data.benefit.due_at).toLocaleDateString()}</strong>
                   </div>
-                  <div className="evidence-box">
-                    <span>DELIVERY EVIDENCE</span>
-                    <strong>{data.benefit.evidence ?? 'No evidence recorded yet'}</strong>
+                  <div className="rule-row">
+                    <span>Community agreement</span>
+                    <strong>
+                      {data.benefit.agreed_at
+                        ? `Agreed by ${data.benefit.agreed_by ?? 'fictional representative'}`
+                        : 'Awaiting fictional representative'}
+                    </strong>
                   </div>
-                  {role === 'community_representative' && !data.benefit.evidence ? (
+                  <div className="rule-row">
+                    <span>Research-team acceptance</span>
+                    <strong>
+                      {data.benefit.accepted_at
+                        ? `Accepted by ${data.benefit.accepted_by ?? 'fictional research team'}`
+                        : 'Awaiting fictional research team'}
+                    </strong>
+                  </div>
+                  <div className="evidence-box">
+                    <span>FICTIONAL EVIDENCE RECORD</span>
+                    <strong>{data.benefit.evidence ?? 'No synthetic evidence recorded yet'}</strong>
+                  </div>
+                  <div className="rule-row">
+                    <span>Community review outcome</span>
+                    <strong>
+                      {data.benefit.review_outcome
+                        ? `${data.benefit.review_outcome} by ${data.benefit.reviewed_by ?? 'fictional representative'}`
+                        : 'Not reviewed yet'}
+                    </strong>
+                  </div>
+                  {role === 'community_representative' && !data.benefit.agreed_at ? (
+                    <button
+                      className="button button-outline"
+                      disabled={busy}
+                      onClick={() =>
+                        void updateBenefit(
+                          { action: 'agree' },
+                          'The fictional representative agreed to this proposed obligation.',
+                        )
+                      }
+                    >
+                      Agree to commitment
+                    </button>
+                  ) : null}
+                  {role === 'researcher' && data.benefit.agreed_at && !data.benefit.accepted_at ? (
+                    <button
+                      className="button button-outline"
+                      disabled={busy}
+                      onClick={() =>
+                        void updateBenefit(
+                          { action: 'accept' },
+                          'The fictional research team accepted responsibility for this commitment.',
+                        )
+                      }
+                    >
+                      Accept as fictional research team
+                    </button>
+                  ) : null}
+                  {role === 'researcher' &&
+                  data.benefit.accepted_at &&
+                  (!data.benefit.evidence ||
+                    data.benefit.review_outcome === 'changes-requested') ? (
                     <div className="benefit-update">
-                      <label htmlFor="benefit-evidence">Add a fictional evidence marker</label>
+                      <label htmlFor="benefit-evidence">Choose a fictional evidence marker</label>
                       <select
                         id="benefit-evidence"
                         value={benefitEvidence}
-                        onChange={(event) => setBenefitEvidence(event.target.value)}
+                        onChange={(event) =>
+                          setBenefitEvidence(
+                            event.target.value as
+                              'accessible-summary-prepared' | 'community-review-scheduled',
+                          )
+                        }
                         disabled={busy}
                       >
                         <option value="accessible-summary-prepared">
@@ -829,15 +911,50 @@ export default function App() {
                       <button
                         className="button button-outline"
                         disabled={busy}
-                        onClick={() => void recordBenefit()}
+                        onClick={() =>
+                          void updateBenefit(
+                            { action: 'submit-evidence', evidence: benefitEvidence },
+                            'A fictional research-team evidence marker was recorded.',
+                          )
+                        }
                       >
-                        Record demo evidence
+                        Submit fictional evidence
+                      </button>
+                    </div>
+                  ) : null}
+                  {role === 'community_representative' &&
+                  data.benefit.evidence &&
+                  !data.benefit.reviewed_at ? (
+                    <div className="button-row">
+                      <button
+                        className="button button-dark"
+                        disabled={busy}
+                        onClick={() =>
+                          void updateBenefit(
+                            { action: 'review', outcome: 'accepted' },
+                            'The fictional community representative accepted the evidence marker.',
+                          )
+                        }
+                      >
+                        Accept evidence marker
+                      </button>
+                      <button
+                        className="button button-outline"
+                        disabled={busy}
+                        onClick={() =>
+                          void updateBenefit(
+                            { action: 'review', outcome: 'changes-requested' },
+                            'The fictional community representative requested a revision.',
+                          )
+                        }
+                      >
+                        Request changes
                       </button>
                     </div>
                   ) : null}
                   <p className="panel-footnote">
-                    Evidence markers are fictional demo records, not proof that a real community
-                    benefit was delivered.
+                    Evidence and review history are fictional records. A review outcome is not proof
+                    that a real community benefit was delivered.
                   </p>
                 </article>
               </div>

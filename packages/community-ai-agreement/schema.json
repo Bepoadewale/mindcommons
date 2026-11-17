@@ -196,8 +196,63 @@
           "agreedByCommunity": {
             "type": "boolean"
           },
+          "agreedBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "acceptedByResearchTeam": {
             "type": "boolean"
+          },
+          "acceptedBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewOutcome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["accepted", "changes-requested"]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewedBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -207,7 +262,12 @@
           "dueAt",
           "status",
           "agreedByCommunity",
-          "acceptedByResearchTeam"
+          "agreedBy",
+          "acceptedByResearchTeam",
+          "acceptedBy",
+          "evidence",
+          "reviewOutcome",
+          "reviewedBy"
         ],
         "additionalProperties": false
       }

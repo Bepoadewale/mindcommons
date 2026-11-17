@@ -65,6 +65,7 @@ export interface AuthorizationFacts {
   } | null;
   contributions: SyntheticContribution[];
   permissions: PermissionFact[];
+  benefitObligations?: CommunityAIAgreement['benefitObligations'];
   purpose: ResearchPurpose;
   jobType: string;
   now: Date;
@@ -122,7 +123,7 @@ export function communityAgreementFromFacts(facts: AuthorizationFacts): Communit
       publicOutputsAllowed: false,
       clinicalUseAllowed: false,
     },
-    benefitObligations: [
+    benefitObligations: facts.benefitObligations ?? [
       {
         obligationId: 'fictional-accessible-summary',
         description:
@@ -131,7 +132,12 @@ export function communityAgreementFromFacts(facts: AuthorizationFacts): Communit
         dueAt: '2027-01-15T00:00:00.000Z',
         status: 'proposed',
         agreedByCommunity: false,
+        agreedBy: null,
         acceptedByResearchTeam: false,
+        acceptedBy: null,
+        evidence: null,
+        reviewOutcome: null,
+        reviewedBy: null,
       },
     ],
   };

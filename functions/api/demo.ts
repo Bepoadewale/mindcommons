@@ -165,7 +165,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
       .bind(sessionId)
       .all(),
     context.env.DB.prepare(
-      'SELECT title, owner, due_at, evidence, status FROM benefit_commitments WHERE session_id = ?1',
+      'SELECT title, owner, due_at, evidence, status, agreed_at, agreed_by, accepted_at, accepted_by, review_outcome, reviewed_at, reviewed_by FROM benefit_commitments WHERE session_id = ?1',
     )
       .bind(sessionId)
       .first<{

@@ -212,7 +212,7 @@ try {
     await api('/api/benefit', {
       method: 'POST',
       cookie: initialCookie,
-      body: { evidence: 'accessible-summary-prepared' },
+      body: { action: 'agree' },
     }),
     403,
   );
@@ -501,22 +501,164 @@ try {
     await api('/api/benefit', {
       method: 'POST',
       cookie: resetCookie,
-      body: { evidence: 'participant Alice said ...' },
+      body: { action: 'submit-evidence', evidence: 'participant Alice said ...' },
     }),
     400,
   );
-  const benefit = await expectJson(
+  await expectJson(
     await api('/api/benefit', {
       method: 'POST',
       cookie: resetCookie,
-      body: { evidence: 'accessible-summary-prepared' },
+      body: { action: 'accept' },
+    }),
+    403,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'researcher' },
     }),
     200,
   );
-  assert.equal(benefit.synthetic, true);
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'accept' },
+    }),
+    409,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  const agreedBenefit = await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'agree' },
+    }),
+    200,
+  );
+  assert.equal(agreedBenefit.status, 'agreed');
+  assert.equal(agreedBenefit.action, 'agree');
+  const acceptedAgreement = await expectJson(
+    await api('/api/agreement', { cookie: resetCookie }),
+    200,
+  );
+  assert.equal(acceptedAgreement.benefitObligations[0].status, 'agreed');
+  assert.equal(acceptedAgreement.benefitObligations[0].agreedBy, 'demo:community_representative');
+  assert.equal(acceptedAgreement.benefitObligations[0].acceptedByResearchTeam, false);
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  const acceptedBenefit = await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'accept' },
+    }),
+    200,
+  );
+  assert.equal(acceptedBenefit.status, 'in_progress');
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'submit-evidence', evidence: 'accessible-summary-prepared' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'submit-evidence', evidence: 'accessible-summary-prepared' },
+    }),
+    409,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'review', outcome: 'changes-requested' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'researcher' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'submit-evidence', evidence: 'accessible-summary-prepared' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/role', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { role: 'community_representative' },
+    }),
+    200,
+  );
+  await expectJson(
+    await api('/api/benefit', {
+      method: 'POST',
+      cookie: resetCookie,
+      body: { action: 'review', outcome: 'accepted' },
+    }),
+    200,
+  );
   const benefitState = await (await api('/api/demo', { cookie: resetCookie })).json();
   assert.equal(benefitState.benefit.status, 'reviewed');
+  assert.equal(benefitState.benefit.agreed_by, 'demo:community_representative');
+  assert.equal(benefitState.benefit.accepted_by, 'demo:researcher');
+  assert.equal(benefitState.benefit.review_outcome, 'accepted');
+  assert.equal(benefitState.benefit.reviewed_by, 'demo:community_representative');
   assert.match(benefitState.benefit.evidence, /Synthetic evidence/);
+  for (const action of [
+    'benefit-commitment-agreed',
+    'benefit-accepted-by-research-team',
+    'benefit-evidence-submitted',
+    'benefit-evidence-community-reviewed',
+  ]) {
+    assert.ok(
+      benefitState.events.some((event) => event.action === action),
+      action,
+    );
+  }
+  const reviewedAgreement = await expectJson(
+    await api('/api/agreement', { cookie: resetCookie }),
+    200,
+  );
+  assert.equal(reviewedAgreement.benefitObligations[0].status, 'community-reviewed');
+  assert.equal(reviewedAgreement.benefitObligations[0].reviewOutcome, 'accepted');
   const activated = await expectJson(
     await api('/api/policy/decision', {
       method: 'POST',

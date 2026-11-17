@@ -135,8 +135,15 @@ try {
     .getByText(/community-policy-requires-all-contributors-to-have-active-permission/i)
     .waitFor();
   await page.getByLabel('Acting as').selectOption('community_representative');
-  await page.getByRole('button', { name: 'Record demo evidence' }).click();
+  await page.getByRole('button', { name: 'Agree to commitment' }).click();
+  await page.getByText('Agreed by demo:community_representative').waitFor();
+  await page.getByLabel('Acting as').selectOption('researcher');
+  await page.getByRole('button', { name: 'Accept as fictional research team' }).click();
+  await page.getByRole('button', { name: 'Submit fictional evidence' }).click();
   await page.getByText(/Synthetic evidence: an accessible summary draft was prepared/i).waitFor();
+  await page.getByLabel('Acting as').selectOption('community_representative');
+  await page.getByRole('button', { name: 'Accept evidence marker' }).click();
+  await page.getByText('accepted by demo:community_representative').waitFor();
 
   await page.evaluate(async () => {
     if ('serviceWorker' in navigator) await navigator.serviceWorker.ready;
