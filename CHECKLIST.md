@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#6 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#8 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#6 source branches removed locally/remotely.
+- [x] Merged PR #1–#8 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -37,6 +37,6 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [ ] Dedicated Cloudflare Pages and D1 resources; Workers AI binding; free-tier verified.
 - [ ] Public HTTPS production URL works independently of Mac.
 - [ ] Public video records verified production behavior.
-- [x] Future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, assets, mobile width, and axe WCAG 2.1 A/AA verified. It is static and is not the live backend demo.
+- [x] Eight-screen future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, all disclosures, assets, 390 px mobile width, no API calls, and axe WCAG 2.1 A/AA verified in Chromium. It is static and is not the live backend demo.
 - [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
 - [~] Source and static vision links verified; live backend demo and technical video remain unavailable pending Cloudflare authorization and recording.
