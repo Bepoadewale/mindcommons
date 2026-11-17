@@ -54,6 +54,14 @@ Reviewed 2026-11-17. Platform quotas and model availability can change; recheck 
 - Git 2.50.1, GitHub CLI 2.101.0 (authenticated as `Bepoadewale`), Node 24.21.0, npm 11.19.0, Python 3.14.0, Docker 29.0.1, Cloudflared 2026.9.3.
 - GitHub identity is `Bepoadewale`; public repository is deployed. Cloudflare account and target-resource identity were confirmed before the project-only mutations; no token value is recorded here. The user-authorized broad token remains in Keychain and was never copied to GitHub Actions or the repository.
 
+## Read-only Cloudflare preflight for pending agreement updates (2026-11-18)
+
+- Confirmed the target Cloudflare account `1630257815c70704ad812cd52c284ca2`, Worker `mindcommons-mozilla-demo`, and D1 database `mindcommons-demo-d1` (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) using read-only identity/resource/migration checks. The deployed Worker remains version `b01d3f96-d72a-41a2-b751-88dff3c7adc9`.
+- The remote D1 migration list shows `0007_policy_benefit_prerequisites.sql` and `0008_research_decision_receipts.sql` pending. No migration or Worker deployment was attempted.
+- The account subscription-list API returned HTTP 403 for both configured Cloudflare token services. Cloudflare documents that this read requires `Billing Read` or `Billing Write`: <https://developers.cloudflare.com/api/resources/accounts/subresources/subscriptions/methods/get/>. Thus this run could not verify current account billing/free-tier status. Model eligibility does not establish account billing status.
+- This is a deployment stop condition under the project rules. No plan, paid add-on, route, unrelated project resource, or DavDeploy resource was changed.
+- PR #40's GitHub Pages wireframe publish succeeded in run `44192355348`, and all jobs in post-merge main CI run `44192355625` passed, including browser acceptance.
+
 ## Live model validation update (2026-11-17)
 
 - An initial bounded call used the 180-token cap for reasoning and produced no visible text. The implementation added Cloudflare's documented `chat_template_kwargs: { enable_thinking: false }`, sanitized the result to user-facing text, and treated empty output as failure. A subsequent bounded call in the deployed demo returned visible non-empty text and was recorded in the published 1080p capture. Cloudflare's official Workers AI setup example uses this setting for Gemma 4: <https://developers.cloudflare.com/workers-ai/get-started/workers-wrangler/>. The model documentation lists this option and the model's input parameters: <https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/>.

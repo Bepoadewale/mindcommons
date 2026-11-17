@@ -1,8 +1,8 @@
 # Project status
 
-**Status on 2026-11-17:** MindCommons is a public technical prototype, not an awarded Mozilla project, established cooperative, SRHIN partnership, or real community pilot. It uses fictional community records and synthetic research material only.
+**Status on 2026-11-18:** MindCommons is a public technical prototype, not an awarded Mozilla project, established cooperative, SRHIN partnership, or real community pilot. It uses fictional community records and synthetic research material only.
 
-PR #37 (benefit prerequisites and Agreement v2), PR #38 (consent explanation, governance options and privacy documentation), and PR #39 (receipt endpoint/migration and portable conformance suite) are merged to protected `main`; required checks and post-merge CI/Pages publish succeeded. None has been deployed to the hosted Worker. The current feature branch adds a guided reviewer walkthrough and deterministic policy preview; local `npm run verify`, 8/8 reviewer browser tests, and full-stack Worker/D1 browser acceptance pass with mock inference. PR/CI are pending.
+PRs #37–#40 are merged to protected `main`; all required PR checks passed. PR #40's post-merge CI run `44192355625` and static Pages publish run `44192355348` passed. PRs #37–#40 are not deployed to the hosted Worker. Local verification for PR #40 passed `npm run verify`, 8/8 reviewer browser tests, and full-stack Worker/D1 browser acceptance with mock inference.
 
 ## What works
 
@@ -11,7 +11,7 @@ PR #37 (benefit prerequisites and Agreement v2), PR #38 (consent explanation, go
 - The synthetic Community AI Agreement has a machine-readable JSON Schema, shared TypeScript/Zod contract, and deterministic reference evaluator. The MindCommons API uses the evaluator; a separate minimal Worker example also consumes the agreement in tests. The agreement cannot control services that ignore it, uncontrolled dataset/model copies, or already released results.
 - A fresh live benefit scenario recorded the fictional community representative's agreement, the fictional research team's acceptance, a fixed synthetic evidence marker, and an accepted community review. It makes no real payment or delivery claim.
 - Main CI run `44134751119` passed all four required checks after PR #34. Local verification passed 38 unit tests, six reviewer browser tests, three static vision tests, local Worker/D1 integration, and output-release concurrency cases. Mocked local inference is not counted as a live model call.
-- Fellowship follow-up branch local verification on 2026-11-17 passed `npm run verify` (55 unit tests plus local Worker/D1 integration), `npm run test:e2e` (7/7), `npm run test:e2e:fullstack`, and `npm run test:agreement` (27/27). Tests use a deterministic mock where AI is invoked. This branch has not yet passed GitHub CI and does not change production.
+- PR #40 local verification on 2026-11-18 passed `npm run verify` (55 unit tests plus local Worker/D1 integration), `npm run test:e2e` (8/8), `npm run test:e2e:fullstack`, and `npm run test:agreement` (27/27). Tests use a deterministic mock where AI is invoked. The preview makes no AI call; production changes are not deployed.
 - Android 16 Google Play emulator checks verified the Chrome install prompt, launcher shortcut and standalone launch. No physical-device test has been done.
 
 ## Public evidence
@@ -28,10 +28,10 @@ PR #37 (benefit prerequisites and Agreement v2), PR #38 (consent explanation, go
 
 - No community pilot, participant feedback, SRHIN endorsement, clinical validation, real benefit delivery, or patient data is involved.
 - Demo seats are not authenticated identities or evidence of legitimate community authority. Agreements can only constrain participating services that implement and honor them.
-- A prior same-day Cloudflare preflight reported zero active paid subscriptions. A fresh subscription-list API request returned HTTP 403 `Authentication error`, so billing status could not be re-read through that endpoint. No plan, subscription, add-on, or paid resource was created or changed in these deployments. The configured model is listed as Workers Free eligible. Free quotas are shared account-wide.
+- Read-only preflight confirmed the dedicated Cloudflare account, Worker and D1, but account subscription/billing reads returned HTTP 403 for both configured tokens. Current billing/free-tier status is therefore unverified; no deployment or migration was attempted. The official subscription-list API requires `Billing Read` or `Billing Write`. Free model eligibility alone does not verify account billing status. See [technical validation](../research/technical-validation.md).
 - The new video is silent with burned-in explanatory on-screen captions. These are not a transcript, narration, or closed captions. The project owner plans to upload an MP4 to YouTube; no upload is claimed.
 - Figma sharing was not verified; the static `/vision/` page remains the honest fallback.
 
 ## Next work
 
-Complete protected PR/CI for conformance and receipt work, then guide the reviewer through benefit gating and decision evidence and reconcile the public status and evidence links. The hosted Worker predates PRs #37–#39; remote migrations and deployment require fresh successful free-tier/billing verification, exact-resource preflight and no-charge confirmation. Do not imply the new benefit gate or receipt is live before production verification. Optional future tasks include physical Android device testing and owner-led YouTube upload. Community co-design, ethics/safeguarding review and any pilot depend on an authorized host relationship and are not claimed as completed. The Mozilla application remains separate.
+The hosted Worker predates PRs #37–#40; migrations 0007 and 0008 are pending remotely. Remote migration and deployment are blocked until current billing/free-tier status is verifiably read and exact-resource/no-charge preflight passes. Do not imply benefit gating, receipts or the reviewer preview are live on the Worker. Remaining owner-dependent work includes obtaining billing-read access or confirming billing in Cloudflare, and optionally uploading the MP4 to YouTube. Physical Android testing is optional. Community co-design, ethics/safeguarding review and any pilot depend on an authorized host relationship and are not claimed as completed. The Mozilla application remains separate.
