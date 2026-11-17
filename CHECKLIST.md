@@ -6,9 +6,9 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
 - [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#26 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
+- [x] PRs #1–#28 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
 - [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#26 source branches removed locally/remotely.
+- [x] Merged PR #1–#28 source branches removed locally/remotely.
 
 ## Phase 0
 
@@ -23,7 +23,7 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [x] Synthetic community and visitor-isolated demo session.
 - [x] Policy proposals and explicit server-side representative role check for activation.
 - [x] Separate individual permissions, expiry and withdrawal are checked independently from collective policy.
-- [~] Permission version-history migration, API and UI pass local integration and browser tests; production migration/deployment and live verification remain.
+- [x] Permission version-history migration, API and accessible UI pass local tests and live production checks; withdrawal blocks requests before inference and grant creates a new history version.
 - [x] Server-side fail-closed authorization and reason evidence.
 - [x] Live fixed job returns visible Workers AI output; prohibited commercial request is rejected before inference.
 - [x] API strips model reasoning metadata, rejects empty answers, and presents the answer more clearly; PR #19 is merged and deployed.
@@ -38,7 +38,7 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 ## Hosting and reviewer evidence
 
 - [x] Workers Static Assets entrypoint and local Worker/D1 integration merged through PR #14; all required CI checks passed.
-- [x] Dedicated D1 database `mindcommons-demo-d1` created and all three migrations applied; account has zero subscriptions and Workers Free is Cloudflare's default.
+- [x] Dedicated D1 database `mindcommons-demo-d1` created and all four migrations applied; the 2026-11-17 account preflight reported zero active subscriptions and Workers Free is Cloudflare's default.
 - [x] Dedicated Cloudflare Worker with Static Assets deployed to `workers.dev`; D1 and Workers AI bindings are configured.
 - [x] Public HTTPS production URL serves the application and API independently of Mac.
 - [x] Live synthetic AI call and denied request are verified; Cloudflare uses the reasoning-disabled model setting.
@@ -48,3 +48,4 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 - [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
 - [x] Source, live backend, and production video links verified.
 - [x] GitHub Pages vision page and mirrored MP4 fallback: PR #20 fixed the build sequence; post-merge Pages publish run `44072149990` succeeded. Both public URLs return HTTPS 200, and the MP4 is `video/mp4`.
+- [x] PR #28 adds session-scoped permission history; all four PR checks and post-merge CI/Pages runs passed. Production migration `0004` and Worker version `de7c9b35-6837-44a9-bd4a-a08c6550f64f` are deployed. Live browser validation observed history versions 1–3, withdrawal denial, one genuine Workers AI result, and commercial-use denial before inference.

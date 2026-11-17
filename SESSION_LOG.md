@@ -166,3 +166,12 @@
 - Completion audit found that the consent table's version counter did not retain prior states. Added a session-scoped history migration, atomic history writes for grant/withdraw actions, API readback, an accessible history timeline, a 50-version cap, and migration backfill documentation.
 - Local `npm run verify`, `npm run test:e2e` (5 tests), and `npm run test:e2e:fullstack` passed. The local integration verifies initial, withdrawn and isolated histories, reset cleanup, and the version cap. All local AI calls use the explicitly labeled mock.
 - Current branch: `feat/individual-permission-history`. The production D1 migration and Worker deployment are not yet performed; complete them only after the feature PR passes required checks and account/resource/billing preflight.
+
+## 2026-11-17 — PR #28 deployment and live consent-history verification
+
+- PR #28 merged through protected `main` at `0c80c29`; required checks run `44097549991` passed all four jobs. Post-merge CI run `44097992360` and Pages run `44097992452` passed. The feature source branch was removed; local checkout is on `main`.
+- Read-only preflight matched account `1630257815c70704ad812cd52c284ca2`, Worker `mindcommons-mozilla-demo`, and D1 `mindcommons-demo-d1` (`9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`). The current token could read the resources but Cloudflare denied billing API access; the same-day prior account preflight had reported zero active subscriptions. Official current free-tier limits were checked; migration/deploy changed no plan, route, or paid resource.
+- Applied only D1 migration `0004_individual_permission_history.sql`; remote migration listing reports no pending changes and an aggregate read reported 9 permission-history rows after backfill.
+- Deployed Worker version `de7c9b35-6837-44a9-bd4a-a08c6550f64f` to the existing `workers.dev` hostname with the existing D1/AI/assets bindings.
+- Live Chromium verified history v1 (granted), v2 (withdrawn), v3 (granted); a withdrawn-permission request returned 403 before inference; one synthetic authorized request completed with non-empty Cloudflare Workers AI output; commercial advertising returned 403 before inference; no browser errors. Landing page and GitHub Pages vision page both returned HTTPS 200.
+- `npm run verify`, `npm run test:e2e` (5 tests), and `npm run test:e2e:fullstack` passed locally. Local model behavior uses the explicitly labeled deterministic mock.
