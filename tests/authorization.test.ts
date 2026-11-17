@@ -103,7 +103,10 @@ describe('AI execution boundary', () => {
     expect(run).toHaveBeenCalledTimes(1);
     expect(run).toHaveBeenCalledWith(
       DEMO_MODEL_ID,
-      expect.objectContaining({ max_completion_tokens: 180 }),
+      expect.objectContaining({
+        max_completion_tokens: 180,
+        chat_template_kwargs: { enable_thinking: false },
+      }),
     );
     expect(JSON.stringify(run.mock.calls[0])).not.toContain('patient');
     expect(SYNTHETIC_CORPUS).toContain('Fictional participant');

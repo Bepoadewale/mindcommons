@@ -2,7 +2,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, resolve } from 'node:path';
 
-const root = resolve(import.meta.dirname, '../dist');
+const root = resolve(import.meta.dirname, '../dist-vision');
 const base = '/mindcommons/';
 const types = {
   '.css': 'text/css; charset=utf-8',

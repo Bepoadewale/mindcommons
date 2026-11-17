@@ -1,6 +1,6 @@
 # System overview
 
-## Implemented local prototype architecture (not deployed)
+## Deployed prototype architecture
 
 ```mermaid
 flowchart LR
@@ -12,7 +12,7 @@ flowchart LR
   W -->|decision and bounded result| V
 ```
 
-The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Locally, the inference path uses a deterministic mock explicitly enabled for development; production inference has not been verified.
+The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference has been verified, but a live response initially used its bounded output budget for reasoning and returned no visible answer. The pending model-setting fix must be redeployed and verified before the displayed inference result is treated as complete. Local tests use a deterministic mock explicitly enabled for development.
 
 ## Trust boundaries
 

@@ -14,11 +14,11 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 
 ## Current status
 
-The core synthetic scenario is implemented and runs locally. Unit, local Worker + D1 integration, browser, and full-stack browser checks pass. The full-stack test uses an explicitly labelled deterministic mock, so it does not prove a live model call. No production Cloudflare resources or public demo have been deployed. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
+The demo is publicly hosted at the URL below. Its server checks synthetic individual permission and community policy before a fixed model call. A bounded live call to Cloudflare Workers AI and a server-side rejection of prohibited commercial use have been verified. The live browser flow and video are being finalized; local automated tests continue to use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
 
 ## Architecture direction
 
-The implementation uses a React and TypeScript single-page application, a Cloudflare Worker with Static Assets, D1, and a Workers AI binding for a possible live deployment, subject to account billing and write-scope verification. Static assets remain public and are served without Worker invocation; all authorization runs in the API Worker. Local inference uses an explicit deterministic mock. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally. A separate static vision-only build is prepared for GitHub Pages; it contains no backend or inference behavior.
+The implementation uses a React and TypeScript single-page application, a Cloudflare Worker with Static Assets, D1, and a Workers AI binding. Static assets are served without Worker invocation; authorization runs in the API Worker. Local tests use an explicit deterministic mock; the hosted demo calls the configured Workers AI model for its approved synthetic job. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally and as a static GitHub Pages site; it contains no backend or inference behavior.
 
 ## Develop and verify
 
@@ -34,8 +34,8 @@ npm run dev
 ## Public links
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
-- Live demonstration: not deployed yet
-- Technical video: not recorded yet
+- Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
+- Technical video: in progress; the reviewed draft showed an empty visible AI answer and is not public evidence.
 - Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
 
 ## Privacy, research, and governance limits

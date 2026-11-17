@@ -96,6 +96,7 @@ export async function executeResearch(
       { role: 'user', content: SYNTHETIC_CORPUS },
     ],
     max_completion_tokens: 180,
+    chat_template_kwargs: { enable_thinking: false },
   });
   return { status: 'completed', decision, modelId: DEMO_MODEL_ID, output };
 }
