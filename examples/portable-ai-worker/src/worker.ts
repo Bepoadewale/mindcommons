@@ -115,12 +115,14 @@ export function createAgreementAIWorker(
               status: 'withheld',
               error: 'authorization_changed_before_output_release',
               resultReleased: false,
+              decision: evaluation,
             },
             { status: 409 },
           );
         }
         return Response.json({
           status: 'completed',
+          decision: evaluation,
           agreementId: evaluation.agreementId,
           policyVersion: evaluation.policyVersion,
           processedContributionIds: evaluation.eligibleContributionIds,

@@ -12,6 +12,7 @@ import {
 import type { Context } from '../../types';
 import { inferenceFor } from '../../lib/inference';
 import { readRequiredBenefitIds } from '../../lib/benefit-prerequisites';
+import { createDecisionReceipt } from '../../lib/decision-receipt';
 import {
   audit,
   createCorrelationId,
@@ -177,8 +178,8 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   // Insert a provisional record. The deterministic check still runs before the inference binding.
   await context.env.DB.prepare(
-    `INSERT INTO research_runs(run_id, session_id, purpose, job_type, status, policy_version, decision_reasons, model_id, created_at)
-     VALUES (?1, ?2, ?3, ?4, 'running', ?5, '[]', NULL, ?6)`,
+    `INSERT INTO research_runs(run_id, session_id, purpose, job_type, status, policy_version, decision_reasons, model_id, created_at, correlation_id)
+     VALUES (?1, ?2, ?3, ?4, 'running', ?5, '[]', NULL, ?6, ?7)`,
   )
     .bind(
       runId,
@@ -187,17 +188,20 @@ export async function onRequestPost(context: Context): Promise<Response> {
       parsed.data.jobType,
       facts.activePolicy?.version ?? null,
       startedAt,
+      correlationId,
     )
     .run();
 
   const decision = authorizeResearch(facts);
+  let receipt = createDecisionReceipt(runId, startedAt, correlationId, facts, decision);
   if (!decision.allowed) {
     await context.env.DB.prepare(
-      "UPDATE research_runs SET status = 'denied', decision_reasons = ?1, contribution_decisions_json = ?2, completed_at = ?3 WHERE session_id = ?4 AND run_id = ?5",
+      "UPDATE research_runs SET status = 'denied', decision_reasons = ?1, contribution_decisions_json = ?2, decision_receipt_json = ?3, completed_at = ?4 WHERE session_id = ?5 AND run_id = ?6",
     )
       .bind(
         JSON.stringify(decision.reasons),
         contributionDecisionEvidence(decision),
+        JSON.stringify(receipt),
         now(),
         session.sessionId,
         runId,
@@ -228,10 +232,27 @@ export async function onRequestPost(context: Context): Promise<Response> {
     .bind(day)
     .first<{ run_count: number }>();
   if (!quota) {
+    receipt = {
+      ...receipt,
+      execution: {
+        status: 'not-started',
+        inferenceAttempted: false,
+        inferenceMode: null,
+        modelId: null,
+        outputReleased: false,
+        reason: 'daily-demo-ai-limit-reached',
+      },
+    };
     await context.env.DB.prepare(
-      "UPDATE research_runs SET status = 'failed', decision_reasons = ?1, completed_at = ?2 WHERE session_id = ?3 AND run_id = ?4",
+      "UPDATE research_runs SET status = 'failed', decision_reasons = ?1, decision_receipt_json = ?2, completed_at = ?3 WHERE session_id = ?4 AND run_id = ?5",
     )
-      .bind(JSON.stringify(['daily-demo-ai-limit-reached']), now(), session.sessionId, runId)
+      .bind(
+        JSON.stringify(['daily-demo-ai-limit-reached']),
+        JSON.stringify(receipt),
+        now(),
+        session.sessionId,
+        runId,
+      )
       .run();
     await audit(
       context.env.DB,
@@ -252,19 +273,54 @@ export async function onRequestPost(context: Context): Promise<Response> {
     );
   }
 
-  let inferenceMode: 'live' | 'mock';
+  let inferenceMode: 'live' | 'mock' | null = null;
   let execution;
   try {
     const inference = inferenceFor(context.env);
     inferenceMode = inference.mode;
-    execution = await executeResearch(facts, inference.binding);
+    execution = await executeResearch(facts, inference.binding, async () => {
+      const attemptedReceipt = {
+        ...receipt,
+        execution: {
+          status: 'running' as const,
+          inferenceAttempted: true,
+          inferenceMode: inference.mode,
+          modelId: DEMO_MODEL_ID,
+          outputReleased: false,
+          reason: null,
+        },
+      };
+      const attemptUpdate = await context.env.DB.prepare(
+        "UPDATE research_runs SET inference_attempted = 1, decision_receipt_json = ?1 WHERE session_id = ?2 AND run_id = ?3 AND status = 'running'",
+      )
+        .bind(JSON.stringify(attemptedReceipt), session.sessionId, runId)
+        .run();
+      if (attemptUpdate.meta.changes !== 1) throw new Error('research_run_unavailable');
+      receipt = attemptedReceipt;
+    });
   } catch {
     const message =
       'The configured model could not complete this synthetic research job. No result was produced.';
     await context.env.DB.prepare(
-      "UPDATE research_runs SET status = 'failed', decision_reasons = ?1, completed_at = ?2 WHERE session_id = ?3 AND run_id = ?4",
+      "UPDATE research_runs SET status = 'failed', decision_reasons = ?1, decision_receipt_json = ?2, completed_at = ?3 WHERE session_id = ?4 AND run_id = ?5",
     )
-      .bind(JSON.stringify(['model-inference-failed']), now(), session.sessionId, runId)
+      .bind(
+        JSON.stringify(['model-inference-failed']),
+        JSON.stringify({
+          ...receipt,
+          execution: {
+            status: 'failed',
+            inferenceAttempted: receipt.execution.inferenceAttempted,
+            inferenceMode: receipt.execution.inferenceAttempted ? inferenceMode : null,
+            modelId: receipt.execution.inferenceAttempted ? DEMO_MODEL_ID : null,
+            outputReleased: false,
+            reason: 'model-inference-failed',
+          },
+        }),
+        now(),
+        session.sessionId,
+        runId,
+      )
       .run();
     await audit(
       context.env.DB,
@@ -296,6 +352,17 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   // This conditional UPDATE is the result-release boundary: it persists output only if
   // the same researcher, policy version, and every used permission remain effective.
+  receipt = {
+    ...receipt,
+    execution: {
+      status: 'completed',
+      inferenceAttempted: true,
+      inferenceMode,
+      modelId: DEMO_MODEL_ID,
+      outputReleased: true,
+      reason: null,
+    },
+  };
   const guardBindings: (string | number | null)[] = [
     session.sessionId,
     facts.activePolicy!.version,
@@ -309,16 +376,16 @@ export async function onRequestPost(context: Context): Promise<Response> {
   ];
   let guardSql = `
     AND EXISTS (
-      SELECT 1 FROM policies p WHERE p.session_id = ?9 AND p.status = 'active'
-        AND p.version = ?10 AND p.withdrawal_mode = ?11
-        AND p.allowed_purpose = ?12 AND p.commercial_allowed = ?13
-        AND p.effective_at = ?14 AND p.required_benefit_ids_json = ?15
+      SELECT 1 FROM policies p WHERE p.session_id = ?10 AND p.status = 'active'
+        AND p.version = ?11 AND p.withdrawal_mode = ?12
+        AND p.allowed_purpose = ?13 AND p.commercial_allowed = ?14
+        AND p.effective_at = ?15 AND p.required_benefit_ids_json = ?16
     )
     AND EXISTS (
-      SELECT 1 FROM sessions s WHERE s.session_id = ?16
-        AND s.actor_role = 'researcher' AND s.expires_at > ?17
+      SELECT 1 FROM sessions s WHERE s.session_id = ?17
+        AND s.actor_role = 'researcher' AND s.expires_at > ?18
     )`;
-  let nextBinding = 18;
+  let nextBinding = 19;
   for (const obligationId of facts.activePolicy!.requiredBenefitObligationIds ?? []) {
     const start = nextBinding;
     guardSql += `
@@ -368,8 +435,8 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   const released = await context.env.DB.prepare(
     `UPDATE research_runs SET status = 'completed', policy_version = ?1, decision_reasons = ?2,
-       contribution_decisions_json = ?3, model_id = ?4, output_json = ?5, completed_at = ?6
-     WHERE session_id = ?7 AND run_id = ?8 ${guardSql}`,
+       contribution_decisions_json = ?3, model_id = ?4, output_json = ?5, decision_receipt_json = ?6, completed_at = ?7
+     WHERE session_id = ?8 AND run_id = ?9 ${guardSql}`,
   )
     .bind(
       execution.decision.policyVersion,
@@ -377,6 +444,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
       contributionDecisionEvidence(execution.decision),
       inferenceMode === 'live' ? DEMO_MODEL_ID : 'mock:deterministic-fixture',
       clippedJson(execution.output),
+      JSON.stringify(receipt),
       completedAt,
       session.sessionId,
       runId,
@@ -386,15 +454,28 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
   if (released.meta.changes !== 1) {
     const withheldReason = 'authorization-changed-before-output-release';
+    receipt = {
+      ...receipt,
+      execution: {
+        status: 'withheld',
+        inferenceAttempted: true,
+        inferenceMode,
+        modelId: DEMO_MODEL_ID,
+        outputReleased: false,
+        reason: withheldReason,
+      },
+    };
     await context.env.DB.prepare(
       `UPDATE research_runs SET status = 'failed', decision_reasons = ?1,
-         contribution_decisions_json = ?2, model_id = ?3, output_json = NULL, completed_at = ?4
-       WHERE session_id = ?5 AND run_id = ?6 AND status = 'running'`,
+         contribution_decisions_json = ?2, model_id = ?3, output_json = NULL,
+         decision_receipt_json = ?4, completed_at = ?5
+       WHERE session_id = ?6 AND run_id = ?7 AND status = 'running'`,
     )
       .bind(
         JSON.stringify([withheldReason]),
         contributionDecisionEvidence(execution.decision),
         inferenceMode === 'live' ? DEMO_MODEL_ID : 'mock:deterministic-fixture',
+        JSON.stringify(receipt),
         completedAt,
         session.sessionId,
         runId,

@@ -949,6 +949,20 @@ select:disabled {
   border-radius: 6px;
   color: #3c4b3d;
 }
+.receipt-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: #254b33;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.receipt-link:focus-visible {
+  outline: 3px solid #365d3d;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
 .benefit-owner {
   display: flex;
   align-items: center;

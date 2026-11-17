@@ -21,6 +21,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:agreement": "vitest run tests/agreement-conformance.test.ts tests/community-ai-agreement.test.ts tests/portable-ai-service.test.ts tests/decision-receipt.test.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "demo:record": "node scripts/record-live-demo.mjs",
