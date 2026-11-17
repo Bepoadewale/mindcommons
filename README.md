@@ -39,7 +39,8 @@ npm run dev
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
-- Technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (public 1920×1080 MP4; YouTube upload is still planned by the project owner)
+- Captioned technical video (published after this PR deploys): <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> (1920×1080 MP4; shows a live synthetic model call, contributor withdrawal, policy-based denial, and fictional benefit review)
+- Original screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (preserved; YouTube upload is still planned by the project owner)
 - Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
 
 ## Privacy, research, and governance limits

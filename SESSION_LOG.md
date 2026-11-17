@@ -176,3 +176,19 @@
 - Live Chromium verified history v1 (granted), v2 (withdrawn), v3 (granted); a withdrawn-permission request returned 403 before inference; one synthetic authorized request completed with non-empty Cloudflare Workers AI output; commercial advertising returned 403 before inference; no browser errors. Landing page and GitHub Pages vision page both returned HTTPS 200.
 - `npm run verify`, `npm run test:e2e` (5 tests), and `npm run test:e2e:fullstack` passed locally. Local model behavior uses the explicitly labeled deterministic mock.
 - PR #29 merged deployment-state documentation through protected `main` at `587b474`; all four required checks passed in run `44099865420`. Post-merge CI run `44100300343` and Pages run `44100300240` passed, and its source branch was removed.
+
+## 2026-11-17 — Governance, portable agreement, and benefits
+
+- Merged PR #31 (contributor-specific permission checks, policy-dependent outcomes, output-release revalidation), PR #32 (portable Community AI Agreement schema/evaluator and independent Worker example), and PR #33 (fictional benefit agreement, team acceptance, evidence and community review). All four required PR checks passed for each; merged feature branches were removed.
+- Main CI run `44128935139` passed all four required checks after PR #33.
+- Preflight confirmed Cloudflare account `1630257815c70704ad812cd52c284ca2`, Worker `mindcommons-mozilla-demo`, and D1 `mindcommons-demo-d1` (`9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`). Only migrations 0005 and 0006 were pending; both applied successfully. Worker version `a4471379-e78c-46b9-9313-0f8c8250038e` was deployed to the existing Workers.dev host with D1 and AI bindings. No custom domains, routes, paid resources, or DavDeploy resources were changed.
+- Read-only subscription-list API lookup returned HTTP 403 `Authentication error`; the prior same-day preflight reported zero active subscriptions. This deployment did not create or change a plan, subscription, add-on or paid resource. The configured model remains listed by Cloudflare as eligible on Workers Free.
+- Live production test: actual Workers AI output returned for a permitted synthetic request; contributor B withdrawal resulted in only A and C being processed under policy v1; policy v2 denied the identical request with HTTP 403 before inference. The fictional benefit workflow completed all four stages and persisted an accepted review outcome. Local mocked concurrency tests verify withheld output when authorization changes during inference.
+
+## 2026-11-17 — Captioned video and evidence refresh in progress
+
+- Created branch `feat/live-demo-evidence-refresh`; added a live Playwright recorder that verifies real model output, contributor-specific filtering, same-request denial after policy change, synthetic benefit review, public repo page, no app overflow, and no browser errors.
+- First recorder attempt stopped on an unreliable notification-text assertion after the production withdrawal itself had succeeded; changed the recorder to assert the persisted withdrawn status. Latest recording passed all assertions.
+- New silent captioned screen recording: `apps/web/public/mindcommons-demo-captioned.mp4`, H.264 CRF 18, 1920×1080, 25 fps, 92.84 seconds, 4,609,951 bytes. It contains timed explanatory text, not speech or closed captions. Existing 90.44-second uncaptioned `mindcommons-demo.mp4` is preserved unchanged.
+- Updated landing-page primary link, preserved-original link, Pages build validator, browser link test, reviewer guide, RFP mapping, existing-solutions comparison, technical validation and project status. New video Worker/Pages publication remains pending.
+- Next: run all local checks after these edits; create, review and merge the PR through required checks; verify both MP4 URLs and landing-page links on Worker and Pages; record run IDs and branch cleanup.

@@ -1,51 +1,54 @@
 # Acceptance checklist
 
-Legend: `[x]` verified; `[~]` started; `[ ]` not done.
+Legend: `[x]` verified; `[~]` in progress; `[ ]` not done.
 
-## Repository
+## Repository and local quality
 
-- [x] Public repository exists: https://github.com/Bepoadewale/mindcommons
-- [x] Apache-2.0 license, Issues enabled, `main` protected for PRs, zero-approval solo-maintainer review policy.
-- [x] PRs #1–#29 merged after required checks passed; GitHub verified the merges and source-branch cleanup.
-- [x] Application, tests, contribution/security guidance and reproducible commands implemented; clean `npm ci` completed with 0 reported vulnerabilities.
-- [x] Merged PR #1–#29 source branches removed locally/remotely.
+- [x] Public Apache-2.0 repository and protected PR-only `main` exist; four required checks are configured without a solo approval blocker.
+- [x] PRs #1–#33 merged after required checks; merged branches cleaned up.
+- [x] Main CI run `44128935139` passed `validate`, `verify`, `browser-acceptance`, and `secret-scan` after PR #33.
+- [x] Previous local checks covered 38 unit tests, six reviewer browser tests, three vision tests, local D1 integration, accessibility, and output-release concurrency behavior.
+- [~] Run the full local verification again after the video, link, and documentation changes.
 
-## Phase 0
+## Governance and technical contribution
 
-- [x] Mac, toolchain, GitHub identity and Keychain credential availability checked.
-- [x] Official Mozilla RFP and SRHIN host challenge reviewed.
-- [x] Official Cloudflare Pages, Workers Static Assets, D1 pricing, Workers limits and AI pricing reviewed; the implementation now follows the current new-project recommendation.
-- [x] DavDeploy read-only review and reusable lessons documented; existing repositories unchanged.
-- [x] Research existing solutions, Nigeria data protection and research ethics context documented.
+- [x] Every synthetic contribution has its own purpose-specific permission, expiry, status, and version.
+- [x] Live withdrawal of contributor B under policy v1 permits only A and C's records.
+- [x] A distinct approved v2 policy changes the authorization outcome for the identical request and blocks it server-side before inference.
+- [x] Output authorization is rechecked; locally tested concurrent withdrawal/policy change leaves output withheld and records the event.
+- [x] Portable Community AI Agreement JSON Schema and deterministic evaluator are used by MindCommons and a separately testable minimal Worker example.
+- [x] Agreement documentation says compliant participating services can check it; it cannot control services that ignore it or copies of data/model weights.
+- [x] Real Cloudflare Workers AI inference and prohibited request behavior were verified in production with synthetic content.
+- [x] Benefit workflow completed in production synthetic session: community agreement, team acceptance, evidence marker, community review.
 
-## Product and security
+## Hosting and safety
 
-- [x] Synthetic community and visitor-isolated demo session.
-- [x] Policy proposals and explicit server-side representative role check for activation.
-- [x] Separate individual permissions, expiry and withdrawal are checked independently from collective policy.
-- [x] Permission version-history migration, API and accessible UI pass local tests and live production checks; withdrawal blocks requests before inference and grant creates a new history version.
-- [x] Server-side fail-closed authorization and reason evidence.
-- [x] Live fixed job returns visible Workers AI output; prohibited commercial request is rejected before inference.
-- [x] API strips model reasoning metadata, rejects empty answers, and presents the answer more clearly; PR #19 is merged and deployed.
-- [x] Local mock execution and denied-before-inference behavior verified; production inference is separately verified, not inferred from mock tests.
-- [x] Model/job/policy provenance, audit history and honest integrity limits.
-- [x] Demonstration benefit commitment and synthetic evidence, visibly hypothetical.
-- [x] Production PWA manifest and service worker load; 192 px and 512 px icons return 200; 390 px viewport has no horizontal overflow; offline API request fails clearly without caching API data; axe WCAG 2.1 A/AA passes.
-- [x] Android 16 Google Play emulator: Chrome offered the install prompt, added the MindCommons icon to the launcher, and launched the production app in standalone display mode. This is emulator evidence, not a physical-device test.
-- [x] Positive/negative governance, consent, API integration and browser paths verified locally.
-- [x] Threat model, limits, fixed input validation, quotas and rate controls documented/implemented.
+- [x] Exact dedicated Worker and D1 resources were confirmed; D1 migrations 0005 and 0006 applied; Worker `a4471379-e78c-46b9-9313-0f8c8250038e` deployed.
+- [x] Existing DavDeploy resources, DNS, Pages, routes and Email Routing were not changed.
+- [x] No paid plan or paid resource was created or changed. A prior same-day preflight reported zero active paid subscriptions; current subscription-list API read failed with 403, so this session could not independently re-read billing state.
+- [x] Cloudflare lists the configured model as Workers Free eligible; the live model call succeeded. Shared account quotas remain a limit.
+- [x] Synthetic-only, no clinical use, no real participants, and demo identity limitations are stated.
+- [x] Public interactive Worker demo and static future vision remain available without the Mac.
 
-## Hosting and reviewer evidence
+## Reviewer assets
 
-- [x] Workers Static Assets entrypoint and local Worker/D1 integration merged through PR #14; all required CI checks passed.
-- [x] Dedicated D1 database `mindcommons-demo-d1` created and all four migrations applied; the 2026-11-17 account preflight reported zero active subscriptions and Workers Free is Cloudflare's default.
-- [x] Dedicated Cloudflare Worker with Static Assets deployed to `workers.dev`; D1 and Workers AI bindings are configured.
-- [x] Public HTTPS production URL serves the application and API independently of Mac.
-- [x] Live synthetic AI call and denied request are verified; Cloudflare uses the reasoning-disabled model setting.
-- [x] A genuine 90.44-second, 1920×1080 Chromium MP4 is publicly served by the production Worker; unauthenticated HTTPS 200 and `video/mp4` verified.
-- [x] The production landing page links to the MP4; verified in Chromium with no page errors.
-- [x] Eight-screen future-product vision is publicly available at https://bepoadewale.github.io/mindcommons/; live HTTPS, all disclosures, assets, 390 px mobile width, no API calls, and axe WCAG 2.1 A/AA verified in Chromium. It is static and is not the live backend demo.
-- [x] Reviewer guide, RFP mapping and 12-month roadmap documented and checked into the repository.
-- [x] Source, live backend, and production video links verified.
-- [x] GitHub Pages vision page and mirrored MP4 fallback: PR #20 fixed the build sequence; post-merge Pages publish run `44072149990` succeeded. Both public URLs return HTTPS 200, and the MP4 is `video/mp4`.
-- [x] PR #28 adds session-scoped permission history; all four PR checks and post-merge CI/Pages runs passed. Production migration `0004` and Worker version `de7c9b35-6837-44a9-bd4a-a08c6550f64f` are deployed. Live browser validation observed history versions 1–3, withdrawal denial, one genuine Workers AI result, and commercial-use denial before inference.
+- [x] Existing 90.44-second, 1920×1080 original MP4 preserved unchanged on Worker and Pages.
+- [x] New genuine 92.84-second, 1920×1080 recording captured after the production deployment; it shows live AI, contributor withdrawal, same-request policy denial, benefits, and the public source repo.
+- [x] New video has readable explanatory text burned in; its silence and lack of spoken-word subtitles are documented accurately.
+- [x] New asset passes H.264 MP4 probe at 1920×1080 and 25 fps; recorder assertions passed with no browser errors.
+- [~] PR to publish new captioned MP4 on Worker and GitHub Pages, make it the landing-page primary video link, and keep original recording linked.
+- [ ] After merge, verify new Worker and Pages video URLs return unauthenticated HTTPS 200, `video/mp4`, and correct media metadata; verify landing-page link.
+
+## Fellowship evidence
+
+- [x] RFP alignment, project status, roadmap, reviewer guide, architecture and limitations documented.
+- [x] Existing-solutions comparison updated to account for MDC licensing/access/compensation overlap; no novelty claim or integration claim.
+- [x] No SRHIN endorsement, real pilot, participant feedback, or benefit delivery is claimed.
+- [x] Personal Mozilla application responses remain separate and are not generated or submitted here.
+- [~] After the video publication PR completes, update evidence links, final status, PR/workflow history and cleanup state.
+
+## Remaining open validation
+
+- [ ] Optional physical Android device test; emulator installability has passed.
+- [ ] Owner's YouTube upload, if desired; until then the independent public MP4 links are the video evidence.
+- [ ] Real community co-design, local ethics/safeguarding review and any pilot remain future work and are not prerequisites to claiming the current synthetic prototype evidence.

@@ -26,6 +26,41 @@ const pageErrors = [];
 page.on('pageerror', (error) => pageErrors.push(error.message));
 const pause = (milliseconds) => page.waitForTimeout(milliseconds);
 
+async function caption(text) {
+  await page.evaluate((message) => {
+    const doc = globalThis.document;
+    let element = doc.querySelector('#mindcommons-video-caption');
+    if (!element) {
+      element = doc.createElement('div');
+      element.id = 'mindcommons-video-caption';
+      Object.assign(element.style, {
+        position: 'fixed',
+        zIndex: '2147483647',
+        left: '50%',
+        bottom: '34px',
+        transform: 'translateX(-50%)',
+        width: 'min(1400px, 78vw)',
+        padding: '22px 32px',
+        border: '1px solid rgba(255, 255, 255, .25)',
+        borderRadius: '16px',
+        background: 'rgba(16, 29, 39, .94)',
+        boxShadow: '0 12px 42px rgba(12, 20, 27, .35)',
+        color: '#fff',
+        font: '600 30px/1.35 system-ui, sans-serif',
+        textAlign: 'center',
+        letterSpacing: '.01em',
+      });
+      doc.body.append(element);
+    }
+    element.textContent = message;
+  }, text);
+}
+
+async function changeRole(role, label) {
+  await page.locator('#demo-role').selectOption(role);
+  await page.getByText(`Demo seat changed to ${label}. This is a fictional role.`).waitFor();
+}
+
 try {
   const response = await page.goto(target.href, { waitUntil: 'domcontentloaded' });
   assert.equal(response?.status(), 200, 'the live site must load successfully');
@@ -37,64 +72,123 @@ try {
       name: /communities should shape how their contributions are used in AI/i,
     })
     .waitFor();
-  await pause(10000);
+  await caption(
+    'Communities can contribute data without a lasting say in how it is used or who benefits.',
+  );
+  await pause(5000);
+  await caption('MindCommons explores community rules before AI research.');
+  await pause(4000);
 
-  await page.getByRole('link', { name: /Explore the demo/ }).click();
+  await page.getByRole('link', { name: /Try the synthetic scenario/ }).click();
   await page.getByRole('heading', { name: 'Riverbend Community (fictional)' }).waitFor();
   await page.getByText('Fictional community scenario').waitFor();
-  await pause(12000);
+  await caption('A technical prototype using only fictional people and research records.');
+  await pause(7000);
 
-  await page.getByRole('button', { name: 'Approve policy' }).click();
-  await page.getByText('The proposal is active as a new synthetic policy version.').waitFor();
-  await pause(12000);
+  await caption(
+    'Community rule v1 excludes a contribution when its individual permission is withdrawn.',
+  );
+  await pause(5000);
+  await changeRole('community_member', 'Community member');
+  await page.getByRole('button', { name: 'Withdraw Fictional contributor B permission' }).click();
+  await page.getByText('WITHDRAWN · v2').waitFor();
+  await caption('Contributor B withdraws. Their fictional record is excluded from the next job.');
+  await pause(5000);
 
-  await page.getByLabel('Acting as').selectOption('researcher');
-  await page.getByText('Demo seat changed to Researcher. This is a fictional role.').waitFor();
-  await page.locator('#request-purpose').selectOption('community-wellbeing-research');
-  await pause(8000);
-
+  await changeRole('researcher', 'Researcher');
+  await page.getByRole('heading', { name: 'Run a bounded theme review' }).scrollIntoViewIfNeeded();
+  await caption('A fixed research job checks every contributor before sending eligible records.');
   const allowedRunResponse = page.waitForResponse(
-    (response) =>
-      response.url().endsWith('/api/research/run') && response.request().method() === 'POST',
+    (item) => item.url().endsWith('/api/research/run') && item.request().method() === 'POST',
     { timeout: 60000 },
   );
   await page.getByRole('button', { name: /Check rules and run evaluation/ }).click();
   const allowedRun = await allowedRunResponse;
-  assert.equal(allowedRun.status(), 200, 'the permitted research request must succeed');
+  assert.equal(allowedRun.status(), 200, 'the partially permitted research request must succeed');
   const allowedPayload = await allowedRun.json();
-  const modelAnswer = allowedPayload.output?.text;
   assert.equal(
-    typeof modelAnswer === 'string' && modelAnswer.trim().length > 0,
-    true,
-    'the live inference must produce visible user-facing output',
+    allowedPayload.inferenceMode,
+    'live',
+    'the approved request must use live inference',
   );
+  assert.deepEqual(allowedPayload.inputContributionIds, ['response-a', 'response-c']);
   await page.getByText('Inference ran with Cloudflare Workers AI. Inputs were synthetic.').waitFor({
     timeout: 60000,
   });
+  await page.getByText('Processed records: response-a, response-c.').waitFor();
   await page.getByText('@cf/google/gemma-4-26b-a4b-it', { exact: true }).waitFor();
+  await caption('Live inference ran on records A and C; the withdrawn record was not sent.');
+  await pause(10000);
+
+  await changeRole('community_representative', 'Community representative');
   await page
-    .getByText('Inference ran with Cloudflare Workers AI. Inputs were synthetic.')
+    .getByRole('heading', { name: 'Research with a clear purpose' })
     .scrollIntoViewIfNeeded();
-  await pause(12000);
+  await caption('The fictional representative approves policy v2: every contributor must agree.');
+  await page.getByRole('button', { name: 'Approve policy' }).click();
+  await page.getByText('The proposal is active as a new synthetic policy version.').waitFor();
+  await page.getByText('ACTIVE · V2').waitFor();
+  await pause(7000);
 
-  await page.locator('#request-purpose').selectOption('commercial-advertising');
+  await changeRole('researcher', 'Researcher');
+  await page.getByRole('heading', { name: 'Run a bounded theme review' }).scrollIntoViewIfNeeded();
+  await caption('The same request is now denied before inference because contributor B withdrew.');
+  const deniedRunResponse = page.waitForResponse(
+    (item) => item.url().endsWith('/api/research/run') && item.request().method() === 'POST',
+    { timeout: 60000 },
+  );
   await page.getByRole('button', { name: /Check rules and run evaluation/ }).click();
-  await page.getByText(/community-policy-prohibits-commercial-use/).waitFor();
-  await page.getByText(/community-policy-prohibits-commercial-use/).scrollIntoViewIfNeeded();
-  await pause(11000);
-
-  // The app loads the audit feed on entry; refresh it after the denied run so
-  // the recording shows the server-recorded decision as well as the response.
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.getByRole('heading', { name: 'Riverbend Community (fictional)' }).waitFor();
+  const deniedRun = await deniedRunResponse;
+  assert.equal(deniedRun.status(), 403, 'the same request must be blocked under policy v2');
+  const deniedPayload = await deniedRun.json();
+  assert.equal(deniedPayload.status, 'denied');
+  assert.equal(
+    deniedPayload.decision.reasons.includes(
+      'community-policy-requires-all-contributors-to-have-active-permission',
+    ),
+    true,
+  );
+  await page
+    .getByText(/community-policy-requires-all-contributors-to-have-active-permission/)
+    .waitFor();
+  await caption('Server-side authorization blocks the job; no model call is made.');
+  await pause(7000);
 
   await page
     .getByRole('heading', { name: 'Share an accessible summary of findings' })
     .scrollIntoViewIfNeeded();
-  await pause(9000);
+  await changeRole('community_representative', 'Community representative');
+  await caption(
+    'Tracks a proposed benefit: shared findings, an accountable owner, evidence and community review.',
+  );
+  await page.getByRole('button', { name: 'Agree to commitment' }).click();
+  await page
+    .getByText('The fictional representative agreed to this proposed obligation.')
+    .waitFor();
+  await changeRole('researcher', 'Researcher');
+  await page.getByRole('button', { name: 'Accept as fictional research team' }).click();
+  await page
+    .getByText('The fictional research team accepted responsibility for this commitment.')
+    .waitFor();
+  await page
+    .getByLabel('Choose a fictional evidence marker')
+    .selectOption('accessible-summary-prepared');
+  await page.getByRole('button', { name: 'Submit fictional evidence' }).click();
+  await page.getByText('A fictional research-team evidence marker was recorded.').waitFor();
+  await changeRole('community_representative', 'Community representative');
+  await page.getByRole('button', { name: 'Accept evidence marker' }).click();
+  await page
+    .getByText('The fictional community representative accepted the evidence marker.')
+    .waitFor();
+  await page.getByText('accepted by demo:community_representative').waitFor();
+  await pause(7000);
+
   await page.getByRole('heading', { name: 'Recent activity' }).scrollIntoViewIfNeeded();
+  await caption(
+    'This prototype is not a pilot or endorsement. Fellowship work would co-design, review and test the rules with communities.',
+  );
   await page.getByText(/research authorization denied/).waitFor();
-  await pause(10000);
+  await pause(5000);
 
   const dimensions = await page.locator('html').evaluate((root) => ({
     width: root.scrollWidth,
@@ -102,8 +196,18 @@ try {
   }));
   assert.ok(
     dimensions.width <= dimensions.viewport,
-    'recorded page must not overflow horizontally',
+    'recorded app page must not overflow horizontally',
   );
+
+  const repository = await page.goto('https://github.com/Bepoadewale/mindcommons', {
+    waitUntil: 'domcontentloaded',
+  });
+  assert.equal(repository?.status(), 200, 'the public source repository must open');
+  assert.match((await page.locator('body').innerText()).toLowerCase(), /bepoadewale\/mindcommons/);
+  await caption(
+    'Proposed next: co-design, ethics review, and pilot planning with young people, lived-experience advocates and community health workers.',
+  );
+  await pause(12000);
   assert.deepEqual(pageErrors, [], `browser errors: ${pageErrors.join('; ')}`);
   const video = page.video();
   await context.close();
@@ -115,7 +219,9 @@ try {
       recording: videoPath,
       viewport: dimensions,
       actualWorkersAiInference: true,
-      prohibitedRequestDenied: true,
+      contributorBWithheld: true,
+      policyV2DeniedSameRequest: true,
+      fictionalBenefitReview: 'accepted',
       browserErrors: pageErrors.length,
     }),
   );

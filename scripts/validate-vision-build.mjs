@@ -56,7 +56,9 @@ if (!productionHtml.includes('<title>MindCommons — Community rules for AI rese
   process.exitCode = 1;
 }
 
-if (!existsSync(join(output, 'mindcommons-demo.mp4'))) {
-  console.error('Vision-only static build must include the public demonstration video.');
-  process.exitCode = 1;
+for (const video of ['mindcommons-demo.mp4', 'mindcommons-demo-captioned.mp4']) {
+  if (!existsSync(join(output, video))) {
+    console.error(`Vision-only static build must include ${video}.`);
+    process.exitCode = 1;
+  }
 }
