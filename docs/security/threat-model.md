@@ -17,7 +17,7 @@ Prototype policy versions, fictional permission records, authorization results, 
 ## Implemented controls and verification status
 
 - Server-controlled opaque session, two-hour expiry and isolation; at most 500 new synthetic sessions per UTC day. In this public synthetic scenario, visitors can switch among fictional seats through the API. The server stores the selected seat in that visitor's session and checks it for each action, but does not authenticate a real person's identity or authority. This demonstrates policy enforcement logic, not production identity or governance security.
-- Strict schemas, body-size and text limits; fixed job IDs/model IDs; no script upload or arbitrary prompt execution.
+- Strict schemas, fixed job IDs/model IDs, and no script upload or arbitrary prompt execution. JSON bodies are read incrementally, and the stream is canceled as soon as the configured byte limit is exceeded, even when the request omits or understates `Content-Length`.
 - Fail-closed authorization before AI; separate policy and individual permission checks; negative tests spy on AI binding.
 - Same-origin mutation checks, no cross-origin credential support, security headers, safe text rendering, no secrets in browser.
 - Application-level rate limits (60 requests/minute/session), a 500-session/day cap and a 100-call/day AI cap; local API tests exercise each cap. No automatic upgrade or paid fallback.
