@@ -6,14 +6,14 @@ The new captioned export is `apps/web/public/mindcommons-demo-captioned.mp4`. Th
 
 The video is silent. Its burned-in explanatory captions are not a transcript of speech or closed captions. They accurately describe the visible scenario and clarify the proposed work. There is no narration or participant footage. The recording run passed its assertions: non-empty real Workers AI result, only A and C processed after B withdrew, identical request rejected under policy v2, fictional benefit obligation agreed/accepted/evidenced/reviewed, GitHub repository page opened, no browser errors, and no horizontal app overflow.
 
-After the PR publishes, the captioned video should be publicly available at:
+The captioned video is published at:
 
 - Worker: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4>
 - GitHub Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>
 - Original Worker MP4: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4>
 - Original GitHub Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>
 
-The page links to both versions. These are independent public files, not a YouTube upload. The project owner may replace the public landing-page video destination with a YouTube URL later through a PR; no upload is claimed.
+Both versions returned unauthenticated HTTPS 200 with `video/mp4` from the Worker and Pages. The landing page links to both videos, and the Pages copy was downloaded and checked as a decodable 1920×1080, 25 fps, 92.84-second MP4. These are independent public files, not a YouTube upload. The project owner may replace the public landing-page video destination with a YouTube URL later through a PR; no upload is claimed.
 
 ## Caption copy and sequence
 
