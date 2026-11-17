@@ -1,6 +1,6 @@
 # Demonstration video outline
 
-**Recording status:** a 90.44-second, 1920×1080 Chromium capture has been made against the production application. It shows a real visible Workers AI result, a server-side commercial-use denial, and the synthetic benefit/audit views. It is silent and contains no participant footage or narration. The pending response change only removes model metadata and presents the same answer more clearly; the MP4 should be checked against the deployed demo and replaced only if the visible flow differs materially.
+**Recording status:** published at <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> and mirrored at <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>. This genuine 90.44-second, 1920×1080, 25 fps H.264 Chromium capture was recorded against the deployed application. It shows a non-empty live Workers AI result, a server-side commercial-use denial, and synthetic benefit/audit views. It is silent and contains no participant footage or narration. The asset was decoded successfully and both public URLs returned unauthenticated HTTPS 200 with `video/mp4`; the project landing page links to the production MP4. The owner plans to upload it to YouTube later; no upload is claimed.
 
 1. **0:00–0:15:** Explain that communities can contribute information while having limited say in later AI uses. Introduce MindCommons as an early technical prototype, not a real cooperative.
 2. **0:15–0:35:** Show a synthetic community rule and explain how it became effective in the demo.

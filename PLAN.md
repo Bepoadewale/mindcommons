@@ -6,14 +6,14 @@ Use a small full-stack web application on Cloudflare Workers with Static Assets:
 
 ## Phases and dependencies
 
-1. **Environment and evidence:** verified the toolchain, GitHub identity, Mozilla RFP, official platform docs, existing solutions and read-only DavDeploy lessons. Cloudflare account and token were verified; the owner chose to retain the broad account token. Mutations remain limited to the exact named MindCommons resources after a read-only preflight.
-2. **Repository foundation:** public repo, Apache-2.0, PR-only protected `main`, documentation and required CI are established. PRs #1, #2, and #3 merged.
-3. **Governance-controlled vertical slice:** synthetic session, policy and individual-permission checks, fixed research request, fail-closed decision, mock-only local inference, provenance, audit and denied path are implemented. Live AI remains unverified.
-4. **Reviewer experience:** responsive accessible landing/demo, session isolation/reset, benefit records, `/vision/` wireframe and installable PWA assets are implemented. Android install has not been device-tested.
-5. **Quality/security:** unit, integration, browser tests, limits, headers, threat model, dependency and secret checks are implemented and locally/CI verified as recorded in `STATE.md`.
-6. **Hosted deployment:** the named D1 database has been provisioned and migrated. Confirm the default Workers Free plan and deploy the named Worker with no custom domain, route, Pages, DNS, or paid add-on.
-7. **Submission evidence:** reviewer guide, RFP traceability and roadmap are documented. The static, vision-only GitHub Pages wireframe is public and verified. Production-accurate public video and the live backend URL still require the Cloudflare deployment.
-8. **Final acceptance:** pending live deployment/inference, public URLs, video, Android/device check and final production verification. Recheck CI, public links, branch cleanup and DavDeploy isolation at that stage.
+1. **Environment and research — complete:** verified the Mac toolchain, GitHub identity, Mozilla RFP, current platform docs, existing solutions, Nigeria data-protection/ethics sources, and read-only DavDeploy lessons. Cloudflare account, free-plan state and the owner-authorized broad token were checked; only named MindCommons resources were provisioned.
+2. **Repository foundation — complete:** public Apache-2.0 repository, protected PR-only `main`, required CI, security/contribution docs and resumable project records are in place. All changes to `main` went through PRs.
+3. **Governance-controlled vertical slice — complete:** synthetic session, proposal/policy approval, independent individual permissions, fixed research request, fail-closed server authorization, actual bounded Workers AI inference, denial-before-inference, provenance, audit and hypothetical benefit record are implemented and verified.
+4. **Reviewer experience — complete:** responsive accessible landing/demo, session isolation/reset, public video link, static `/vision/` wireframe, PWA manifest/service worker and bounded offline handling are deployed. Android installation prompt, launcher shortcut, and standalone launch were verified in an Android 16 Google Play emulator; physical-device coverage is not claimed.
+5. **Quality/security — complete for the prototype scope:** unit, integration, browser and static accessibility checks, validation/quotas, security headers, threat model, dependency scan and secret scan pass in local evidence/CI. Real participant data and clinical uses remain out of scope.
+6. **Hosted deployment — complete:** the dedicated D1 and Worker are deployed on Workers Free with Workers AI. Live allowed inference, prohibited-use denial, public HTTPS behavior and zero active paid subscriptions were checked. No DavDeploy production resource, custom route, DNS, email setting or paid add-on was changed.
+7. **Submission evidence — complete except owner-controlled YouTube upload:** reviewer guide, RFP traceability, roadmap, live demo, public video and future-vision wireframe are available. The site currently links directly to the public MP4; the owner may replace the destination after uploading to YouTube.
+8. **Final acceptance — technical prototype criteria complete:** CI and Pages publish pass, public URLs and MP4 are verified, `main` is protected, and Android install/standalone launch work in an emulator. A real-device spot check is optional follow-up; keep synthetic-only and community-co-design limits explicit.
 
 ## Routine decisions
 
