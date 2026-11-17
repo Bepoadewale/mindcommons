@@ -7,6 +7,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 ## What this prototype is intended to show
 
 - A community rule and an individual's permission are evaluated independently.
+- Individual permission changes create a session-scoped, versioned history that can be inspected in the demo.
 - A server-side, deterministic policy check authorizes a fixed research operation.
 - An allowed operation can call a configured model; a denied operation must not call it.
 - A decision and its provenance can be inspected afterward.

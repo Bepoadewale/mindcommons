@@ -22,7 +22,8 @@ Legend: `[x]` verified; `[~]` started; `[ ]` not done.
 
 - [x] Synthetic community and visitor-isolated demo session.
 - [x] Policy proposals and explicit server-side representative role check for activation.
-- [x] Separate individual permissions, expiry, withdrawal, and version history.
+- [x] Separate individual permissions, expiry and withdrawal are checked independently from collective policy.
+- [~] Permission version-history migration, API and UI pass local integration and browser tests; production migration/deployment and live verification remain.
 - [x] Server-side fail-closed authorization and reason evidence.
 - [x] Live fixed job returns visible Workers AI output; prohibited commercial request is rejected before inference.
 - [x] API strips model reasoning metadata, rejects empty answers, and presents the answer more clearly; PR #19 is merged and deployed.

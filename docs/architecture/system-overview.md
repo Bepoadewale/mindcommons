@@ -25,7 +25,9 @@ The static user interface is not an authority boundary. The Worker loads server-
 
 ## State and records
 
-Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, policy proposal and effective version, fictional individual permission with purpose/expiry/withdrawal state, fixed research request, authorization decision, AI execution provenance, append-oriented audit event, and hypothetical benefit commitment. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
+Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, policy proposal and effective version, fictional individual permission with purpose/expiry/withdrawal state and versioned history, fixed research request, authorization decision, AI execution provenance, append-oriented audit event, and hypothetical benefit commitment. Permission history records the state, version, action, actor, timestamp and correlation ID; a session permits up to 50 versions. Existing sessions receive a baseline snapshot during migration; pre-migration permission transitions cannot be reconstructed. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
+
+Reset and expiry delete the synthetic session and its permission history through the database's cascading foreign key. This is a temporary reviewer record, not a durable community consent ledger.
 
 ## Failure behavior
 

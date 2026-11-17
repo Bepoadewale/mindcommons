@@ -37,6 +37,8 @@ async function createDemoSession(context: Context): Promise<string | null> {
 
   const sessionId = crypto.randomUUID();
   const correlationId = createCorrelationId();
+  const permissionExpiry = expiry();
+  const benefitDueAt = new Date(Date.now() + 30 * 86400000).toISOString();
   await context.env.DB.batch([
     context.env.DB.prepare(
       'INSERT INTO sessions(session_id, actor_role, created_at, expires_at) VALUES (?1, ?2, ?3, ?4)',
@@ -52,11 +54,18 @@ async function createDemoSession(context: Context): Promise<string | null> {
     context.env.DB.prepare(
       `INSERT INTO individual_permissions(permission_id, session_id, community_id, purpose, status, expires_at, version, updated_at)
        VALUES ('participant-a', ?1, 'demo-community', 'community-wellbeing-research', 'granted', ?2, 1, ?3)`,
-    ).bind(sessionId, expiry(), timestamp),
+    ).bind(sessionId, permissionExpiry, timestamp),
+    context.env.DB.prepare(
+      `INSERT INTO individual_permission_history(
+         session_id, permission_id, version, community_id, purpose, status, expires_at,
+         action, actor, correlation_id, recorded_at
+       ) VALUES (?1, 'participant-a', 1, 'demo-community', 'community-wellbeing-research', 'granted', ?2,
+         'created', 'demo-service', ?3, ?4)`,
+    ).bind(sessionId, permissionExpiry, correlationId, timestamp),
     context.env.DB.prepare(
       `INSERT INTO benefit_commitments(commitment_id, session_id, title, owner, due_at, evidence, status)
        VALUES ('benefit-findings', ?1, 'Share an accessible summary of findings', 'Fictional research team', ?2, NULL, 'proposed')`,
-    ).bind(sessionId, new Date(Date.now() + 30 * 86400000).toISOString()),
+    ).bind(sessionId, benefitDueAt),
     context.env.DB.prepare(
       `INSERT INTO audit_events(event_id, session_id, actor, community_id, action, policy_version, decision, job_status, correlation_id, occurred_at)
        VALUES (?1, ?2, 'demo-service', 'demo-community', 'synthetic-session-created', 1, 'initialized', NULL, ?3, ?4)`,
@@ -129,6 +138,13 @@ export async function onRequestGet(context: Context): Promise<Response> {
       .bind(sessionId, 'participant-a')
       .first<{ purpose: string; status: string; expires_at: string; version: number }>(),
     context.env.DB.prepare(
+      `SELECT permission_id, version, purpose, status, expires_at, action, actor, correlation_id, recorded_at
+       FROM individual_permission_history
+       WHERE session_id = ?1 AND permission_id = ?2 ORDER BY version DESC LIMIT 50`,
+    )
+      .bind(sessionId, 'participant-a')
+      .all(),
+    context.env.DB.prepare(
       'SELECT title, owner, due_at, evidence, status FROM benefit_commitments WHERE session_id = ?1',
     )
       .bind(sessionId)
@@ -150,8 +166,8 @@ export async function onRequestGet(context: Context): Promise<Response> {
       .bind(sessionId)
       .all(),
   ]);
-  const [actor, policy, proposal, permission, benefit, events, runs] = values;
-  if (!actor || !policy || !proposal || !permission || !benefit)
+  const [actor, policy, proposal, permission, permissionHistory, benefit, events, runs] = values;
+  if (!actor || !policy || !proposal || !permission || !permissionHistory || !benefit)
     return Response.json({ error: 'demo_state_unavailable' }, { status: 503 });
 
   const response = json({
@@ -170,6 +186,7 @@ export async function onRequestGet(context: Context): Promise<Response> {
       proposedCommercialAllowed: Boolean(proposal.proposed_commercial_allowed),
     },
     permission,
+    permissionHistory: permissionHistory.results,
     benefit,
     events: events.results,
     runs: runs.results.map((run) => ({
