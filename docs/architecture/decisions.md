@@ -1,16 +1,16 @@
 # Architecture decisions
 
-## ADR-001: Pages Functions, D1 and Workers AI for the hosted demo
+## ADR-001: Workers Static Assets, D1 and Workers AI for the hosted demo
 
-**Status:** selected, subject to account-access and free-plan verification.
+**Status:** selected; deployment remains subject to confirming account billing state and the required write permissions.
 
-**Decision:** use Cloudflare Pages static assets and TypeScript Functions, one D1 database, and a Workers AI binding. This puts the UI and narrow API on one origin, avoids an always-on server, and uses documented free allowances suitable for a small demonstration.
+**Decision:** use one Cloudflare Worker with Static Assets, one D1 database, and a Workers AI binding. The API runs in a typed Worker entry point on the same origin as the React assets. `run_worker_first` matches only `/api/*`, so matching static assets bypass Worker execution and retain Cloudflare's free, unlimited asset serving. The Worker applies deterministic authorization before it can call AI.
 
-**Trade-offs:** Pages Functions share Workers' 10 ms free CPU budget and daily request allowance. D1 reads/writes and Workers AI neurons are bounded and fail when the free allowance is exceeded. Cloudflare remains a provider dependency. Hosting cannot proceed without verified account permissions.
+**Trade-offs:** Workers Static Assets is Cloudflare's current recommendation for new full-stack applications and gets current platform investment. The team owns a small explicit API router instead of relying on Pages' file-based route mapping. API invocations share the Workers Free daily request and CPU limits; D1 and Workers AI free allocations are bounded and fail closed when exhausted. Cloudflare remains a provider dependency. Deployment still requires account-level billing and write-scope verification.
 
-**Alternatives:** a plain static site cannot enforce policy; a paid VM, managed database, or paid Workers plan violates the zero-cost constraint; conventional training is too resource-heavy. Workers with Static Assets is technically viable but adds no current benefit over the documented Pages functions directory and bindings.
+**Alternatives:** Pages Functions also supports the current D1 and AI bindings, file-based API handlers, and branch previews, and would have avoided the explicit router. Cloudflare now recommends Workers Static Assets for new projects, supports `_headers` and `_redirects` there, and static asset requests remain free and unlimited; this makes Workers the better starting point before any production deployment. GitHub Pages remains a separate, verified static-only vision fallback. A plain static site cannot enforce policy; a paid VM, managed database, or paid Workers plan violates the zero-cost constraint; conventional model training is too resource-heavy.
 
-The hosted model candidate is `@cf/google/gemma-4-26b-a4b-it`. Cloudflare's 2026-11-05 model-deprecation notice invalidated the first Llama candidate; the replacement is still subject to account-level and live free-allowance verification. Local Pages development overrides the configured AI binding with a nonfunctional placeholder and a separately labeled deterministic mock, preventing account calls.
+The hosted model candidate is `@cf/google/gemma-4-26b-a4b-it`. Cloudflare's 2026-11-05 model-deprecation notice invalidated the first Llama candidate. It appears in the current account-accessible model catalog, but a live bounded call and free allocation remain unverified. Local Worker development sets explicit mock-only variables; automated and local application tests do not call an AI model.
 
 ## ADR-002: Deterministic authorization before inference
 
@@ -40,6 +40,6 @@ All content is fictional and synthetic. The prototype will not accept arbitrary 
 
 **Status:** deployed and verified as a static fallback while Cloudflare account access is unavailable.
 
-Publish a separately built, static future-product visualization at the repository's GitHub Pages URL. Client-side expandable details let visitors inspect proposed screen content, but do not write data or invoke a backend. This page bundle has no demo API, model calls, service-worker registration or install-manifest link; the live governance-controlled demo still requires the Cloudflare Pages Functions, D1 and Workers AI deployment in ADR-001. GitHub Pages is available for public repositories on GitHub Free and supports custom GitHub Actions workflows. The fallback makes the proposed screens reviewable without implying that the backend is deployed.
+Publish a separately built, static future-product visualization at the repository's GitHub Pages URL. Client-side expandable details let visitors inspect proposed screen content, but do not write data or invoke a backend. This page bundle has no demo API, model calls, service-worker registration or install-manifest link; the live governance-controlled demo still requires the Worker, D1 and Workers AI deployment in ADR-001. GitHub Pages is available for public repositories on GitHub Free and supports custom GitHub Actions workflows. The fallback makes the proposed screens reviewable without implying that the backend is deployed.
 
 The Pages URL is not evidence of a live prototype. It becomes a verified artifact only after the GitHub Pages configuration, deployment workflow and public HTTPS response are checked. Sources: [GitHub Pages availability and limits](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [custom workflow publishing](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).

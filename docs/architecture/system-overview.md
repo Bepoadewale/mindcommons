@@ -4,15 +4,15 @@
 
 ```mermaid
 flowchart LR
-  V[Reviewer browser] -->|static files| P[Cloudflare Pages]
-  V -->|same-origin API; anonymous demo session| F[Pages Functions]
-  F --> G[Deterministic authorization engine]
-  F --> D[(D1: synthetic session, policy, permission, audit)]
+  V[Reviewer browser] -->|static files; served without Worker invocation| A[Workers Static Assets]
+  V -->|same-origin API; anonymous demo session| W[TypeScript Worker]
+  W --> G[Deterministic authorization engine]
+  W --> D[(D1: synthetic session, policy, permission, audit)]
   G -->|allowed fixed job only| AI[Workers AI]
-  F -->|decision and bounded result| V
+  W -->|decision and bounded result| V
 ```
 
-The static user interface is not an authority boundary. The function loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Locally, the binding is replaced by a deterministic mock explicitly enabled for development; production inference has not been verified.
+The static user interface is not an authority boundary. The Worker loads server-owned demo facts, applies role, policy, permission, purpose, job and expiry checks, writes decision evidence, and calls the Workers AI binding only for an allowed operation. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Locally, the inference path uses a deterministic mock explicitly enabled for development; production inference has not been verified.
 
 ## Trust boundaries
 

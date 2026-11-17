@@ -14,11 +14,11 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 
 ## Current status
 
-The core synthetic scenario is implemented and runs locally. Unit, local Pages + D1 integration, browser, and full-stack browser checks pass. The full-stack test uses an explicitly labelled deterministic mock, so it does not prove a live model call. No production Cloudflare resources or public demo have been deployed. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
+The core synthetic scenario is implemented and runs locally. Unit, local Worker + D1 integration, browser, and full-stack browser checks pass. The full-stack test uses an explicitly labelled deterministic mock, so it does not prove a live model call. No production Cloudflare resources or public demo have been deployed. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
 
 ## Architecture direction
 
-The implementation uses a React and TypeScript single-page application, Cloudflare Pages Functions, D1, and a Workers AI binding for a possible live deployment, subject to account access and free-plan verification. Static assets remain public; all authorization runs in the API. Local inference uses an explicit deterministic mock. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally. A separate static vision-only build is prepared for GitHub Pages; it contains no backend or inference behavior.
+The implementation uses a React and TypeScript single-page application, a Cloudflare Worker with Static Assets, D1, and a Workers AI binding for a possible live deployment, subject to account billing and write-scope verification. Static assets remain public and are served without Worker invocation; all authorization runs in the API Worker. Local inference uses an explicit deterministic mock. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally. A separate static vision-only build is prepared for GitHub Pages; it contains no backend or inference behavior.
 
 ## Develop and verify
 
@@ -29,7 +29,7 @@ npm ci
 npm run dev
 ```
 
-`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Pages Functions runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` checks the built UI against local Pages Functions and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run test:vision-static` builds and browser-tests the GitHub Pages vision-only artifact. `npm run verify` also checks that artifact, and runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
+`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Worker runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` checks the built UI against the local Worker and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run test:vision-static` builds and browser-tests the GitHub Pages vision-only artifact. `npm run verify` also checks that artifact, and runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
 
 ## Public links
 
