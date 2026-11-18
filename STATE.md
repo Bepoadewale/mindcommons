@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-18
 
+## Current reviewer-video and documentation update
+
+- Branch `docs/current-reviewer-video` contains the next single PR: a new 92.40-second, 1920×1080 silent captioned MP4, a reproducible no-inference production recorder, an opt-in guard on the older live-inference recorder, and reconciled reviewer/fellowship evidence. The Pages-only video URL is not public until the PR's Pages workflow publishes it; no Worker deployment or Cloudflare mutation is planned.
+- Local `npm run verify` passed (55 unit tests, Worker/D1 integration with explicitly labelled mock AI, format/lint/typecheck/build/docs checks); `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` passed with labeled mock AI; `npm run test:agreement` passed 27/27. `ffprobe` confirms H.264 1920×1080 at 25 fps, 92.40 seconds, 5,202,681 bytes. No live inference was run for this update.
+- The production recording asserted one benefit-gated HTTP 403, a receipt with `inferenceAttempted: false` and `outputReleased: false`, cross-session receipt denial (404), a later eligible preview after fictional agreement/acceptance, public repository/vision access and zero browser errors. It does not demonstrate an allowed AI run.
+- Next: inspect the final diff, commit and open the one PR, wait for required checks, merge only if all pass, then verify the new Pages video and existing links in an independent browser. The existing live Worker, database and prior video assets remain unchanged.
+
 ## Active fellowship-strengthening work
 
 - PR #37, [enforce accepted benefit prerequisites](https://github.com/Bepoadewale/mindcommons/pull/37), merged through protected `main` at `b0e321f62e5c6f8bc45922ae3760832566f2b586`. Its four required checks passed in run `44180211781`; post-merge CI run `44181005785` and static vision publish `44181005834` passed. The source branch was deleted locally and remotely.
@@ -22,18 +29,18 @@ Last updated: 2026-11-18
 
 ## Next executable tasks
 
-1. No further production mutation or live inference is required for this release. Before any future deployment or material increase in use, recheck account plan and usage. Do not select Workers Paid or activate any billable resource; shared free allowances can be consumed by unrelated workloads.
+1. Complete the pending reviewer-video/documentation PR and verify its GitHub Pages publish and public links. No production mutation or live inference is required. Before any future deployment or material increase in use, recheck account plan and usage. Do not select Workers Paid or activate any billable resource; shared free allowances can be consumed by unrelated workloads.
 2. Optional owner tasks: upload the verified MP4 to YouTube and share the URL if desired; arrange physical Android testing if useful. Any participant co-design, host relationship, ethics/safeguarding review and pilot are post-selection/host-dependent and are not completed or claimed.
 
 ## Verified complete
 
 - Public repository: https://github.com/Bepoadewale/mindcommons; Apache-2.0, Issues enabled, protected PR-only `main`, required checks `validate`, `verify`, `browser-acceptance`, and `secret-scan`; no solo-approval rule.
-- PRs #1–#44 merged through GitHub. PR #34 (`9a31042feb34987bbae3c9b10140a900435e07bd`) delivered the updated video and evidence; its checks passed in run `44134264751`, post-merge CI `44134751119` and Pages run `44134751142` succeeded. PR #35 (`b659a0a60f3cea6d8dfc293d951e9bd82742e2b7`) reconciled video evidence; its checks passed in PR run `44136713915`, post-merge CI `44137169473` and Pages run `44137169692` succeeded. PRs #39–#44 post-merge CI and static Pages publishes passed. All merged source branches were deleted.
+- PRs #1–#45 merged through GitHub. PR #34 (`9a31042feb34987bbae3c9b10140a900435e07bd`) delivered the updated video and evidence; its checks passed in run `44134264751`, post-merge CI `44134751119` and Pages run `44134751142` succeeded. PR #35 (`b659a0a60f3cea6d8dfc293d951e9bd82742e2b7`) reconciled video evidence; its checks passed in PR run `44136713915`, post-merge CI `44137169473` and Pages run `44137169692` succeeded. PRs #39–#45 post-merge CI and static Pages publishes passed. All merged source branches were deleted.
 - CI verification includes 38 unit tests, six reviewer browser tests, three vision tests, local Worker/D1 integration and mocked concurrency/output-withholding paths. The local full-stack browser test clearly identifies mocked AI and is not evidence of live inference.
 - D1 `mindcommons-demo-d1` (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) has migrations 0001–0008. Dedicated Worker `mindcommons-mozilla-demo` is at version `a12cd688-9975-44a6-a3ee-9c8c2dfe4974` with D1 and Workers AI bindings. The account ID confirmed with Wrangler and matched by the screenshots is `1630257815c70704ad812cd52c284ca2`.
 - Live production verification used a fresh synthetic session: actual Workers AI returned non-empty text; after contributor B withdrew, only contributions A and C were sent under policy v1; policy v2 then denied the identical request before inference. The same session recorded fictional benefit agreement, research-team acceptance, evidence and accepted community review. Output-release withholding during concurrent authorization change is verified by deterministic local integration tests, not a live race.
 - The Cloudflare subscription API previously returned HTTP 403 for both configured token services. Owner-shared dashboard screenshots show Workers Free active and Workers Paid not subscribed (an “Add” action is shown). The current-month billable-usage page said “No data” at capture time and refreshes daily, so it is not a post-deployment zero-charge attestation. No paid plan or add-on was created, and no DavDeploy resource was modified.
-- Captioned video and original video are public on both hosts. The new silent explanatory-caption recording is 92.84 seconds, 1920×1080, 25 fps H.264, 4,609,951 bytes. Worker and Pages URLs returned unauthenticated HTTPS 200 with `video/mp4`; the downloaded copies were probed/decoded. Live landing page links to both and loaded with no browser errors. Original 90.44-second video is unchanged.
+- The earlier captioned live-inference video (92.84 seconds) and original recording (90.44 seconds) are public on both hosts and remain unchanged. Their unauthenticated HTTPS URLs returned 200 with `video/mp4`; downloaded copies were probed/decoded. The latest 92.40-second no-inference recording is described in the current reviewer-video PR and awaits Pages publication.
 - Public future-product wireframe remains https://bepoadewale.github.io/mindcommons/. Research comparison acknowledges existing related work and does not claim novelty or integration.
 
 ## Latest verified deliveries

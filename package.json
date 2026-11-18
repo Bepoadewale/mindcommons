@@ -24,7 +24,7 @@
     "test:agreement": "vitest run tests/agreement-conformance.test.ts tests/community-ai-agreement.test.ts tests/portable-ai-service.test.ts tests/decision-receipt.test.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "demo:record": "node scripts/record-live-demo.mjs",
+    "demo:record": "node scripts/record-reviewer-video.mjs",
     "test:integration": "node scripts/test-local-integration.mjs",
     "agreement:schema": "node --experimental-strip-types scripts/export-agreement-schema.ts",
     "test:e2e:fullstack": "npm run build && node scripts/test-local-browser.mjs",
