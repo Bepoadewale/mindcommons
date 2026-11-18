@@ -18,7 +18,7 @@ The first scenario uses fictional Nigerian community members and synthetic menta
 
 ## Current status
 
-The demo is publicly hosted at the URL below. Its server checks synthetic individual permission and community policy before a fixed model call. A bounded live call to Cloudflare Workers AI and a server-side rejection of prohibited commercial use have been verified. The landing page links to a genuine 1080p screen recording served by the same Worker. Local automated tests continue to use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
+The demo is publicly hosted at the URL below. Its server checks synthetic individual permission, community policy, and configured benefit prerequisites before a fixed model call. The live service has demonstrated denial before inference, session-scoped decision receipts, and one bounded synthetic Workers AI execution. The account's billing screenshots show Workers Free active and Workers Paid not subscribed; the “No data” usage view predates the latest deployment and is not a zero-usage guarantee. No paid fallback is configured. Shared free quotas can be exhausted, in which case requests may fail. Local automated tests use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
 
 ## Architecture direction
 

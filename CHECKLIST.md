@@ -5,17 +5,17 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 ## Fellowship-strengthening follow-up
 
 - [x] PR #37 merged: benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. The initial policy remains permissive. Local API integration denies before inference until community agreement and research-team acceptance; the same request can proceed after acceptance.
-- [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; the delayed-inference API integration verified withholding. PR checks and post-merge CI passed. Hosted behavior for this new code remains unverified because no production migration or deploy was performed.
+- [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; delayed-inference integration verified withholding. Production benefit-gate denial was also verified; no live race was attempted.
 - [x] PR #38 merged: consent explanation, governance design framework, data-flow audit and cross-session API tests. Required checks and post-merge CI/Pages publication passed.
-- [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed. Hosted release does not include these changes yet.
+- [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed; receipt behavior is live.
 - [x] PR #40 merged: seven-step reviewer journey and deterministic no-inference policy preview. 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
-- [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; hosted Worker UI has not changed.
-- [x] Final status and evidence reconciliation merged in PRs #41 and #42; both passed required checks and post-merge CI/Pages workflows. The production deployment itself remains blocked because Cloudflare subscription/billing reads returned HTTP 403 for both configured token services; the official endpoint requires `Billing Read` or `Billing Write`. Do not deploy without successful current billing verification.
+- [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; the guided preview is deployed.
+- [x] PR #43 reconciled the production release and owner-shared billing screenshots through the PR workflow.
 
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#42 merged after their required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed.
+- [x] PRs #1–#43 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
 - [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
 - [x] PR #40 `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
@@ -29,13 +29,15 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 - [x] Portable Community AI Agreement JSON Schema and deterministic evaluator are used by MindCommons and a separately testable minimal Worker example.
 - [x] Agreement boundaries are explicit: it cannot control systems that ignore it, uncontrolled copies, or already released outputs.
 - [x] Real Workers AI inference and denied request were verified in production using synthetic content.
+- [x] Live benefit gate denied before inference while required terms were absent. After agreement and team acceptance, one synthetic operation completed; a receipt recorded the outcome. A separate session could not retrieve the first session's receipt.
 - [x] Benefit workflow completed in production synthetic session: community agreement, team acceptance, evidence marker and community review.
 
 ## Hosting and safety
 
-- [x] Exact dedicated Worker and D1 were confirmed; migrations 0005 and 0006 applied; Worker `b01d3f96-d72a-41a2-b751-88dff3c7adc9` deployed.
+- [x] Exact dedicated Worker and D1 were confirmed; migrations 0001–0008 applied; Worker `a12cd688-9975-44a6-a3ee-9c8c2dfe4974` deployed.
 - [x] No DavDeploy resources, DNS, Pages, routes, Email Routing or custom domain were changed.
-- [x] No plan, subscription, add-on or paid resource was created or changed. Prior same-day preflight reported zero active subscriptions; this session's subscription-list API read returned 403, so current billing status could not be re-read through that endpoint.
+- [x] Owner-shared screenshots show Workers Free active and Workers Paid not subscribed (the paid option shows “Add”). The billable-usage screen showed “No data” at capture time before deployment; daily refresh means it does not prove zero post-deployment usage.
+- [x] No plan, subscription, add-on or paid resource was enabled or changed. The project remains configured for free-tier services; shared free quotas can be exhausted, at which point requests may fail.
 - [x] Cloudflare lists the configured model as Workers Free eligible; the production call succeeded. Shared account quotas remain a limit.
 - [x] Synthetic-only, no clinical use, no real participants, and demo identity limitations are documented.
 - [x] Public interactive Worker demo and static future vision work without the Mac.

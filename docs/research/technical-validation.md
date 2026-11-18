@@ -54,13 +54,21 @@ Reviewed 2026-11-17. Platform quotas and model availability can change; recheck 
 - Git 2.50.1, GitHub CLI 2.101.0 (authenticated as `Bepoadewale`), Node 24.21.0, npm 11.19.0, Python 3.14.0, Docker 29.0.1, Cloudflared 2026.9.3.
 - GitHub identity is `Bepoadewale`; public repository is deployed. Cloudflare account and target-resource identity were confirmed before the project-only mutations; no token value is recorded here. The user-authorized broad token remains in Keychain and was never copied to GitHub Actions or the repository.
 
-## Read-only Cloudflare preflight for pending agreement updates (2026-11-18)
+## Historical read-only Cloudflare preflight before owner billing screenshots (2026-11-18)
 
 - Confirmed the target Cloudflare account `1630257815c70704ad812cd52c284ca2`, Worker `mindcommons-mozilla-demo`, and D1 database `mindcommons-demo-d1` (ID `9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) using read-only identity/resource/migration checks. The deployed Worker remains version `b01d3f96-d72a-41a2-b751-88dff3c7adc9`.
 - The remote D1 migration list shows `0007_policy_benefit_prerequisites.sql` and `0008_research_decision_receipts.sql` pending. No migration or Worker deployment was attempted.
 - The account subscription-list API returned HTTP 403 for both configured Cloudflare token services. Cloudflare documents that this read requires `Billing Read` or `Billing Write`: <https://developers.cloudflare.com/api/resources/accounts/subresources/subscriptions/methods/get/>. Thus this run could not verify current account billing/free-tier status. Model eligibility does not establish account billing status.
 - This is a deployment stop condition under the project rules. No plan, paid add-on, route, unrelated project resource, or DavDeploy resource was changed.
 - PR #40's GitHub Pages wireframe publish succeeded in run `44192355348`, and all jobs in post-merge main CI run `44192355625` passed, including browser acceptance.
+
+## Owner billing evidence and deployed agreement updates (2026-11-18)
+
+- The owner shared the three latest Cloudflare billing screenshots. They show **Workers Free** active, **Workers Paid** still available via “Add” and not subscribed, and “No data” on the current-month billable-usage page at capture time. The screenshots were taken before this deployment. Cloudflare says usage estimates refresh daily, so this is not evidence that post-deployment charges are zero or that the final bill is zero. The screenshots are intentionally not copied into the repository.
+- Before the additive changes, Wrangler confirmed the exact account and dedicated MindCommons Worker/D1. The D1 migration list showed only 0007/0008 pending; their SQL was reviewed and both migrations only add fields/tables without deleting data. `wrangler deploy --dry-run` confirmed the dedicated Worker, D1 binding, Workers AI binding and static assets. No paid service or unrelated resource was selected.
+- Applied migrations 0007 and 0008 to D1 `mindcommons-demo-d1` (`9b9dff3c-6743-4dab-8fb9-e2cebe0196f0`) and deployed only `mindcommons-mozilla-demo`, now version `a12cd688-9975-44a6-a3ee-9c8c2dfe4974`. Read-only post-deployment checks confirmed the version and no pending migrations. The public demo, GitHub Pages vision page and video endpoints returned HTTPS 200.
+- Production API validation used synthetic sessions only. Missing required benefit terms returned 403 before inference; the denial receipt was accessible from its own session, while another initialized session received 404 for the same receipt. One explicitly submitted synthetic job completed with the bounded Workers AI binding; its receipt recorded live inference, policy v2, accepted required benefit, three contributions and released output. No additional model call was made for these checks.
+- No paid plan, subscription, add-on, model access, custom domain, route, billing setting or unrelated Cloudflare resource was enabled or changed; no DavDeploy resource was touched. Free-tier quotas are shared across the account and can be exhausted by other workloads. The app has no paid fallback: if a quota is exhausted, requests may fail until reset. Recheck official limits and account status before any future deployment or material usage increase. Current references: [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), and [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/).
 
 ## Live model validation update (2026-11-17)
 

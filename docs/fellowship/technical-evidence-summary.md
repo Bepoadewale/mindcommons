@@ -13,15 +13,15 @@ SRHIN's challenge describes mental-health data from African communities being us
 - Community AI Agreement versions 1.0.0 and 2.0.0. Version 2 can make named benefit obligations prerequisites without changing version 1 semantics.
 - A conditional D1 result-release guard that withholds a result when the applicable policy, permissions, researcher session or required benefit facts change during inference.
 - A portable reference evaluator and a separately testable Worker consumer. Agreement conformance tests cover withdrawal, policy changes, benefit states, malformed/future agreements, denial-before-inference and output withholding.
-- A session-scoped JSON decision receipt that records authorization and execution evidence without exporting model output or raw narratives. The receipt endpoint and D1 migration are verified locally; they are not yet part of the hosted Worker release.
-- A guided reviewer walkthrough with a deterministic preview computed from the current agreement snapshot. It displays eligible/excluded contributions and authorization reasons without invoking AI; the server repeats authorization when a visitor explicitly submits the fixed job. Browser tests cover permission, policy and benefit changes. PR #40 is merged and its required checks passed; the feature is not in the hosted Worker release.
+- A session-scoped JSON decision receipt that records authorization and execution evidence without exporting model output or raw narratives. Production checks verified a denial receipt and confirmed a separate session cannot retrieve it.
+- A guided reviewer walkthrough with a deterministic preview computed from the current agreement snapshot. It displays eligible/excluded contributions and authorization reasons without invoking AI; the server repeats authorization when a visitor explicitly submits the fixed job. The current Worker serves this experience.
 - Fictional benefit workflow states: community agreement, research-team acceptance, evidence submission and community review. Recording these states does not establish delivery or payment.
 
 ## Demonstrable enforcement and architecture
 
 The current public application and captioned recording show a genuine bounded Workers AI call on synthetic inputs, contributor-specific filtering after withdrawal, and server-side denial after a different collective policy is activated. The local branch adds an opt-in benefit prerequisite: the request is denied before inference while required terms are missing, then becomes eligible after community agreement and research-team acceptance, assuming other conditions pass. Local integration tests use a labelled deterministic mock; they are not production inference evidence.
 
-The browser sends a fixed job request to a Cloudflare Worker. The Worker reads session-scoped D1 facts, evaluates policy and permissions, selects eligible synthetic records, and sends only those records to Workers AI. Before storing or returning model output, a conditional database update checks that authorization facts remain unchanged. Cloudflare Workers AI is an external processing boundary. A post-inference withdrawal can withhold release, but cannot recall information already transmitted to the provider or reverse provider processing.
+The browser sends a fixed job request to a Cloudflare Worker. The Worker reads session-scoped D1 facts, evaluates policy, permissions and required benefit conditions, selects eligible synthetic records, and sends only those records to Workers AI. Before storing or returning model output, a conditional database update checks that authorization facts remain unchanged. Cloudflare Workers AI is an external processing boundary. A post-inference withdrawal can withhold release, but cannot recall information already transmitted to the provider or reverse provider processing.
 
 ## Open-source and reproducibility evidence
 
@@ -32,7 +32,7 @@ The browser sends a fixed job request to a Cloudflare Worker. The Worker reads s
 - Existing static future-vision wireframe: <https://bepoadewale.github.io/mindcommons/>. It is a static concept page without the backend or AI.
 - Captioned 1080p screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> and independent Pages copy at <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>.
 
-PRs #39 and #40 have passed required GitHub checks and merged to `main`. The public Worker and video have not been updated to include the receipt, required-benefit gate or policy preview. Do not describe these as hosted until current billing status is verifiably checked, migrations are applied and the Worker release is separately deployed and validated.
+PRs #37–#43 have passed the PR workflow and merged to `main`. The Worker and D1 were updated to the release containing the required-benefit gate, decision receipt and policy preview. Owner-shared screenshots show Workers Free active and Workers Paid not subscribed. The billable-usage screen showed “No data” before deployment and refreshes daily; it is not proof of zero post-deployment usage. No paid service was enabled. The live denial and receipt isolation were verified; one bounded synthetic Workers AI request completed. The public video predates the latest interface and benefit gate. Before any future deployment, recheck free-tier status and usage; if a feature requires payment, leave it disabled.
 
 ## Limitations and unresolved decisions
 
