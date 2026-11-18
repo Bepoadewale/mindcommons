@@ -43,6 +43,7 @@ For the protocol consumer example, see [`examples/portable-ai-worker/`](examples
 
 - Source: <https://github.com/Bepoadewale/mindcommons>
 - Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
+- Latest policy-and-benefit walkthrough: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4> (public 1920×1080 MP4; it demonstrates the real denial and session receipt without running AI)
 - Captioned technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> (public 1920×1080 MP4; a <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4> Pages fallback is available)
 - Original screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (preserved; YouTube upload is still planned by the project owner)
 - Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)

@@ -6,6 +6,10 @@
 
 SRHIN's challenge describes mental-health data from African communities being used in AI without sufficient consent, community control or equitable benefit-sharing. MindCommons explores whether community-defined rules, separate individual permissions, model-use restrictions and agreed benefit conditions can be enforced by AI services that choose to participate in a shared technical agreement. The prototype leaves legitimate authority and acceptable governance arrangements open for future co-design.
 
+## Why this technical approach may matter to the SRHIN challenge
+
+The technical question is whether community and individual decisions can change an AI service's behavior when a research request arrives—not only be documented as consent text. MindCommons tests that question with a participating-service boundary: the request is checked against a collective policy, each contributor's own permission, the allowed model operation, and any required benefit terms. The service refuses a request before inference when an applicable condition is missing and creates a session-scoped receipt that records the reasons. This links consent, privacy, community control, and benefit accountability in one inspectable workflow. It does not prove that a community wants this design, establish who has authority, or control services that ignore the agreement. The synthetic demo is intended as a concrete object for future co-design, not a substitute for it.
+
 ## Implemented technical capabilities
 
 - Synthetic, session-isolated community, policy, individual-permission, research and benefit records.
@@ -31,8 +35,9 @@ The browser sends a fixed job request to a Cloudflare Worker. The Worker reads s
 - Existing hosted demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>.
 - Existing static future-vision wireframe: <https://bepoadewale.github.io/mindcommons/>. It is a static concept page without the backend or AI.
 - Captioned 1080p screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> and independent Pages copy at <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>.
+- Latest 92.40-second 1080p policy-and-benefit walkthrough: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4>. It records real production denial and receipt behavior, but deliberately does not invoke AI. The prior recording above remains the separate live-inference evidence.
 
-PRs #37–#43 have passed the PR workflow and merged to `main`. The Worker and D1 were updated to the release containing the required-benefit gate, decision receipt and policy preview. Owner-shared screenshots show Workers Free active and Workers Paid not subscribed. The billable-usage screen showed “No data” before deployment and refreshes daily; it is not proof of zero post-deployment usage. No paid service was enabled. The live denial and receipt isolation were verified; one bounded synthetic Workers AI request completed. The public video predates the latest interface and benefit gate. Before any future deployment, recheck free-tier status and usage; if a feature requires payment, leave it disabled.
+PRs #37–#45 have passed the PR workflow and merged to `main`. The Worker and D1 were updated to the release containing the required-benefit gate, decision receipt and policy preview. Owner-shared screenshots show Workers Free active and Workers Paid not subscribed. The billable-usage screen showed “No data” before deployment and refreshes daily; it is not proof of zero post-deployment usage. No paid service was enabled. The live denial and receipt isolation were verified; one bounded synthetic Workers AI request completed. The new video records the latest interface and benefit gate without inference; the previous video remains the separate live-inference evidence. Before any future deployment, recheck free-tier status and usage; if a feature requires payment, leave it disabled.
 
 ## Limitations and unresolved decisions
 

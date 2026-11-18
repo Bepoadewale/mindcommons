@@ -2,6 +2,14 @@ import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 
+// Historical recording only: it performs real model calls. Use `npm run demo:record` for the
+// current benefit/receipt video, which intentionally makes no Workers AI inference call.
+assert.equal(
+  process.env.MINDCOMMONS_ALLOW_LIVE_INFERENCE,
+  'true',
+  'This legacy recorder makes live model calls; explicitly set MINDCOMMONS_ALLOW_LIVE_INFERENCE=true to proceed.',
+);
+
 const targetUrl =
   process.env.MINDCOMMONS_DEMO_URL ?? 'https://mindcommons-mozilla-demo.bepoadewale1.workers.dev';
 const target = new URL(targetUrl);

@@ -2,47 +2,40 @@
 
 ## Current recording
 
-The new captioned export is `apps/web/public/mindcommons-demo-captioned.mp4`. The original `apps/web/public/mindcommons-demo.mp4` remains unchanged as the uncaptioned recording. Both are 1920×1080, 25 fps H.264 MP4 files; the new export is 92.84 seconds and 4,609,951 bytes. It was captured from the publicly deployed application with Chromium, then encoded with FFmpeg at H.264 CRF 18. The recording script is `scripts/record-live-demo.mjs`.
+The latest browser recording is `apps/web/public/mindcommons-demo-authorization.mp4`. It is a genuine 92.40-second, 1920×1080, 25 fps H.264 MP4 encoded at CRF 18 (5,202,681 bytes). It was captured from a clean Chromium session against the live Worker. It demonstrates a contributor withdrawal in the policy preview, the policy change, a real server-side denial because the agreed benefit terms are missing, the actual session receipt, and a preview becoming eligible after the fictional community and research team accept the obligation. The script asserts that the one submitted research request is denied, the receipt says inference was not attempted and output was not released, and a separate session cannot read that receipt. No Workers AI inference is called during this recording.
 
-The video is silent. Its burned-in explanatory captions are not a transcript of speech or closed captions. They accurately describe the visible scenario and clarify the proposed work. There is no narration or participant footage. The recording run passed its assertions: non-empty real Workers AI result, only A and C processed after B withdrew, identical request rejected under policy v2, fictional benefit obligation agreed/accepted/evidenced/reviewed, GitHub repository page opened, no browser errors, and no horizontal app overflow.
+The new recording is silent with burned-in explanatory captions; the captions are not speech subtitles. It contains no participant footage or community endorsement. The temporary receipt viewer in the video displays the exact JSON returned for that synthetic session; it is a viewer used for recording, not a new product feature.
 
-The captioned video is published at:
+After the documentation PR merges, the video will be publicly hosted at <https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4>. It is a GitHub Pages static fallback and does not depend on the Mac. The deployed Worker continues to serve the previous recordings; no Worker deployment is needed for the Pages copy. The earlier captioned and original recordings remain unchanged:
 
-- Worker: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4>
-- GitHub Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>
+- Previous captioned Worker video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4>
+- Previous captioned Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>
 - Original Worker MP4: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4>
-- Original GitHub Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>
+- Original Pages fallback: <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>
 
-Both versions returned unauthenticated HTTPS 200 with `video/mp4` from the Worker and Pages. The landing page links to both videos, and the Pages copy was downloaded and checked as a decodable 1920×1080, 25 fps, 92.84-second MP4. These are independent public files, not a YouTube upload. The project owner may replace the public landing-page video destination with a YouTube URL later through a PR; no upload is claimed.
+## Caption sequence
 
-## Caption copy and sequence
+The recorder inserts captions over the real browser interaction. The video distinguishes the no-inference preview from the denied server request and does not claim that AI ran:
 
-The recorder inserts each caption over the screen recording at the point where the described action occurs. Text remains long enough to read; the complete phrases below are the recorded copy.
-
-1. “Communities can contribute data without a lasting say in how it is used or who benefits.”
-2. “MindCommons explores community rules before AI research.”
-3. “A technical prototype using only fictional people and research records.”
-4. “Community rule v1 excludes a contribution when its individual permission is withdrawn.”
-5. “Contributor B withdraws. Their fictional record is excluded from the next job.”
-6. “A fixed research job checks every contributor before sending eligible records.”
-7. “Live inference ran on records A and C; the withdrawn record was not sent.”
-8. “The fictional representative approves policy v2: every contributor must agree.”
-9. “The same request is now denied before inference because contributor B withdrew.”
-10. “Server-side authorization blocks the job; no model call is made.”
-11. “Tracks a proposed benefit: shared findings, an accountable owner, evidence and community review.”
-12. “This prototype is not a pilot or endorsement. Fellowship work would co-design, review and test the rules with communities.”
-13. “Proposed next: co-design, ethics review, and pilot planning with young people, lived-experience advocates and community health workers.”
+1. “Community contributions should come with a continuing say in AI research.”
+2. “MindCommons is an independent technical prototype. Every person and record in this demo is fictional.”
+3. “First, inspect the community rule and each person’s separate permission.”
+4. “This preview applies the shared agreement rules. It makes no model call.”
+5. “Withdrawing one person’s permission removes that person’s fictional contribution.”
+6. “The approved policy also requires community agreement and research-team acceptance of a shared-results commitment.”
+7. “The server denies the request before inference and offers a session-only JSON receipt.”
+8. “The receipt records the denied outcome and says inference was not attempted.”
+9. “Receipt data is scoped to this synthetic session and omits the model output.”
+10. “After the fictional team accepts, the same rules preview changes to eligible. No AI job is run.”
+11. “The future roadmap is proposed work for genuine community co-design, not completed validation.”
+12. “Open-source code, evidence and limitations are available for independent review.”
 
 ## Reproduce and verify
 
-Run `npm run demo:record` after deployment. The script deliberately targets only the MindCommons production Worker and performs two bounded real model calls in a fresh synthetic session; it refuses to report success if the model response is empty or the denied request is not blocked. By default, Playwright saves a WebM in `/private/tmp/mindcommons-live-video`. Encode it to MP4 with:
+Run `npm run demo:record` from a local development checkout. The script targets only the MindCommons production Worker using a fresh, synthetic browser session. It performs one denied research request and verifies a receipt with `inferenceAttempted: false`; it never invokes the Workers AI binding. It also checks the future-vision page, repository, receipt isolation, and zero browser errors. Playwright saves WebM under `/private/tmp/mindcommons-reviewer-video`. Encode it to the preserved sibling MP4 path with:
 
 ```bash
-ffmpeg -i <playwright-recording.webm> -map 0:v:0 -an -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart mindcommons-demo-captioned.mp4
+ffmpeg -i <playwright-recording.webm> -map 0:v:0 -an -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart apps/web/public/mindcommons-demo-authorization.mp4
 ```
 
-The checked-in MP4 is also decoded and probed with `ffprobe`; after publishing, open each unauthenticated Worker and GitHub Pages URL and verify HTTPS 200 plus `video/mp4`. Do not describe deterministic local mock runs as live inference evidence.
-
-## Proposed follow-up recording (not yet recorded)
-
-If the receipt and benefit-gate changes are merged and safely deployed, make a new capture rather than editing or replacing the verified files above. The original and current captioned files remain preserved. Target a concise 90–120 second 1080p recording that accurately shows: (1) fictional community rule and individual permission; (2) preview of a contributor withdrawal with eligible records; (3) the same fixed request denied because a required accessible-results obligation has not been agreed and accepted; (4) fictional community agreement and research-team acceptance; (5) actual bounded AI execution only after authorization, or an honest service-limit/error state; (6) downloading and inspecting a receipt that reports inference mode and release outcome without exposing output or narrative; and (7) repository reuse and the proposed, host-dependent co-design roadmap. Explain that the external provider has already received inputs before any post-inference withholding, and that simulated seats do not prove identity or authority. Do not record an un-deployed feature as public or use mock footage as live-model evidence.
+The video is checked with `ffprobe` and decoded. After the PR publishes GitHub Pages, verify unauthenticated HTTPS 200 and `video/mp4` for the new asset. The previous Worker and Pages recordings remain independently available. Do not describe a preview as execution or claim inference happened in this new recording.
