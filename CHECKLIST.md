@@ -10,12 +10,12 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 - [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed; receipt behavior is live.
 - [x] PR #40 merged: seven-step reviewer journey and deterministic no-inference policy preview. 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
 - [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; the guided preview is deployed.
-- [x] PR #43 reconciled the production release and owner-shared billing screenshots through the PR workflow.
+- [x] PR #44 reconciled the production release and owner-shared billing screenshots through the PR workflow; four required checks, post-merge CI and Pages publish passed.
 
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#43 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed.
+- [x] PRs #1–#44 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed; PR #44 post-merge CI run `44239516814` and Pages run `44239516893` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
 - [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
 - [x] PR #40 `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
