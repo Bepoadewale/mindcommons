@@ -286,4 +286,10 @@
 - Added `scripts/record-reviewer-video.mjs` as the safe default for `npm run demo:record`; it uses a fresh fictional session, makes one denied request, validates the receipt and cross-session isolation, then checks the public vision and repository. The older live-inference recorder now requires explicit `MINDCOMMONS_ALLOW_LIVE_INFERENCE=true` opt-in. No inference was called in this work.
 - Updated README, reviewer/video guidance, technical validation, evidence links, RFP alignment, project status, checklist and plan. The new MP4 will be hosted as a GitHub Pages-only fallback after this branch merges; no Cloudflare or Worker changes are required.
 - Validation: `npm run verify` passed with 55 unit tests and local Worker/D1 integration using deterministic mock AI; `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` passed with labeled mock AI; `npm run test:agreement` passed 27/27; `git diff --check` passed; ffprobe confirmed 1920×1080 H.264 at 25 fps, 92.40 seconds, 5,202,681 bytes. Production browser recording asserted benefit-denial HTTP 403, receipt `inferenceAttempted: false`/`outputReleased: false`, cross-session receipt 404, eligible preview after fictional acceptance, and no browser errors.
-- Remaining: final diff review, one PR, required CI, merge only if passing, verify Pages publication and all public links in an independent browser, then delete the merged source branch.
+- Completed by PR #46; see the following publication-verification entry.
+
+# 2026-11-18 — PR #46 publication verification
+
+- PR #46 merged to protected `main` at `ad0f527f109431fbe080da7e93e484468a92aa8b`; all four required checks passed. Post-merge CI run `44261338378` and static Pages publish run `44261338331` passed. GitHub deleted the source branch locally and remotely.
+- Independent, unauthenticated Chromium verification opened the live app, vision page, repository, and new 92.40-second MP4. The video returned HTTP 200 with `video/mp4`; the browser player reported 1920×1080 and 92.4 seconds. Four prior Worker/Pages video links also returned HTTP 200 with `video/mp4`. There were no API submissions or model calls.
+- No Cloudflare resource, Worker, D1 database, billing setting or DavDeploy service changed.

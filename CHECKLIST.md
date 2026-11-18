@@ -15,7 +15,7 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 ## Repository and quality
 
 - [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#45 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed; PR #44 post-merge CI run `44239516814` and Pages run `44239516893` passed; PR #45 post-merge CI run `44241005421` and Pages run `44241005379` passed.
+- [x] PRs #1–#46 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed; PR #44 post-merge CI run `44239516814` and Pages run `44239516893` passed; PR #45 post-merge CI run `44241005421` and Pages run `44241005379` passed; PR #46 post-merge CI run `44261338378` and Pages run `44261338331` passed.
 - [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
 - [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
 - [x] PR #40 `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
@@ -48,10 +48,10 @@ Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future wor
 - [x] New genuine 92.84-second, 1920×1080, 25 fps H.264 MP4 shows live inference, contributor withdrawal/filtering, same-request policy denial, the fictional benefit workflow and source repository.
 - [x] New video contains readable explanatory on-screen captions; silence and lack of speech subtitles are stated accurately.
 - [x] Latest fresh-session video shows benefit-based denial, the real session receipt and post-acceptance eligibility in 1920×1080; the single API submission was denied with `inferenceAttempted: false`, so no model call or free inference quota was used.
-- [x] Independent Chromium verification checked the live application, GitHub repository, static vision page, current Worker video URLs and existing Pages video fallbacks without authentication; the new asset is queued for verification after the Pages publishing workflow.
+- [x] Independent Chromium verification checked the live application, GitHub repository, static vision page, new Pages MP4 playback (1920×1080, 92.40 seconds), existing Worker video URLs and existing Pages video fallbacks without authentication; all returned HTTP 200 with expected media types and no page errors.
 - [x] Both local MP4s decoded; new asset probed. Worker and Pages copies returned unauthenticated HTTPS 200 with `video/mp4`; downloaded copies match expected size, dimensions, frame rate and duration.
 - [x] Production landing page links to both recordings; Chromium verified both links and zero page errors.
-- [x] Pages vision is live and static. The new video will be mirrored there as a fallback after this PR's Pages workflow succeeds.
+- [x] Pages vision is live and static; the new 5.0 MB MP4 is independently playable there as a fallback.
 
 ## Fellowship evidence and boundaries
 
