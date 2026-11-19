@@ -2,7 +2,7 @@
 
 **Status on 2026-11-18:** MindCommons is a public technical prototype, not an awarded Mozilla project, established cooperative, SRHIN partnership, or real community pilot. It uses fictional community records and synthetic research material only.
 
-PRs #37–#46 are merged to protected `main`; required checks passed. PR #46's post-merge CI run `44261338378` and static Pages publish run `44261338331` passed. PRs #37–#40 are deployed on the dedicated Worker, and their live behavior was checked using synthetic sessions. PR #46 only updated the Pages video and documentation; it did not redeploy or change the Worker.
+PRs #37–#47 are merged to protected `main`; required checks passed. PR #46's post-merge CI run `44261338378` and static Pages publish run `44261338331` passed. PR #47's post-merge CI run `44262711032` and static Pages publish run `44262711116` passed. PRs #37–#40 are deployed on the dedicated Worker, and their live behavior was checked using synthetic sessions. PRs #46–#47 updated the Pages video and documentation; they did not redeploy or change the Worker.
 
 ## What works
 
