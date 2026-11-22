@@ -3,18 +3,14 @@ import { extname, join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const required = [
-  'GOAL.md',
-  'PLAN.md',
-  'STATE.md',
-  'CHECKLIST.md',
-  'SESSION_LOG.md',
   'README.md',
+  'docs/README.md',
   'LICENSE',
   'CONTRIBUTING.md',
   'SECURITY.md',
   'docs/architecture/system-overview.md',
   'docs/architecture/decisions.md',
-  'docs/engineering/davdeploy-lessons.md',
+  'docs/architecture/mindcommons-architecture.svg',
   'docs/research/technical-validation.md',
   'docs/research/existing-solutions.md',
   'docs/governance/community-authority.md',

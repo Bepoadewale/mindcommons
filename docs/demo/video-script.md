@@ -1,31 +1,34 @@
-# What the demonstration videos show
+# Demonstration videos and captions
 
-The project has more than one video because each shows a different part of the prototype.
+The project has two short videos because they demonstrate different things.
 
 ## Policy and benefit walkthrough
 
-[Watch the latest walkthrough](https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4). It is a real 92-second browser recording at 1920 × 1080 resolution. It shows a fictional permission change, a policy preview, a server denial because a required benefit has not been accepted, a session-only receipt, and a preview that becomes eligible after fictional agreement and acceptance. The server request is denied; this recording does not call AI.
+[Watch the 1080p walkthrough](https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4). It shows a real server denial, the session-only decision receipt, and how fictional agreement and acceptance change a policy preview. It does not call AI.
 
-The video is silent. Explanatory text is shown on screen, but it is not a spoken transcript or closed captions. It contains no participant footage or endorsement. The receipt shown belongs to the fictional demo session. The temporary receipt display used while recording is not a separate product feature.
+This video is silent. The text shown on screen is explanatory text, not spoken narration or closed captions. Its key messages are:
+
+1. Community contributions should come with a continuing say in AI research.
+2. MindCommons is an independent prototype. Every person and record in the demo is fictional.
+3. The demo shows the community rule and each person's separate permission.
+4. The policy preview applies the agreement rules without calling a model.
+5. Withdrawing permission removes that person's sample contribution.
+6. A research task may also depend on agreed community benefits.
+7. The server denies a request before AI when the benefit terms are missing.
+8. The receipt explains that the request was denied and AI was not called.
+9. Receipts belong to one synthetic session and do not include model output.
+10. After fictional agreement and team acceptance, the same rules preview may become eligible.
+11. Future work would require genuine community co-design.
+12. The source code, evidence and limits are public for review.
 
 ## Captioned synthetic AI demonstration
 
-[Watch the earlier captioned recording](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4). It shows a separate, limited AI task on fictional research text. The video does not show a real study or real participants.
+[Watch the captioned recording](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4). This is a separate video. It shows a bounded AI run using fictional material and a fictional permission change. It does not show a real study or participants.
 
 ## Other preserved recordings
 
-- [Original recording on the live demo host](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4)
-- [Original recording on GitHub Pages](https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4)
-- [Captioned recording on GitHub Pages](https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4)
+- [Original screen recording on the demo site](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4)
+- [Original recording mirrored on GitHub Pages](https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4)
+- [Captioned recording mirrored on GitHub Pages](https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4)
 
-## Recreate the walkthrough
-
-From the repository root, run `npm run demo:record`. This uses a fresh fictional session on the live MindCommons demo. It sends one request that is expected to be denied and checks that the receipt says AI was not attempted. It does not call the AI model.
-
-The browser recording is saved under `/private/tmp/mindcommons-reviewer-video`. To make the MP4 in the existing project location:
-
-```sh
-ffmpeg -i <playwright-recording.webm> -map 0:v:0 -an -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart apps/web/public/mindcommons-demo-authorization.mp4
-```
-
-The recording should be checked with `ffprobe` and decoded before publishing. After GitHub Pages publishes it, verify that it opens without sign-in and is served as an MP4. Never describe the preview as an AI run.
+No YouTube upload is claimed.

@@ -2,8 +2,6 @@
 
 **Updated: November 22, 2026.** MindCommons is an independent, public technical prototype. It is not an established cooperative, an SRHIN project, a community-approved product, a clinical tool, or an awarded Mozilla project. The demo uses fictional people and synthetic research material only.
 
-Recent documentation changes are PR #49, which added context about GENSCORE and SRHIN's lived-experience co-design guide, and PR #50, which rewrote the public project materials in simpler English. Neither changed the software or production service. Both PRs passed their required checks; the post-merge CI and static-site publications also passed.
-
 ## What a reviewer can try
 
 - Open the [live demo](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/).
@@ -28,10 +26,10 @@ The live service uses Cloudflare Workers, D1 (a small database), and Workers AI.
 
 No community demand, participant feedback, SRHIN endorsement, partnership, real benefit delivery, clinical validation, or real-world pilot is claimed. The demo's role switcher does not verify identity or representative authority. The agreement only affects services that choose to use it; it cannot control outside copies of data or models or recall results already shared.
 
-Owner-shared Cloudflare screenshots showed the Workers Free plan active and the Workers Paid plan not subscribed. A usage page said “No data” before the latest deployment; that is not proof of zero usage or a guarantee that future service use will remain within free limits. No paid service was enabled. Stop if free allowances are unavailable; do not enable paid service.
+The demo has no paid fallback. Its free service allowances are shared across the Cloudflare account and may run out; if that happens, requests may fail. No paid service was enabled for this project.
 
-The latest video is silent and uses on-screen captions. It is not a spoken narration or a closed-caption transcript. The owner has not uploaded it to YouTube. An Android emulator test passed, but a physical Android phone has not been tested.
+The latest video is silent and uses on-screen captions, not narration or closed captions. Android installation was checked in an emulator; a physical phone has not been tested.
 
 ## Fellowship path
 
-The proposed [SRHIN roadmap](srhin-embedded-roadmap.md) describes work that could happen only if the fellowship is awarded, a host relationship is established, and the necessary safeguards are approved. Community authority, consent, benefit terms, and any pilot must be shaped with the people affected. The application is separate; these technical notes are not personal application answers.
+The proposed [SRHIN roadmap](srhin-embedded-roadmap.md) describes work that could happen only if the fellowship is awarded, a host relationship is established, and the necessary safeguards are approved. Community authority, consent, benefit terms, and any pilot must be shaped with the people affected.
