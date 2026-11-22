@@ -37,6 +37,14 @@ The website is built with React and TypeScript. A Cloudflare Worker runs the ser
 
 Most tests use a clearly labelled mock instead of calling an AI model. A mock is a test substitute. It helps check the software but is not evidence of a live model run. The live run is separately described in the [project status](docs/fellowship/project-status.md).
 
+### Architecture at a glance
+
+[![MindCommons data flow: a visitor's fixed request is checked against current community rules and individual permissions; only approved synthetic text reaches the AI model, and the server checks the rules again before sharing a result.](docs/architecture/mindcommons-architecture.svg)](docs/architecture/mindcommons-architecture.svg)
+
+On a small screen, open the diagram to view it at full size.
+
+The diagram shows the live demo's main path. A denial stops before the AI model. If the rules change while the model is working, the service withholds the result. It cannot undo information already sent to the outside model provider.
+
 ## Run and check it locally
 
 Requirements: Node.js 24 or later and npm 11 or later.
