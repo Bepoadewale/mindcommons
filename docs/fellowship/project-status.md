@@ -2,7 +2,7 @@
 
 **Updated: November 22, 2026.** MindCommons is an independent, public technical prototype. It is not an established cooperative, an SRHIN project, a community-approved product, a clinical tool, or an awarded Mozilla project. The demo uses fictional people and synthetic research material only.
 
-The latest documentation change, PR #49, added research context about the GENSCORE project and SRHIN's public lived-experience co-design guide. It did not change the software or production service. PR #49 and its required checks passed; the post-merge tests and static-site publication also passed.
+Recent documentation changes are PR #49, which added context about GENSCORE and SRHIN's lived-experience co-design guide, and PR #50, which rewrote the public project materials in simpler English. Neither changed the software or production service. Both PRs passed their required checks; the post-merge CI and static-site publications also passed.
 
 ## What a reviewer can try
 
