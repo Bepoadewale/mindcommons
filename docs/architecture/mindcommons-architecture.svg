@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+  <title id="title">MindCommons architecture</title>
+  <desc id="desc">A visitor sends a fixed research request to the MindCommons service. The service checks community rules, each contributor's permission, and any required benefit terms using temporary demo records. A request that fails is denied before AI. Only an approved request sends selected synthetic text to an outside AI model. The service checks the rules again before sharing a result and withholds it if the rules changed.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#52657a"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#16836a"/>
+    </marker>
+    <style>
+      .title{font:700 32px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#14243a}
+      .subtitle{font:400 17px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#52657a}
+      .boundary-title{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#fff;letter-spacing:.3px}
+      .card-title{font:700 18px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#14243a}
+      .body{font:400 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#42566d}
+      .small{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#52657a}
+      .number{font:700 13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#fff}
+      .label{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#42566d}
+      .line{fill:none;stroke:#52657a;stroke-width:2.5;marker-end:url(#arrow)}
+      .allowed{fill:none;stroke:#16836a;stroke-width:2.5;marker-end:url(#arrow-green)}
+      .dotted{fill:none;stroke:#7187a0;stroke-width:2;stroke-dasharray:6 6;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" rx="24" fill="#f4f7fb"/>
+  <text x="48" y="58" class="title">How MindCommons checks an AI research request</text>
+  <text x="48" y="90" class="subtitle">A fictional example. The AI model never decides who is allowed.</text>
+
+  <!-- Visitor -->
+  <rect x="38" y="285" width="218" height="220" rx="18" fill="#fff" stroke="#cbd7e4" stroke-width="2"/>
+  <circle cx="66" cy="316" r="15" fill="#496a90"/>
+  <text x="66" y="321" text-anchor="middle" class="number">1</text>
+  <text x="91" y="322" class="card-title">Visitor</text>
+  <text x="58" y="362" class="body">
+    <tspan x="58" dy="0">Chooses a fixed research</tspan>
+    <tspan x="58" dy="22">request using fictional</tspan>
+    <tspan x="58" dy="22">sample records.</tspan>
+  </text>
+  <rect x="58" y="438" width="177" height="42" rx="10" fill="#edf3f9"/>
+  <text x="72" y="456" class="small">
+    <tspan x="72" dy="0">No real health data</tspan>
+    <tspan x="72" dy="15">is accepted.</tspan>
+  </text>
+
+  <!-- MindCommons service boundary -->
+  <rect x="282" y="170" width="830" height="550" rx="22" fill="#eaf1f8" stroke="#9eb5cc" stroke-width="2.5"/>
+  <rect x="312" y="150" width="345" height="40" rx="20" fill="#315477"/>
+  <text x="484" y="176" text-anchor="middle" class="boundary-title">MINDCOMMONS SERVICE</text>
+  <text x="675" y="211" class="small">Rules are checked on the server.</text>
+
+  <!-- API -->
+  <rect x="315" y="265" width="210" height="185" rx="16" fill="#fff" stroke="#b7c7d8" stroke-width="2"/>
+  <circle cx="343" cy="295" r="15" fill="#496a90"/>
+  <text x="343" y="300" text-anchor="middle" class="number">2</text>
+  <text x="369" y="301" class="card-title">MindCommons server</text>
+  <text x="337" y="341" class="body">
+    <tspan x="337" dy="0">Loads the current rule,</tspan>
+    <tspan x="337" dy="22">permissions, and benefit</tspan>
+    <tspan x="337" dy="22">conditions for this session.</tspan>
+  </text>
+  <rect x="337" y="410" width="165" height="25" rx="12" fill="#edf3f9"/>
+  <text x="419" y="427" text-anchor="middle" class="small">Cloudflare Worker</text>
+
+  <!-- Authorization -->
+  <rect x="565" y="265" width="250" height="200" rx="16" fill="#fff" stroke="#9bc8b9" stroke-width="2"/>
+  <circle cx="593" cy="295" r="15" fill="#16836a"/>
+  <text x="593" y="300" text-anchor="middle" class="number">3</text>
+  <text x="619" y="301" class="card-title">Rule check</text>
+  <text x="587" y="341" class="body">
+    <tspan x="587" dy="0">Is this purpose allowed?</tspan>
+    <tspan x="587" dy="22">Has each person permitted</tspan>
+    <tspan x="587" dy="22">their own contribution?</tspan>
+    <tspan x="587" dy="22">Are required benefit terms met?</tspan>
+  </text>
+  <text x="587" y="448" class="small">A “no” means denial before AI.</text>
+
+  <!-- Outside model provider -->
+  <text x="1180" y="242" class="label">OUTSIDE MODEL PROVIDER</text>
+  <rect x="1170" y="265" width="285" height="185" rx="16" fill="#fff" stroke="#e5b573" stroke-width="2"/>
+  <circle cx="1198" cy="295" r="15" fill="#b66b24"/>
+  <text x="1198" y="300" text-anchor="middle" class="number">4</text>
+  <text x="1224" y="301" class="card-title">AI model</text>
+  <text x="1192" y="341" class="body">
+    <tspan x="1192" dy="0">Receives only selected</tspan>
+    <tspan x="1192" dy="22">synthetic text, and only</tspan>
+    <tspan x="1192" dy="22">after the rule check passes.</tspan>
+  </text>
+  <text x="1192" y="427" class="small">Cloudflare Workers AI</text>
+
+  <!-- Data records -->
+  <rect x="315" y="520" width="275" height="130" rx="16" fill="#fff" stroke="#b7c7d8" stroke-width="2"/>
+  <text x="339" y="551" class="card-title">Temporary demo records</text>
+  <text x="339" y="579" class="body">
+    <tspan x="339" dy="0">Community rule • personal choice</tspan>
+    <tspan x="339" dy="22">Benefit terms • decision history</tspan>
+  </text>
+  <text x="339" y="633" class="small">Short-lived D1 records; sessions can be reset.</text>
+
+  <!-- Result-release check -->
+  <rect x="635" y="520" width="410" height="130" rx="16" fill="#fff" stroke="#9bc8b9" stroke-width="2"/>
+  <circle cx="663" cy="550" r="15" fill="#16836a"/>
+  <text x="663" y="555" text-anchor="middle" class="number">5</text>
+  <text x="689" y="556" class="card-title">Check before sharing</text>
+  <text x="659" y="590" class="body">
+    <tspan x="659" dy="0">Check the rules and permissions again.</tspan>
+    <tspan x="659" dy="22">If they changed, withhold the result.</tspan>
+  </text>
+  <text x="659" y="637" class="small">This cannot undo text already sent to the model.</text>
+
+  <!-- Request and model flow -->
+  <path d="M256 365H307" class="line"/>
+  <text x="264" y="348" class="label">request</text>
+  <path d="M525 355H557" class="line"/>
+  <path d="M815 355H1162" class="allowed"/>
+  <text x="920" y="338" class="label">allowed request only</text>
+  <path d="M1170 410H1125V585H1053" fill="none" stroke="#52657a" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="1071" y="480" class="small">model result</text>
+
+  <!-- Current facts read from temporary records -->
+  <path d="M420 450V512" class="dotted"/>
+  <path d="M690 465V490H575V512" class="dotted"/>
+  <path d="M590 585H627" class="dotted"/>
+
+  <!-- Response back to visitor -->
+  <path d="M840 650V785H148V512" fill="none" stroke="#52657a" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="700" y="755" text-anchor="middle" class="label">The visitor gets an allowed result, a denial, or a withheld-result message.</text>
+  <text x="48" y="855" class="small">Important limit: a later rule change can stop the result being shared, but cannot reverse the outside model provider's earlier processing.</text>
+</svg>
