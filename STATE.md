@@ -6,11 +6,11 @@ Last updated: 2026-11-22
 
 MindCommons is an independently built public prototype. It uses made-up community members and synthetic research text to show how a server can check a community rule, each person's permission, and agreed benefit conditions before a fixed AI task. It is not an established cooperative, an SRHIN project, community-validated, clinical, or a real pilot.
 
-## Current documentation work
+## Latest documentation update
 
-This documentation update rewrites the README and key public pages in simpler English. It adds concrete examples and explains terms and limits. It does not change the app, call AI, deploy services, or change Cloudflare resources. Local `npm run verify` passed, including code checks, 55 unit tests, local Worker/database integration using a test substitute, and documentation-link checks. The changes still need the repository's normal pull-request review and checks.
+PR #50, [explain MindCommons in plain English](https://github.com/Bepoadewale/mindcommons/pull/50), merged as `d6a1baa8f6c1660f85932afe216bbc7581761bf6`. It rewrote the README and key project, reviewer, governance, privacy and fellowship pages around a concrete example. It also added a documentation index and glossary. The change did not alter the app, call AI or modify Cloudflare resources. Local `npm run verify` passed, including 55 unit tests, a local Worker/database check using a test substitute, and documentation-link checks. All required PR checks and the post-merge CI and Pages publication passed.
 
-## Latest completed repository change
+## Earlier research update
 
 PR #49, [add GENSCORE and lived-experience guide context](https://github.com/Bepoadewale/mindcommons/pull/49), merged to protected `main` as `d706db10dd667d709b829e707acebadda37ab99a`. All required PR checks passed after a rerun, and the post-merge CI and static Pages publication passed. It updated two research pages only.
 
@@ -31,4 +31,4 @@ There has been no SRHIN collaboration, community feedback, user research, endors
 
 ## Next steps
 
-Finish and review the plain-English documentation on this branch. Run the repository's documented verification checks, open a pull request, and merge only if required checks pass. Keep the fellowship application separate; the applicant writes and submits personal answers in their own words.
+Keep public explanations clear as the project changes, and update evidence when behavior or sources change. Keep the fellowship application separate; the applicant writes and submits personal answers in their own words.
