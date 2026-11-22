@@ -1,8 +1,10 @@
-# Portable agreement: minimal AI service example
+# Use the agreement in another small service
 
-This is a separate, minimal Cloudflare Worker that loads a fictional Community AI Agreement and checks it before calling a fixed Workers AI binding. It accepts both agreement v1 and v2; v2 may make named benefit commitments prerequisites. The agreement lists which fictional researcher principal is allowed. A service token authenticates the caller; the Worker takes the researcher identity from server-side configuration rather than trusting a body field. It accepts a structured request, never accepts user-supplied prompts or records, and includes only contributions selected by the evaluator.
+This example is a separate Cloudflare Worker. It loads a fictional Community AI Agreement and checks it before a fixed AI task. It shows how another service could use the same rules as MindCommons.
 
-The fixture is synthetic. The Worker is an independently testable reference example; it is not deployed and its test double does not prove a live model call. The local conformance tests need no Cloudflare account, API token, D1 database or model allowance. `wrangler.jsonc` documents the binding needed if a maintainer later runs it with an authorized Workers AI account. Keep it on a free plan and check the current model's allowance before any live request.
+The example accepts agreement versions 1 and 2. Version 2 can require named community benefits to be agreed by the community and accepted by the research team before the task runs. The caller is authenticated with a private service token. The researcher identity comes from server settings, not a value supplied in the request. Requests use a fixed structure and cannot include a custom prompt, uploaded record or script.
+
+This example is for local testing only. It is not deployed. Its tests use a substitute AI function and do not prove a live model call. You do not need Cloudflare credentials or an AI allowance to run the tests.
 
 From the repository root:
 
@@ -12,8 +14,10 @@ npm run test:agreement
 npx wrangler dev --config examples/portable-ai-worker/wrangler.jsonc
 ```
 
-The conformance suite compares the same agreement and request in the MindCommons reference authorization path and this Worker consumer. It covers v1 compatibility, contributor withdrawal, a collective require-all policy, v2 benefit prerequisites, missing obligations, future-effective agreements, unsupported versions, pre-inference denial and output withholding after benefit state changes. To use the protocol in another service, authenticate the caller independently, load a fresh effective agreement and current permission/benefit facts, validate the structured request, call the evaluator before inference, send only authorized records, then re-read the agreement and withhold output if relevant state changed.
+The agreement tests compare the same request in the main service and this small Worker. They check that withdrawal, policy changes, benefit rules, expired or unsupported agreements, and changes during a model task produce the expected result.
 
-The sample Worker uses a static fixture for reproducibility. A real integrating service must define how agreement updates and individual revocations reach it, how quickly stale copies expire, and how conflicts are resolved. It cannot authenticate a community representative from this agreement, establish that community authority is legitimate, or control services that do not implement the evaluator.
+A service using this agreement should verify its caller separately, load the latest policy and permission facts, check the request before calling AI, send only approved records, and check the same facts again before sharing a result. If a rule changes while the model is working, withhold the result.
 
-The local Worker route is `POST /run`; requests include purpose, job type, model ID, contribution IDs, operation, output audience and clinical-use flag. Before using the route, configure a private `RESEARCHER_TOKEN` secret in the target environment. A deployment needs the `AI` binding and can incur model usage. This example does not enforce an agreement against copies of data or model weights that leave the participating service.
+The example uses a fixed sample agreement so tests are repeatable. A real service must decide how it receives rule updates and withdrawals, how quickly old copies expire, and what happens when records disagree. The agreement does not verify a community representative's identity or authority. It cannot control services that do not use it, or copies of data and models outside those services.
+
+The local route is `POST /run`. A live deployment would need a private `RESEARCHER_TOKEN`, an AI connection, and may use an account's AI allowance. Do not deploy or run live inference unless the account, model and cost limits have been checked and authorized.

@@ -1,45 +1,55 @@
-# Architecture decisions
+# Why the prototype is built this way
 
-## ADR-001: Workers Static Assets, D1 and Workers AI for the hosted demo
+This note records the main design choices. A decision may change if new evidence shows it is unsuitable.
 
-**Status:** deployed and verified on the dedicated Cloudflare Workers Free environment. The account's active subscription list returned zero before deployment; the selected model successfully returned visible output within its free-access allocation.
+## 1. One small hosted service
 
-**Decision:** use one Cloudflare Worker with Static Assets, one D1 database, and a Workers AI binding. The API runs in a typed Worker entry point on the same origin as the React assets. `run_worker_first` matches only `/api/*`, so matching static assets bypass Worker execution and retain Cloudflare's free, unlimited asset serving. The Worker applies deterministic authorization before it can call AI.
+**Choice:** Use Cloudflare Workers for the API and website files, D1 for short-lived demo records, and a Workers AI connection for one fixed synthetic task.
 
-**Trade-offs:** Workers Static Assets is Cloudflare's current recommendation for new full-stack applications and gets current platform investment. The team owns a small explicit API router instead of relying on Pages' file-based route mapping. API invocations share the Workers Free daily request and CPU limits; D1 and Workers AI free allocations are bounded and fail closed when exhausted. Cloudflare remains a provider dependency. The deployed demo has no custom domain or paid add-on.
+**Why:** This keeps the public demo small and avoids a server that must run all the time. Website files are served separately; only API requests run server code. The demo uses a free plan and no paid fallback. Free allowances are limited and shared across an account, so requests can fail if an allowance is unavailable.
 
-**Alternatives:** Pages Functions also supports the current D1 and AI bindings, file-based API handlers, and branch previews, and would have avoided the explicit router. Cloudflare now recommends Workers Static Assets for new projects, supports `_headers` and `_redirects` there, and static asset requests remain free and unlimited; this makes Workers the simpler hosted runtime for this prototype. GitHub Pages remains a separate, verified static-only vision fallback. A plain static site cannot enforce policy; a paid VM, managed database, or paid Workers plan violates the zero-cost constraint; conventional model training is too resource-heavy.
+**Trade-off:** The project depends on Cloudflare and its model service. Cloudflare is an outside provider. The model receives selected fictional text.
 
-The hosted model is `@cf/google/gemma-4-26b-a4b-it`. Cloudflare's 2026-11-05 model-deprecation notice invalidated the first Llama candidate. The deployed model has completed a bounded live call with visible synthetic output. Local Worker development sets explicit mock-only variables; automated and local application tests do not call an AI model.
+**Other options:** Cloudflare Pages Functions could also provide an API. A conventional paid server or database would violate the no-cost goal. Training a large model is outside the scope and capacity of this prototype.
 
-## ADR-002: Deterministic authorization before inference
+## 2. Fixed software rules decide access
 
-**Status:** accepted.
+**Choice:** A TypeScript rules checker evaluates the request on the server before AI runs.
 
-The model never decides whether a job is allowed. A server-side TypeScript function checks researcher role, active community policy, individual permission, purpose, approved fixed job, approval state, expiry and restrictions. Unknown facts deny. AI calls occur only after the checks pass.
+**Why:** A model should not decide whether someone has permission. The same facts should produce the same allow or deny result.
 
-## ADR-003: Synthetic anonymous reviewer sessions
+**Trade-off:** The checks can enforce only rules that the service has been configured to understand. They do not prove that a community's decision process was fair or legitimate.
 
-**Status:** accepted for demo, not a real identity system.
+## 3. Fictional roles and temporary sessions
 
-Public visitors receive isolated short-lived sessions containing fictional roles and facts. The server, not a submitted role string, chooses the scenario capabilities. This lets reviewers explore without registration while keeping the demo's scope explicit. It does not secure a real governance body or validate real authority.
+**Choice:** Visitors can switch between fictional roles without creating an account. Each visitor gets a separate temporary session.
 
-## ADR-004: Mock inference locally; live inference is separate evidence
+**Why:** Reviewers can explore the scenario without registration and without entering personal information.
 
-**Status:** accepted.
+**Trade-off:** Switching roles is not identity verification. It does not show how a real organization should confirm a person's authority.
 
-Automated tests use a deterministic mock. Wrangler local D1 exercises migrations and API persistence. The bounded live Workers AI request was separately verified on the deployed demo; mock tests do not count as live inference evidence.
+## 4. Mock tests and live AI are separate
 
-## ADR-005: No real participant or health data
+**Choice:** Most automated tests use a predictable test substitute. A separate bounded request has been checked against the live model.
 
-**Status:** accepted.
+**Why:** Tests can run repeatedly without using the AI allowance or depending on outside service availability.
 
-All content is fictional and synthetic. The prototype will not accept arbitrary narrative uploads or clinical prompts. Any future human-subject work requires co-design, ethical review, privacy/security assessment, safeguarding, and legal advice.
+**Trade-off:** Passing mock tests alone does not prove live AI works. The project records live checks separately.
 
-## ADR-006: GitHub Pages hosts a vision-only fallback
+## 5. No personal or health data
 
-**Status:** deployed and verified as a static future-vision page and mirrored video fallback.
+**Choice:** Keep the demo synthetic. Do not accept health stories or patient records.
 
-Publish a separately built, static future-product visualization at the repository's GitHub Pages URL. Client-side expandable details let visitors inspect proposed screen content, but do not write data or invoke a backend. This page bundle has no demo API, model calls, service-worker registration or install-manifest link. The live governance-controlled demo is separately deployed at the Workers URL in ADR-001. GitHub Pages is available for public repositories on GitHub Free and supports custom GitHub Actions workflows. This static page presents future screens without implying that those screens are implemented in the live demo.
+**Why:** The prototype has not been approved or prepared for research with people.
 
-The Pages URL is a static future-vision and video mirror, not the live API demo. The separate Workers URL hosts the live prototype. GitHub Pages configuration, workflow and public HTTPS responses are verified. Sources: [GitHub Pages availability and limits](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [custom workflow publishing](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+**Trade-off:** A future study would need host and community authorization, ethics and legal review, privacy and security safeguards, accessible consent, and a specific data-handling plan before any real data is considered.
+
+## 6. A separate page for future design
+
+**Choice:** GitHub Pages hosts the visual future-product design and video copies. The actual interactive demo is on a separate Cloudflare Worker URL.
+
+**Why:** A static design can explain possible future screens without suggesting that they already work.
+
+**Trade-off:** The static page has no database, API or AI behavior. It should not be confused with the live demo.
+
+For current platform facts and sources, see [technical validation](../research/technical-validation.md).

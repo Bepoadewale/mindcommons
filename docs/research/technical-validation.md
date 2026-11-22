@@ -1,6 +1,8 @@
 # Technical validation notes
 
-Reviewed 2026-11-17. Platform quotas and model availability can change; recheck them before any future deployment or substantial usage increase. The current prototype deployment and live behavior are recorded below.
+This page records technical facts checked during development. Start with the [plain-language project summary](../fellowship/technical-evidence-summary.md) if you want to understand what the prototype does before reading platform details. These notes include service limits and test records that may change over time; check the linked official sources before future deployment or increased use.
+
+Platform research began on November 17, 2026; later deployment records are dated in the sections below. Service limits and model availability can change, so check the linked official sources before future deployments or increased use.
 
 ## Fellowship call and host alignment (checked 2026-11-17)
 

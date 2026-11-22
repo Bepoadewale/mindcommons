@@ -1,39 +1,33 @@
-# Proposed SRHIN Embedded Fellowship roadmap
+# Possible work with an SRHIN Embedded Fellowship
 
-**Period:** June 2027–May 2028, if selected and if an authorized host relationship is established.
+**Possible period:** June 2027 to May 2028, if selected and if an authorized host relationship is established.
 
-This is a proposal for future work, not an SRHIN plan or commitment. MindCommons was built independently. No SRHIN collaboration, community consultation, participant recruitment, pilot, feedback or endorsement is claimed. The current prototype uses synthetic data only. Do not begin outreach or participant work before the application is submitted and the appropriate host relationship, authorization and safeguards exist.
+MindCommons was built independently. This is a proposed path, not an SRHIN plan or promise. No collaboration, community consultation, participant recruitment, pilot, feedback or endorsement is claimed. The current demo uses synthetic information only. Do not contact or involve participants before the application and the necessary relationship, authorization and safeguards are in place.
 
-## Q1 — Community discovery and co-design (June–August 2027)
+## Months 1–3: Listen and define the questions
 
-Subject to SRHIN's agreement and a suitable process, work with young people, people with lived experience, community health workers and other people SRHIN identifies as affected. Explore what should be governed, what community authority means in this setting, how individual choice and collective decisions relate, what information is in scope, which purposes are unacceptable, and how people want to ask questions or raise objections.
+If SRHIN agrees and a suitable process is approved, learn with young people, people with lived experience, community health workers and other people the host identifies as affected. Ask what should be governed, which choices belong to individuals and which to a group, what uses should be ruled out, and how people want to ask questions or raise concerns.
 
-Co-design accessible research materials and language options, participation and safeguarding arrangements, privacy boundaries, decision processes, and benefit priorities. Obtain relevant ethics review, safeguarding approval, legal advice and privacy assessment before any human-subject activity. Do not collect health narratives as a product input. Record disagreements and unresolved choices rather than forcing consensus.
+Plan accessible languages and formats, safe participation, privacy boundaries, decision processes and possible benefits. Get the relevant ethics, safeguarding, legal and privacy reviews before any activity involving people. Do not collect personal health stories as product input. Make room for disagreement.
 
-**Possible evidence:** participant-approved design questions and process notes, only where participants authorize documentation and safe publication. No such evidence exists yet.
+**Possible evidence:** questions and design notes that participants have approved for safe sharing. No such evidence exists yet.
 
-## Q2 — Community-informed development (September–November 2027)
+## Months 4–6: Change the design with participants
 
-If the co-design process supports continued development, adapt the portable agreement, permission explanations, governance workflow, privacy controls, benefit obligations and accessibility based on participant direction. Offer alternative ways to encode authority rather than hardcoding one voting or representative model. Review how policy, permission and benefit changes affect pending requests and results.
+If people find the approach useful, update the agreement, permission explanations, decision process, privacy safeguards and accessibility based on what they say. Offer different ways to represent authority; do not assume that one voting or representative model is right. Keep using fictional examples unless any other data has separate approval.
 
-Use synthetic fixtures by default. Any move beyond synthetic data requires a separate documented purpose, lawful basis, ethics approval where applicable, safeguarding review, security assessment and explicit host/community authorization. Treat model-provider data handling as an unresolved trust boundary.
+**Possible measures:** can people explain the difference between a group rule and their own choice? Can they find how to withdraw, object or ask for help? These are questions to test later, not results achieved.
 
-**Prospective indicators:** people can explain the difference between collective rules and their own permission; can identify what withdrawal affects; can find the grievance route; and can challenge or amend a proposed rule. These are targets to assess, not achieved results.
+## Months 7–9: Decide whether a small test is safe
 
-## Q3 — Controlled pilot, only if approved (December 2027–February 2028)
+Consider a limited pilot only if the host and affected people approve it and all required ethics, legal, privacy, safety and security reviews are complete. Prefer synthetic material. If any real information is considered, it must have a clear, approved purpose and permission. Agree on how to stop, respond to incidents, support participants, and handle information before starting.
 
-Consider a bounded, reversible pilot only if SRHIN and the relevant community process approve it and applicable ethics, legal, privacy, safeguarding, security and operational reviews are complete. Prefer synthetic material or data that has been separately authorized for the exact proposed purpose. Define a small participant group, clear stop conditions, data minimization, retention and deletion procedures, incident response, support arrangements and an independent contact for complaints.
+**Proceed only if:** authority is clear, participants understand the process, the data and task are narrowly defined, outside model handling has been reviewed, withdrawal and stop steps work, and benefit responsibilities have named owners.
 
-**Go criteria:** host authorization is documented; governance and individual permission processes are understood by participants; the approved data and operation are narrowly scoped; the model-provider boundary is reviewed; withdrawal and stop paths are tested; and benefits and responsibilities have named owners and review dates.
+**Do not proceed if:** people are confused or pressured, authority or data permissions are disputed, provider handling is unacceptable, safeguards are missing, software checks fail, or required benefits are unresolved. Not running a pilot can be the right outcome. If a pilot is not approved, use fictional exercises and design reviews instead.
 
-**No-go criteria:** unresolved participant confusion or pressure; missing or disputed authority; unclear data provenance or permission; unacceptable provider handling; unavailable safeguards or response capacity; failed authorization tests; or disagreement about a required benefit. A no-go decision is a valid outcome. Do not collect data or call a model for a pilot while criteria are unmet.
+## Months 10–12: Learn and plan for continued care
 
-If a pilot is not approved or feasible, use synthetic scenarios, tabletop walkthroughs and community-directed design review instead. Do not describe a simulation as a field pilot.
+Review with participants whether the process made sense, whether they could influence it, what happened when permission changed, and whether benefits were accountable. Share limits, disagreements and negative findings honestly. Avoid publishing details that could identify someone.
 
-## Q4 — Evaluation and stewardship (March–May 2028)
-
-Evaluate comprehension, agency, the experience of changing or withdrawing permission, ability to influence governance, benefit accountability and accessibility using methods approved by the host and participants. Report limitations, disagreement, negative findings and any pilot stop or non-start accurately. Avoid publishing sensitive details or small-group attribution without explicit review.
-
-Agree an open-source stewardship model, maintainer responsibilities, issue and security-reporting process, funding options that do not make participant data a revenue asset, and a post-fellowship maintenance path. Share findings in formats and languages participants approve. Continued use remains subject to community and host decisions.
-
-**Prospective indicators:** participant-defined comprehension and agency measures; tested policy-change and withdrawal scenarios; documented benefit review outcomes; accessibility findings; security and privacy issues resolved; and a funded or explicitly bounded maintenance plan. No targets are presented as achieved facts.
+Agree who will maintain the open-source software and how concerns and security reports will be handled. Any measures of understanding, agency, benefit review, accessibility or maintenance are future questions. None are presented as achieved results.

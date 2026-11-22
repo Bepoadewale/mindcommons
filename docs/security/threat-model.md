@@ -1,53 +1,46 @@
-# Threat model
+# Security: what could go wrong and what protects the demo
 
-## Assets
+A threat model is a list of important information, possible attacks and the protections in place. This one covers the public synthetic demo only. No real health information is accepted.
 
-Prototype policy versions, fictional permission records, authorization results, AI-call budget, synthetic outputs, session isolation and truthful public claims. No real health information is an allowed asset.
+## What needs protection
 
-## Adversaries and risks
+The project protects the demo's fictional permissions and rules, decisions about whether a task may run, the limited AI-call allowance, results, and separation between visitors' sessions. It also needs to avoid misleading visitors about what has or has not been proven.
 
-- Anonymous visitor alters requests, claims a role, replays or floods endpoints, probes other sessions, or submits oversized input.
-- A researcher requests an unapproved purpose, model or job type.
-- A bug or missing database fact allows a denied operation to reach AI.
-- Logs, browser storage or service-worker caches retain data unexpectedly.
-- A cloud provider or privileged operator can access or change hosted records.
-- A reviewer mistakes fictional roles, mock tests, or an ordinary audit table for real governance or immutable evidence.
-- Resource exhaustion causes quota failure or unexpected paid activation.
+## Possible problems
 
-## Implemented controls and verification status
+A visitor could change a request, pretend to be another demo role, send too many requests, try to read another session's records, or send an oversized request. Someone could ask for a forbidden purpose or model. A software error or missing database fact could accidentally allow a denied task. Information could be kept in logs or browser storage. A reviewer could mistake fictional roles or test results for real authority or live AI. Shared service limits could be exhausted.
 
-- Server-controlled opaque session, two-hour expiry and isolation; at most 500 new synthetic sessions per UTC day. In this public synthetic scenario, visitors can switch among fictional seats through the API. The server stores the selected seat in that visitor's session and checks it for each action, but does not authenticate a real person's identity or authority. This demonstrates policy enforcement logic, not production identity or governance security.
-- Strict schemas, fixed job IDs/model IDs, and no script upload or arbitrary prompt execution. JSON bodies are read incrementally, and the stream is canceled as soon as the configured byte limit is exceeded, even when the request omits or understates `Content-Length`.
-- Fail-closed authorization before AI; separate policy, individual permission and explicitly required benefit checks; negative tests spy on AI binding.
-- Same-origin mutation checks, no cross-origin credential support, security headers, safe text rendering, no secrets in browser.
-- Application-level rate limits (60 requests/minute/session), a 500-session/day cap and a 100-call/day AI cap; local API tests exercise each cap. No automatic upgrade or paid fallback.
-- Do not log submitted narratives; synthetic-only corpus; no API caching or browser persistence of sensitive records.
-- Append-oriented decision events with correlation IDs, without claiming tamper resistance.
-- Session-scoped decision receipt export validates a structured snapshot and omits cookies, session identifiers, raw narratives and model output. Foreign-session run IDs return 404. Receipts are ordinary D1 records, not signed, immutable, independently certified or legally conclusive.
-- Locked dependencies, CI least privilege, secret scanning, build and browser tests.
+## Protections in the prototype
 
-## Data flow and trust boundaries
+- Each visitor gets a short-lived, separate session. The demo allows switching among fictional seats within that session; it does not verify real identity or authority.
+- Requests have a fixed structure, a fixed task and a fixed model. Visitors cannot upload scripts or arbitrary research text.
+- The server checks the community rule, individual permissions and required benefits before calling AI. If facts are missing or disagree, it denies the task.
+- Automated tests check that denied requests do not call the AI function.
+- Requests must come from the same website. Security settings and safe text handling reduce common browser risks.
+- The demo limits requests to 60 per minute per session, new sessions to 500 per day, and AI attempts to 100 per day. These limits do not guarantee shared Cloudflare capacity.
+- The app does not log free-form narratives, store research results in browser storage or cache API responses.
+- Decision receipts are limited to the current session and do not include cookies, raw narratives or model output. They are regular database records, not signed or tamper-proof proof.
+- Dependencies, code style, tests, browser behavior and secrets are checked in the repository's automated workflow.
+
+## Where information goes
 
 ```mermaid
 flowchart LR
-  B[Visitor browser<br/>fictional role, HttpOnly session cookie] -->|same-origin API request| W[MindCommons Worker API]
-  B -->|public static assets only| SW[Service worker cache]
-  SW -. excludes /api and session responses .-> B
-  W -->|read/write session-scoped policy, permissions, benefit facts, runs and events| D[D1 database]
-  W -->|fixed job + eligible synthetic snippets only| A[Cloudflare Workers AI]
-  A -->|model output| W
-  W -->|conditional authorization recheck before storing/releasing output| D
-  W -->|decision, permitted output or denial| B
+  B[Visitor's browser] -->|same-site request| W[MindCommons server]
+  W -->|short-lived fictional records| D[(D1 database)]
+  W -->|selected synthetic text for an approved task| A[Cloudflare AI model]
+  A -->|possible result| W
+  W -->|check rules again before sharing| D
+  W -->|decision or permitted result| B
+  B -->|public website files only| C[Browser cache]
 ```
 
-The browser cannot upload records or prompts for this fixed job. The Worker selects text from the checked-in fictional corpus only after server-side authorization. On the hosted path, eligible synthetic snippets cross the Worker boundary to Cloudflare Workers AI; this is an external provider boundary. The model response returns to the Worker, which checks the same policy version, used permission versions, session role and any required benefit facts before persisting/releasing the result. A denied request does not call AI. A withheld result means the model call already happened; it does not recall the submitted text or undo provider processing.
+The browser can only use the fixed fictional corpus. If an approved task runs, selected synthetic text crosses the boundary to Cloudflare Workers AI. If permission changes after that, the app can withhold the result, but it cannot undo the provider's earlier receipt or processing.
 
-The service worker caches the public shell and selected static assets. It bypasses `/api/` requests and does not store session state, permissions, research results or model output. API responses use `Cache-Control: no-store`. The frontend does not write session or research data to localStorage, sessionStorage or IndexedDB. The session cookie is HttpOnly, SameSite=Lax and Secure on HTTPS; its opaque identifier is not authentication of a real person.
+The website cache does not store API requests or session data. A protected cookie reconnects the browser to its temporary session. The session expires after two hours; reset removes its linked database rows. Cleanup of expired rows is not guaranteed at the exact expiry time. Cloud provider records are outside this app's deletion controls.
 
-Session access expires after two hours. Explicit reset deletes that session and its child records immediately. Expired sessions become inaccessible and are deleted on a request that discovers expiry or by opportunistic cleanup when a new session is created (cleanup is throttled to once an hour). This is not a fixed two-hour physical deletion guarantee. Cloud provider operational logs and model-provider retention are outside this prototype's deletion control.
+## What remains outside the protection
 
-The D1 conditional update is a narrow release guard against app-visible changes between authorization and output persistence. It is not a distributed transaction with the model provider. A change after output has already been returned cannot retract that output; a provider may already have processed the synthetic input; privileged provider/operator access is outside the guarantee.
+A public demo can still be unavailable, overwhelmed or affected by a provider outage. Service quotas are shared across the account. The fictional role switcher is not real identity verification. The agreement cannot control a service that ignores it, copies of information outside a participating service, or results already released.
 
-## Residual risks and scope
-
-Public demos remain vulnerable to denial of service and service outages. Free-plan limits are account-level and may be shared with other projects. Demo roles are intentionally switchable and must never be treated as verified researcher or community-representative identity. Production use needs independently designed authentication, authorization, representative selection, objection, appeal, stop and safeguarding processes. This prototype has no verified real identity, community authority, clinical controls, independent security audit, or patient-data suitability. A live provider executes model inference outside the community's infrastructure. A governance record cannot technically force deletion from copied datasets or model weights.
+Before real research, a project would need a separate identity and authority design, community-approved processes, appropriate ethics and legal review, privacy and security assessment, safeguards, incident response and a reviewed model-provider arrangement. The current prototype is not suitable for patient information and has not had an independent security audit.

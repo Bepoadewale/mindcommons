@@ -1,9 +1,18 @@
-# Consent and benefit sharing
+# Personal permission and community benefits
 
-Collective rules and individual permission are separate inputs. An otherwise approved community request must be denied if an individual's relevant permission is absent, expired, withdrawn or restricted. Collective approval cannot override an individual's refusal or legal rights.
+A community rule and each person's permission are separate. Even if a community allows a research task, the demo denies it when a relevant person's permission is missing, expired, withdrawn or too narrow.
 
-The demo stores fictional purpose, status, expiry and version facts, plus a session-scoped history for each recorded permission transition. Each entry records the resulting state, action, actor, timestamp and correlation identifier. A session is limited to 50 versions; reset deletes the synthetic session and its child records, while expired sessions become inaccessible and are removed by a later request or opportunistic cleanup. Existing sessions are backfilled with their current state when the migration runs; their earlier transitions cannot be reconstructed. This is not a durable consent ledger. The interface explains the synthetic information, purpose, fictional requester, model boundary, effect of withdrawal and limits of reversal. It does not present legally valid consent and does not process real consent.
+In the demo, each fictional permission has a purpose, status, expiry date and version. The service records changes for that temporary session. A session can have up to 50 permission changes. Reset removes the session's sample records. Expired sessions become inaccessible and are later removed; this does not promise physical deletion at an exact time. This is a demonstration record, not a long-term consent ledger or legally valid consent.
 
-The synthetic demo now records a hypothetical obligation through separate stages: agreement by the fictional community representative, acceptance by the fictional research team, a fixed evidence marker, and community review that can accept the marker or request changes. Requested changes can be answered with a replacement marker and reviewed again. Each transition records an actor, timestamp and correlation-linked audit event. A reviewed evidence marker is not the same as a delivered benefit; no payment, revenue, or real-world commitment is claimed.
+## Benefit steps are separate
 
-Before real use, co-design understandable choices, withdrawal handling, accessible communication, grievance and remedy pathways, and fair compensation with affected people. Obtain legal and ethics review for the specific study and jurisdiction.
+A fictional benefit commitment can pass through several distinct steps:
+
+1. The fictional community agrees to the proposed benefit.
+2. The fictional research team accepts responsibility.
+3. The team submits a fixed, made-up evidence marker.
+4. The community seat reviews the evidence and accepts it or asks for a change.
+
+For one demo policy, steps 1 and 2 must happen before research can run. Delivery can be due later. Evidence and review are not proof that a real benefit was delivered. The demo records no real payment, revenue or participant benefit.
+
+Before any real project, affected people would need to decide what benefit is useful and fair, how permission is explained, how a person can withdraw or complain, and what support and remedies exist. Appropriate ethics and legal review would also be needed.

@@ -1,7 +1,7 @@
-# Security policy
+# Security and privacy reporting
 
-MindCommons is an early prototype and must not receive real health or patient data. It is not a clinical system or a production consent-management service.
+MindCommons is an early prototype. Do not enter real health or patient information. It is not a clinical service or a production system for managing consent.
 
-Please report suspected vulnerabilities privately to the repository owner through GitHub's private vulnerability reporting feature if enabled. Do not publish exploit details or personal data in an issue. Include affected version, reproduction steps using synthetic values, and impact.
+If you think you found a security weakness, report it privately through GitHub's private vulnerability reporting feature, if available for this repository. Do not post exploit details or personal information in a public issue. Include the affected version, steps to reproduce the problem using fictional values, and what could go wrong.
 
-Security work prioritizes server-side authorization, fail-closed behavior, least privilege, bounded requests, safe logs, dependency checks, and honest limitations. No security response time or production support commitment is currently offered.
+The project focuses on checking permissions on the server, denying requests when facts are missing, limiting request sizes, avoiding sensitive logs, and checking software dependencies. There is no promised response time or production support service.

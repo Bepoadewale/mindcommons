@@ -1,17 +1,33 @@
-# Reviewer guide
+# A simple guide to the MindCommons demo
 
-**Live demo:** <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>. The demo uses fictional community records and synthetic research material. It is a technical prototype, not a community pilot or clinical product. A separate static future-product visualization is available at <https://bepoadewale.github.io/mindcommons/>; it has no API or AI execution.
+**Open the [live demo](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/).** It uses a made-up community and synthetic research text. No real people or health records are involved.
 
-**Latest video:** <https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4>. This fresh-session, silent 1080p recording shows the real no-inference policy preview, benefit-gate denial, session receipt and renewed eligibility after fictional acceptance. It deliberately makes no model call. The previous captioned video remains useful for seeing one real bounded synthetic inference.
+MindCommons explores this question: what if people could set ongoing rules for how their contributions are used in AI research? The demo shows software checking a community rule and each person's own permission before a research job runs.
 
-The current production model setting disables Gemma reasoning. The API returns only user-facing text, excludes reasoning metadata, treats empty output as a failure, and displays the result in a readable format. Chromium verified a real synthetic inference and the production page's public video link.
+## Follow the example
 
-Choose **Try the synthetic scenario**, switch to the fictional Community member seat, and withdraw contributor B's sample permission. Switch to Researcher and run the fixed “Community wellbeing research” evaluation: only contributors A and C's eligible synthetic records are sent to the model. Switch to the fictional representative seat and approve the proposal requiring permission from everyone, then repeat the same request; the server denies it before inference. The proposal changes the decision for the identical request. **Commercial advertising** is also denied. The **Community AI Agreement (JSON)** and its schema links show the policy, researcher, contribution permissions, model restrictions and current benefit terms. A second authorization check before output release withholds results if permission or policy changed while inference was running; deterministic concurrency tests cover this path.
+1. Choose **Try the synthetic scenario**. Everything in the scenario is fictional.
+2. Read the proposed research request. It asks to examine made-up material for community wellbeing research.
+3. Look at the community's rule and each contributor's separate permission.
+4. Switch to the fictional contributor seat and withdraw contributor B's sample permission.
+5. Return to the researcher seat and preview the request. The preview explains which records are eligible. It does not call AI.
+6. Run the approved fixed task if you want to see a real, bounded AI operation on synthetic text. The model is a tool that processes the text; it does not decide whether the request is allowed.
+7. Switch to the fictional representative seat and approve the proposal that requires permission from every contributor. Preview the same request again. The server now denies it because B withdrew permission. The request never reaches the model.
+8. Try the commercial advertising request. The server denies this use too.
+9. Open the decision receipt to see the rule versions, included and excluded sample records, reasons, and whether AI ran. Receipts belong to one demo session; another session cannot read them.
+10. Reset the scenario before exploring benefits so the earlier withdrawal and policy change do not affect this example. Then review the fictional benefit commitment. The community must agree to it and the fictional research team must accept it before the rule allows the request. Evidence and community review are separate steps. This does not mean a real benefit was delivered.
 
-To inspect benefit accountability, the fictional community representative agrees to the accessible-summary obligation, the research seat accepts responsibility and submits a fixed fictional evidence marker, and the representative reviews it. The reviewer may request changes and the researcher can resubmit. This is a synthetic workflow; it does not claim that a benefit was delivered. The **captioned project demo** is published at <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> and mirrored at <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4>. Both returned unauthenticated HTTPS 200 with `video/mp4`; the downloaded copies were checked as 92.84-second, 1920×1080, 25 fps H.264 files. It is silent with explanatory on-screen captions, recorded against the live app and verified real inference. The **original screen recording** remains separately available at <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> and <https://bepoadewale.github.io/mindcommons/mindcommons-demo.mp4>. GitHub Pages also hosts the static future-vision page; it is not the live backend demo.
+A policy preview is an explanation based on the current demo records. The server checks the rules again when a job is submitted, so the preview itself does not grant permission.
 
-The page identifies implemented and proposed capabilities. The demo role selector switches fictional seats in an isolated visitor session; these roles are not authenticated identities. The server-side checks demonstrate that policy and permission records affect the requested action, not that a real representative or researcher has been verified. Automated local tests use a deterministic mock and are not live inference evidence. Any pilot plans are not partnership or participant feedback.
+## Videos and future design
 
-The hosted release now includes PRs #37–#40: the optional benefit gate, receipt export, agreement conformance support and seven-step policy preview. The preview is deterministic and makes no model call. To see the new gate, keep the fictional proposal active and inspect the preview before the research team accepts its required accessible-results-sharing commitment; the request is denied. Record the fictional community agreement and team acceptance, then refresh the preview to see eligibility. The new video records this scenario with the real server response and receipt, but does not execute an AI job. The earlier captioned recording demonstrates the separate bounded synthetic inference. Automated tests use mock inference.
+- [Policy and benefit walkthrough](https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4): 1080p, on-screen captions, no AI call. It shows a real server denial and session receipt.
+- [Captioned recording](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4): shows a separate real, bounded AI run on synthetic material.
+- [Original screen recording](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4).
+- [Future-product design](https://bepoadewale.github.io/mindcommons/): a static visual guide. It has no live API or AI behavior.
 
-The owner-shared Cloudflare billing screenshots show Workers Free active and Workers Paid not subscribed. The billable-usage page showed “No data” when captured before this deployment; its daily refresh means that is not proof of zero usage after deployment. No paid plan, add-on or resource was enabled. The demo uses free-tier allowances that are shared across the account and can be exhausted; stop rather than enabling paid service if the free quota is unavailable.
+## What this demo does not prove
+
+The role switcher is a shortcut for exploring the example. It does not check anyone's real identity or prove that a person has the right to represent a community. The demo is not community-approved, user-tested, clinically validated, or ready for patient data. A result withheld after a rule changes cannot undo text already sent to the outside model provider. The agreement cannot control services that do not use it or copies that leave those services.
+
+The [project status](../fellowship/project-status.md) and [privacy limits](../security/privacy-limitations.md) explain what has been tested and what remains future work.

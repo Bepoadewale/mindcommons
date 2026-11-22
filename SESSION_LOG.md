@@ -1,5 +1,7 @@
 # Session log
 
+This is a dated engineering history for maintainers. It records commands, test runs, decisions and pull requests, so it uses more technical language than the [reviewer guide](docs/demo/reviewer-guide.md) or [project status](docs/fellowship/project-status.md). Read those pages first for a plain-language explanation.
+
 ## 2026-11-16
 
 - Verified Mac/toolchain and GitHub authentication; GitHub identity is `Bepoadewale`.
