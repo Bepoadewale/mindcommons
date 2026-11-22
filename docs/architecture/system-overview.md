@@ -1,36 +1,37 @@
-# System overview
+# How the demo is put together
 
-## Deployed prototype architecture
+This page describes the live prototype in plain language. The picture shows where each part runs and which information it handles.
 
 ```mermaid
 flowchart LR
-  V[Reviewer browser] -->|static files; served without Worker invocation| A[Workers Static Assets]
-  V -->|same-origin API; anonymous demo session| W[TypeScript Worker]
-  W --> G[Portable Community AI Agreement evaluator]
-  W --> D[(D1: synthetic session, policy, permission, audit)]
-  G -->|approved contribution IDs only| AI[Workers AI]
-  AI -->|candidate output| G
-  G -->|release only if policy and used permissions still match| W
-  W -->|decision, provenance and bounded result| V
+  V[Visitor's browser] -->|website files| A[Static website hosting]
+  V -->|same-site request| W[MindCommons server]
+  W --> G[Fixed agreement checks]
+  W --> D[(Short-lived demo database)]
+  G -->|approved fictional text only| AI[Cloudflare AI model]
+  AI -->|possible result| W
+  W -->|check rules again before sharing| G
+  W -->|decision and permitted result| V
 ```
 
-The static user interface is not an authority boundary. The Worker adapts its session policy, researcher role and individual permissions into the portable agreement, then uses its deterministic evaluator before inference. It sends only approved contribution IDs to Workers AI. At the output-release boundary it atomically rechecks the active policy configuration/version, researcher session and exact versions of every used permission; if authorization changed during inference, it persists no output and records a withholding event. A denied request ends before inference. Only `/api/*` routes invoke the Worker; other requests are served from the asset manifest and SPA fallback. Production inference and visible output were verified before the current governance updates; those updates still require deployment and a new live check. Local tests use a deterministic mock explicitly enabled for development. A separate, undeployed Worker example consumes the same agreement evaluator.
+## What happens when someone tries a research task
 
-## Trust boundaries
+The browser displays the controls, but it does not decide whether a request is allowed. The server reads the current fictional community rule, each relevant person's permission, the requested purpose, the allowed model and task, and any required benefit terms. Fixed software checks these facts before the model is called.
 
-- The browser is public and untrusted. Client-side validation helps usability only.
-- A visitor session isolates fictional records; it is not verified identity or a real representative credential.
-- The API and its D1 binding are the enforcement boundary for this prototype.
-- Workers AI receives only a small fixed synthetic input and can fail or be unavailable.
-- Cloudflare controls infrastructure and model execution. The demo does not prove removal from model weights or eliminate provider trust.
-- GitHub Actions builds and checks source; deployment credentials, if later needed, must be scoped to the new project and kept out of source.
+If the request passes, the server sends only the selected synthetic text to the AI model. Before it saves or returns the result, it checks whether the policy, permissions, or required benefit facts changed while the model was working. If they changed, the service withholds the result. The model provider may already have received and processed the text; withholding cannot undo that.
 
-## State and records
+The policy preview helps visitors understand a decision and does not call AI. Submitting a research task is a separate action. A local test model is a mock: a test substitute that does not make an AI call. The separate Worker example is tested locally and is not deployed.
 
-Implemented records: short-lived demo session (two hours; 500 new sessions/day), community, proposal and effective policy versions, each synthetic contribution's purpose-scoped permission and versioned history, fixed research requests, per-contribution authorization and exclusion evidence, AI execution provenance, append-oriented audit events, and a benefit obligation with fictional community agreement, research-team acceptance, evidence and community-review states. The portable agreement exposes this policy, model restrictions and benefit state as JSON. Permission history records the state, version, action, actor, timestamp and correlation ID; a session permits up to 50 versions. Existing sessions receive a baseline snapshot during migration; pre-migration permission transitions cannot be reconstructed. API requests are capped at 60 per minute per session and AI attempts at 100 per day. Do not store free-form health narratives.
+## What each part does
 
-Reset and expiry delete the synthetic session and its permission history through the database's cascading foreign key. This is a temporary reviewer record, not a durable community consent ledger.
+- **Browser:** shows the public demo and sends requests. It is public and cannot be trusted to enforce the rules.
+- **MindCommons server (Cloudflare Worker):** applies the checks and controls calls to the model.
+- **D1 database:** stores fictional demo records for a short time. A session expires after two hours; reset removes its records. Expiry does not promise that every infrastructure copy is physically erased at exactly that time.
+- **Workers AI:** processes selected synthetic text for an approved fixed task. It is an outside service.
+- **Static website hosting:** serves public website files. Only API requests run the server code.
 
-## Failure behavior
+## Records and limits
 
-Missing, expired, conflicting or unreadable authorization facts fail closed. D1 or AI service errors return a clear retryable error without claiming completion. Only successful calls are marked executed. Audit records are ordinary database evidence and can be altered by an operator with sufficient access; integrity fields are not tamper-proof guarantees.
+A demo session can contain a fictional community rule, versioned permissions for fictional contributors, a fixed research request, an authorization decision, an AI run record, and benefit steps. Permission history is capped at 50 changes per session. Requests are limited to 60 per minute per session, new sessions to 500 per day, and AI attempts to 100 per day. These limits reduce abuse but do not guarantee that shared account allowances are available.
+
+The demo does not accept free-form health stories, uploaded scripts, or arbitrary prompts. Missing, expired, conflicting or unreadable permission facts cause a denial. Database records and event history are not tamper-proof: an operator with sufficient access could change them.

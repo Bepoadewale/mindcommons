@@ -1,21 +1,28 @@
-# Community AI Agreement protocol (prototype)
+# Community AI Agreement: a shared set of rules for participating services
 
-MindCommons publishes a small, portable JSON agreement format and a TypeScript reference evaluator. Its purpose is to give participating AI services a common, inspectable policy object and a deterministic way to decide whether a fixed operation may use specific contributions.
+A Community AI Agreement is a small, machine-readable description of rules for a specific community and AI task. “Machine-readable” means software can read the fields and check them. MindCommons publishes an example format and a fixed software checker that other participating services can reuse.
 
-## What it carries
+The agreement is not a legal contract or proof that a community decision was legitimate. It cannot make an outside service follow the rules.
 
-Schema v1 includes a schema version, agreement identifier, community identifier, policy version and effective status; permitted purposes; authorized researcher principals; a permission purpose, version, status and expiry for each contribution; allowed model identifiers and job types; restrictions on model training, public outputs and clinical use; and benefit obligations with community agreement and research-team acceptance states. V1 benefit records remain informational and keep their original semantics.
+## What the agreement records
 
-Schema v2 adds an optional agreement expiry and `requiredBenefitObligationIds`. Only obligations explicitly listed there block execution. For each listed obligation, the evaluator requires consistent community agreement and research-team acceptance; delivery may remain due later. The default synthetic policy has no required benefit IDs. The reviewed fictional proposal makes its accessible-results commitment mandatory, which lets a reviewer observe the same request denied before acceptance and eligible afterward.
+It can describe the active community policy, approved purposes, permitted research teams, each contributor's separate permission and expiry, allowed AI models and tasks, and limits on training, public results or clinical use.
 
-The evaluator checks the agreement and request shape, duplicate or ambiguous identifiers, effective and expiry dates, active policy, researcher, purpose, model, job type, use restrictions, each requested contribution's matching permission, permission expiry, required benefit conditions, and the community's rule for a withdrawn contribution. Its result lists approved contribution IDs, excluded records, permission versions and decision reasons. Missing or contradictory required benefit facts fail closed. It does not use a language model to decide authorization.
+The agreement has two versions:
 
-## Implementations in this repository
+- **Version 1** keeps its original meaning. Benefit commitments are recorded for information but do not block a research task.
+- **Version 2** can name specific benefit commitments that must be agreed by the community and accepted by the research team before a task may run. The benefit may be delivered later. Missing or conflicting required benefit facts cause a denial.
 
-The MindCommons research endpoint adapts its active database policy, contributor permissions and benefit records to the same agreement format and runs the reference evaluator before inference. Before output release, it conditionally checks that the policy, used permissions and required benefit facts still match the authorization snapshot. Visitors can inspect the agreement and JSON Schema in the demo. A separate minimal Worker in `examples/portable-ai-worker/` uses the same evaluator, fixed synthetic records and an AI binding. Neither implementation can undo information already sent to an external model provider.
+The demo's ordinary policy has no required benefit condition. A fictional proposal adds a commitment to share results accessibly. This lets a reviewer see the same request denied before agreement and accepted after the fictional team takes responsibility.
 
-## Limits and open questions
+## What the checker does
 
-This prototype does not establish whether a decision was legitimate, represent a legal agreement, make external services obey the policy, or prevent use of copies of data or model weights outside a participating service. Its contributor identities and permissions are fictional. The research, meanings, authority, dispute process, and benefit terms require co-design with people affected before any real pilot. A future protocol should consider signed agreement versions, interoperable identity and revocation, cross-organization semantics, conflict resolution, and independent conformance tests; those are not implemented here.
+The fixed checker confirms that the agreement is supported and active, dates are valid, the requester and research purpose are allowed, the requested model and task are permitted, and each contribution has a current permission for that purpose. It also checks restrictions and any required benefit terms. It reports which records are allowed or excluded and why.
 
-The format is deliberately versioned and bounded rather than presented as a complete standard. Changes that alter semantics require a new schema version and migration guidance.
+MindCommons checks the rules before a model call and checks again before it releases the result. A separate small Worker example uses the same checker in local tests.
+
+## Important limits
+
+The checker does not verify anyone's real identity, prove that consent was freely given, judge whether a community decision was fair, or inspect what the model does internally. It cannot control services that ignore the agreement, copies of data or model weights outside a participating service, or results that have already been shared. It cannot undo text already sent to a model provider.
+
+The format is an experiment, not a complete standard. A change that alters meaning needs a new version and clear instructions for updating existing agreements. See the [package guide](../../packages/community-ai-agreement/README.md).

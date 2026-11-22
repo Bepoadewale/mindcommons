@@ -1,64 +1,55 @@
-# Acceptance checklist
+# Project checklist
 
-Legend: `[x]` verified; `[~]` in progress; `[ ]` not done or optional future work.
+This checklist shows what the prototype has demonstrated and what still needs real-world decisions. A checked software item does not mean a community has approved or tested the idea.
 
-## Fellowship-strengthening follow-up
+**Key:** [x] checked with evidence; [~] underway; [ ] not yet done or depends on future work.
 
-- [x] PR #37 merged: benefit obligations are optional, explicit authorization prerequisites in Agreement v2; Agreement v1 meaning is retained. The initial policy remains permissive. Local API integration denies before inference until community agreement and research-team acceptance; the same request can proceed after acceptance.
-- [x] PR #37 merged: conditional result release checks that required benefit facts remain unchanged during model execution; delayed-inference integration verified withholding. Production benefit-gate denial was also verified; no live race was attempted.
-- [x] PR #38 merged: consent explanation, governance design framework, data-flow audit and cross-session API tests. Required checks and post-merge CI/Pages publication passed.
-- [x] PR #39 merged: portable Agreement v2 conformance and session-scoped decision receipt. Required checks, post-merge CI and Pages publish passed; receipt behavior is live.
-- [x] PR #40 merged: seven-step reviewer journey and deterministic no-inference policy preview. 8/8 browser tests pass, including withdrawal, policy and benefit changes, keyboard navigation and scoped accessibility. AI execution remains a separate user action.
-- [x] PR #40 post-merge CI run `44192355625` and Pages publish run `44192355348` passed; the guided preview is deployed.
-- [x] PR #44 reconciled the production release and owner-shared billing screenshots through the PR workflow; four required checks, post-merge CI and Pages publish passed.
+## In plain English
 
-## Repository and quality
+The software checks a fictional community rule, each person's permission and any required benefit agreement before it sends synthetic text to an AI model. Automated and live checks are recorded separately. No real health data, participants or community approval are involved.
 
-- [x] Public Apache-2.0 repository and protected PR-only `main`; four required checks; no solo-approval blocker.
-- [x] PRs #1–#46 merged after required checks passed; merged source branches cleaned up locally and remotely. PR #41 post-merge CI run `44194854283` and Pages run `44194852519` passed; PR #42 post-merge CI run `44196877121` and Pages run `44196877364` passed; PR #44 post-merge CI run `44239516814` and Pages run `44239516893` passed; PR #45 post-merge CI run `44241005421` and Pages run `44241005379` passed; PR #46 post-merge CI run `44261338378` and Pages run `44261338331` passed.
-- [x] PR #34 checks passed in run `44134264751`; post-merge CI run `44134751119` and Pages publish run `44134751142` succeeded.
-- [x] Previous main `npm run verify` passed with 38 unit tests and Worker/D1 integration; PR #40 `npm run verify` passed with 55 unit tests and local integration.
-- [x] PR #40 `npm run test:e2e` passed 8/8; `npm run test:e2e:fullstack` and `npm run test:agreement` passed with explicitly labeled mock AI; `npm run test:vision-static` passed 3/3 as part of verify.
+For the reviewer links, begin with the [README](README.md), [demo guide](docs/demo/reviewer-guide.md) and [project status](docs/fellowship/project-status.md).
 
-## Governance and technical contribution
+## Fellowship-strengthening work
 
-- [x] Every synthetic contribution has a separate purpose-specific permission, expiry, status and version.
-- [x] Live withdrawal of contributor B under policy v1 permitted only records A and C.
-- [x] Approving v2 changed the outcome for the identical request and blocked it server-side before inference.
-- [x] Output authorization is rechecked; local integration cases verify concurrent withdrawal/policy changes withhold the result and record the event.
-- [x] Portable Community AI Agreement JSON Schema and deterministic evaluator are used by MindCommons and a separately testable minimal Worker example.
-- [x] Agreement boundaries are explicit: it cannot control systems that ignore it, uncontrolled copies, or already released outputs.
-- [x] Real Workers AI inference and denied request were verified in production using synthetic content.
-- [x] Live benefit gate denied before inference while required terms were absent. After agreement and team acceptance, one synthetic operation completed; a receipt recorded the outcome. A separate session could not retrieve the first session's receipt.
-- [x] Benefit workflow completed in production synthetic session: community agreement, team acceptance, evidence marker and community review.
+- [x] A fictional benefit can be required before a research request is allowed.
+- [x] A result can be withheld if required benefit facts change while the model is working.
+- [x] The demo explains fictional permission and withdrawal, and documents governance choices that real communities must decide.
+- [x] A session-only decision receipt and portable agreement tests are in place.
+- [x] A guided preview explains policy outcomes without calling AI.
+- [x] The production release and shared billing screenshots were recorded. The screenshots do not guarantee future usage will stay within free allowances.
+
+## Repository and tests
+
+- [x] Public Apache-2.0 repository; changes to `main` require pull requests and automated checks.
+- [x] Merged changes use protected `main`; source branches were removed after merging.
+- [x] Automated checks cover permissions, policy changes, benefits, output withholding, browser behavior and session separation.
+- [x] Test runs using a mock are not counted as live AI evidence.
+- [x] Pull request #49 added the Wellcome GENSCORE and SRHIN co-design-guide sources to the research notes.
+
+## What the prototype demonstrates
+
+- [x] Each fictional contribution has its own purpose-specific permission, expiry, status and version.
+- [x] Withdrawing one contributor's permission changes which synthetic records are eligible.
+- [x] A different fictional policy changes the result for the same request.
+- [x] Required benefit agreement can block a request before AI.
+- [x] The portable agreement has a machine-readable format and fixed evaluator, used by MindCommons and tested in a separate Worker example.
+- [x] The system checks policy and permission again before releasing results.
+- [x] A live bounded AI request and separate denied request were checked in production using synthetic data.
+- [x] The decision receipt is limited to its own session and excludes raw text and model output.
 
 ## Hosting and safety
 
-- [x] Exact dedicated Worker and D1 were confirmed; migrations 0001–0008 applied; Worker `a12cd688-9975-44a6-a3ee-9c8c2dfe4974` deployed.
-- [x] No DavDeploy resources, DNS, Pages, routes, Email Routing or custom domain were changed.
-- [x] Owner-shared screenshots show Workers Free active and Workers Paid not subscribed (the paid option shows “Add”). The billable-usage screen showed “No data” at capture time before deployment; daily refresh means it does not prove zero post-deployment usage.
-- [x] No plan, subscription, add-on or paid resource was enabled or changed. The project remains configured for free-tier services; shared free quotas can be exhausted, at which point requests may fail.
-- [x] Cloudflare lists the configured model as Workers Free eligible; the production call succeeded. Shared account quotas remain a limit.
-- [x] Synthetic-only, no clinical use, no real participants, and demo identity limitations are documented.
-- [x] Public interactive Worker demo and static future vision work without the Mac.
+- [x] The app uses separate MindCommons hosting and database resources. DavDeploy infrastructure was not changed.
+- [x] Owner-shared screenshots showed the Workers Free plan active and Workers Paid not subscribed. A “No data” usage page was captured before deployment and is not proof of zero later usage.
+- [x] No paid plan or add-on was enabled. If a free allowance is unavailable, the demo may fail; do not enable a paid tier.
+- [x] The public demo works without the owner's Mac running.
+- [x] Android 16 emulator install and launch were checked; a physical Android phone has not been tested.
 
-## Reviewer assets
+## What remains open
 
-- [x] Existing 90.44-second, 1920×1080 original MP4 preserved unchanged on Worker and Pages.
-- [x] New genuine 92.84-second, 1920×1080, 25 fps H.264 MP4 shows live inference, contributor withdrawal/filtering, same-request policy denial, the fictional benefit workflow and source repository.
-- [x] New video contains readable explanatory on-screen captions; silence and lack of speech subtitles are stated accurately.
-- [x] Latest fresh-session video shows benefit-based denial, the real session receipt and post-acceptance eligibility in 1920×1080; the single API submission was denied with `inferenceAttempted: false`, so no model call or free inference quota was used.
-- [x] Independent Chromium verification checked the live application, GitHub repository, static vision page, new Pages MP4 playback (1920×1080, 92.40 seconds), existing Worker video URLs and existing Pages video fallbacks without authentication; all returned HTTP 200 with expected media types and no page errors.
-- [x] Both local MP4s decoded; new asset probed. Worker and Pages copies returned unauthenticated HTTPS 200 with `video/mp4`; downloaded copies match expected size, dimensions, frame rate and duration.
-- [x] Production landing page links to both recordings; Chromium verified both links and zero page errors.
-- [x] Pages vision is live and static; the new 5.0 MB MP4 is independently playable there as a fallback.
-
-## Fellowship evidence and boundaries
-
-- [x] RFP alignment, project status, roadmap, reviewer guide, architecture, limitations and evidence URLs are documented.
-- [x] Existing-solutions comparison accounts for overlap with Mozilla Data Collective, PySyft and Flower; no novelty or integration claim.
-- [x] No SRHIN endorsement, real pilot, participant feedback, clinical validation or benefit delivery is claimed.
-- [x] Mozilla personal application responses remain separate and are not generated or submitted.
-- [ ] Optional physical Android device test; emulator installability passed.
-- [ ] Optional owner YouTube upload; public MP4s currently satisfy the video evidence need.
-- [ ] Real community co-design and any pilot require collaboration and ethics/safeguarding review; they are future work, not prototype acceptance evidence.
+- [ ] No user research, community validation, SRHIN endorsement, partnership, clinical testing or pilot is claimed.
+- [ ] Real governance, consent, privacy, benefits and complaint processes must be shaped with affected people through an authorized process.
+- [ ] Any work with people or real data needs appropriate host permission, ethics and legal review, safeguarding and privacy/security protections.
+- [ ] The project owner may upload the video to YouTube later; no upload is claimed.
+- [ ] Personal fellowship answers must be written and submitted by the applicant. Technical notes are not application answers.

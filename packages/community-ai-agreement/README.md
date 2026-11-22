@@ -1,31 +1,36 @@
-# Community AI Agreement, versions 1 and 2
+# Community AI Agreement
 
-This directory contains a reusable agreement schema and a deterministic TypeScript reference evaluator. The agreement is a machine-readable description of a community policy for a participating service; it is not a legal contract, cryptographic proof, or control over copies that leave that service.
+This package contains a shared set of rules in a format software can read, plus a fixed TypeScript checker. A service can use it to decide whether a specific AI task may use specific contributions.
 
-## Contents
+The agreement is for participating services. It is not a legal contract, a certificate, or proof that a community decision was fair. It cannot make other services follow the rules.
 
-- `schema.json` is the JSON Schema Draft 2020-12 representation.
-- `src/index.ts` contains the Zod schema, TypeScript types, request schema, and fail-closed evaluator.
-- `../../examples/portable-ai-worker/` is a separate minimal Worker using the same evaluator before inference and again before releasing output.
+## What is in this folder?
 
-Version 1 records its original schema and continues to evaluate with its original semantics. It includes the active policy version; permitted research purposes; authorized researcher identifiers; contributor-specific purposes, permission versions, statuses and expiries; allowed model identifiers and job types; training, public-output and clinical-use restrictions; and benefit obligations. Version 1 benefit records are informational; they are not silently upgraded into execution prerequisites.
+- `schema.json` describes the allowed agreement fields.
+- `src/index.ts` defines the data types, checks request data and decides whether a request passes.
+- `../../examples/portable-ai-worker/` shows another small service using the checker.
 
-Version 2 adds an optional agreement expiry and `requiredBenefitObligationIds`. Only obligations explicitly listed there block execution. For each listed obligation, the evaluator requires a consistent community-agreed state and research-team acceptance. Delivery can remain due later. Missing or contradictory benefit facts fail closed with explicit reasons. The active demo policy starts with an empty prerequisite list; the fictional reviewed proposal adds `benefit-findings` to the list.
+## Agreement versions
 
-## Version migration
+Version 1 records the policy, permitted purposes, approved researchers, permission for each contribution, allowed models and tasks, limits on training and public outputs, and benefit information. In version 1, benefit information is recorded but does not block a task.
 
-Keep existing `1.0.0` documents unchanged. To adopt the new behavior, create a `2.0.0` agreement, add `expiresAt` (`null` when there is no fixed expiry), and add `requiredBenefitObligationIds` (an empty array preserves non-gating benefit tracking). Then ensure each required obligation has current community agreement and research-team acceptance facts. Do not change only the version string: validate the complete v2 schema and evaluate it with the reference evaluator. The current demo constructs v2 from its versioned D1 policy and benefit records; D1 migration `0007_policy_benefit_prerequisites.sql` leaves existing policies non-gating and updates the fictional proposal.
+Version 2 can list benefit commitments that must be agreed to before a task runs. For each required commitment, the checker expects both community agreement and research-team acceptance. The benefit itself may be delivered later. If a required fact is missing or contradicts another fact, the checker denies the task.
 
-## Evaluate an operation
+The demo's normal policy has no required benefit. Its fictional proposal adds an accessible-results commitment so reviewers can see it block a task.
+
+## Updating an agreement
+
+Do not change an existing version 1 agreement to act like version 2. Keep version 1 documents unchanged. To use version 2, create a complete version 2 agreement, set its expiry (or explicitly set it to `null`), and list required benefit IDs. Then check that each required benefit has current community agreement and team acceptance.
+
+Changing the version number alone is not enough. Run the schema check and the reference checker. The current demo builds agreements from its versioned database records. Database migration `0007_policy_benefit_prerequisites.sql` keeps existing policy behavior and adds the benefit requirement only to the fictional proposal.
+
+## Example
 
 ```ts
-import {
-  evaluateCommunityAIAgreement,
-  type CommunityAIAgreement,
-} from './packages/community-ai-agreement/src';
+import { evaluateCommunityAIAgreement } from './packages/community-ai-agreement/src';
 
 const decision = evaluateCommunityAIAgreement(agreement, {
-  researcherId: 'researcher-from-your-auth-layer',
+  researcherId: 'researcher-from-your-auth-system',
   purpose: 'community-wellbeing-research',
   jobType: 'theme-classification',
   modelId: '@cf/google/gemma-4-26b-a4b-it',
@@ -38,12 +43,12 @@ const decision = evaluateCommunityAIAgreement(agreement, {
 if (!decision.allowed) throw new Error(decision.reasons.join(', '));
 ```
 
-The caller must authenticate the researcher and bind the request to actual contribution records. The evaluator does not authenticate identities, verify a community's legitimate decision process, prove that a listed permission was freely given, or inspect model internals. An integration must re-read the effective agreement before releasing output and withhold results if its policy or applicable permissions changed during execution.
+The surrounding service must verify the researcher's identity and connect the request to actual contribution records. The checker does not verify identity, prove that permission was freely given, decide whether the community process was legitimate, or inspect the model. Before sharing a result, the service must check the current rules and permissions again.
 
-Regenerate the committed JSON Schema after editing the Zod contract:
+After changing the agreement type definitions, regenerate the JSON Schema:
 
 ```sh
 npm run agreement:schema
 ```
 
-The MindCommons demo exposes the current synthetic session agreement at `/api/agreement` and the v1/v2 JSON Schema at `/api/agreement/schema`. These endpoints are session-specific and return fictional values.
+The live demo exposes its fictional agreement at `/api/agreement` and the schema at `/api/agreement/schema`. These records belong to the current demo session.

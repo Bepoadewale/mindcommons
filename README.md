@@ -1,57 +1,74 @@
 # MindCommons
 
-**A Community-Owned AI Model Cooperative** is the working subtitle for an independent open-source prototype. MindCommons explores how communities could set continuing rules for research use of their contributions, and how software can apply those rules before a model job runs.
+**A Community-Owned AI Model Cooperative** is a working subtitle for this independent, open-source prototype. MindCommons explores a practical question: can communities set rules for how their contributions are used in AI research, and can a participating service check those rules before it acts?
 
-The first scenario uses fictional Nigerian community members and synthetic mental-health research material. It is not a real pilot, clinical product, health service, or established cooperative. No real health records are accepted.
+## The problem, in a simple example
 
-## What this prototype is intended to show
+Imagine a community shares fictional examples to help researchers study mental health. The community agrees that an approved research team may use them for community wellbeing research, but not for advertising. Each person also has a separate choice about their own contribution. If one person withdraws permission, that person's record should be left out. If the research team has not accepted a required community benefit, the job should wait. A software service can check these conditions before it sends anything to an AI model.
 
-- A community rule and an individual's permission are evaluated independently.
-- Individual permission changes create a session-scoped, versioned history that can be inspected in the demo.
-- A server-side, deterministic policy check authorizes a fixed research operation.
-- An allowed operation can call a configured model; a denied operation must not call it.
-- A decision and its provenance can be inspected afterward.
-- A session-scoped JSON decision receipt records the policy and permission snapshot, required benefits, authorization reasons, inference attempt and release outcome without exporting model output or raw narratives.
-- A fictional benefit commitment can be agreed, accepted by the research team, evidenced and reviewed without claiming real-world delivery.
-- A version 2 policy may make selected benefit terms prerequisites to inference; version 1 agreements keep their original behavior.
-- A portable Community AI Agreement is checked by MindCommons and by a separate minimal Worker example.
+That is the kind of control MindCommons demonstrates. It does not create community authority by itself. People affected by a real project would need to decide how rules are made, who may speak for the group, and what benefits are fair.
 
-## Current status
+## What works today
 
-The demo is publicly hosted at the URL below. Its server checks synthetic individual permission, community policy, and configured benefit prerequisites before a fixed model call. The live service has demonstrated denial before inference, session-scoped decision receipts, and one bounded synthetic Workers AI execution. The account's billing screenshots show Workers Free active and Workers Paid not subscribed; the “No data” usage view predates the latest deployment and is not a zero-usage guarantee. No paid fallback is configured. Shared free quotas can be exhausted, in which case requests may fail. Local automated tests use an explicitly labelled deterministic mock. See [project status](docs/fellowship/project-status.md) and [acceptance checklist](CHECKLIST.md) for evidence and remaining work.
+- The public demo uses fictional people and synthetic research text only. It is not a real pilot, health service, or clinical tool.
+- A visitor can see a community rule and each fictional contributor's separate permission.
+- The server checks a fixed research request against the rule, each relevant permission, allowed model and task, and any required benefit terms.
+- An approved request can run a bounded AI task on synthetic text. A request that breaks the rules is denied before the model is called.
+- If relevant rules or permissions change while a model task is running, the service can withhold the result. This cannot undo information already sent to the model provider.
+- A visitor can inspect and download a session-only decision receipt explaining what was allowed or denied. It does not contain raw research text or model output.
+- A portable, machine-readable agreement and a small example show how another participating service could use the same checks.
 
-## Architecture direction
+The agreement cannot control a service that does not use it, copies of data or models outside a participating service, or results that have already been shared.
 
-The implementation uses a React and TypeScript single-page application, a Cloudflare Worker with Static Assets, D1, and a Workers AI binding. Static assets are served without Worker invocation; authorization runs in the API Worker. Local tests use an explicit deterministic mock; the hosted demo calls the configured Workers AI model for its approved synthetic job. See [system overview](docs/architecture/system-overview.md) and [decisions](docs/architecture/decisions.md). The proposed wireframe runs at `/vision/` locally and as a static GitHub Pages site; it contains no backend or inference behavior.
+## Try it and inspect the evidence
 
-The [Community AI Agreement](packages/community-ai-agreement/README.md) provides a versioned JSON Schema and a deterministic TypeScript evaluator. The current synthetic agreement and schema are inspectable at `/api/agreement` and `/api/agreement/schema` in the live demo. The [separate Worker example](examples/portable-ai-worker/README.md) demonstrates reuse outside the MindCommons application. This protocol cannot control unrestricted copies of data or models outside participating services.
+- [Open the live demo](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/)
+- [Read the reviewer guide](docs/demo/reviewer-guide.md)
+- [Watch the policy and benefit walkthrough](https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4). This 1080p recording shows a real denial and decision receipt; it does not run AI.
+- [Watch the captioned recording of a synthetic AI run](https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4). It shows a separate, bounded model call using fictional material.
+- [Explore the future-product design](https://bepoadewale.github.io/mindcommons/). This is a static visual guide, not a working backend.
+- [Browse the source code](https://github.com/Bepoadewale/mindcommons)
 
-## Develop and verify
+All community members, research requests and benefits in the demo are fictional. No SRHIN partnership, community approval, clinical validation or real benefit delivery is claimed.
 
-Requirements: Node.js 24+, npm 11+.
+## How the demo works
 
-```bash
+The website is built with React and TypeScript. A Cloudflare Worker runs the server-side checks, D1 stores short-lived fictional demo records, and Workers AI runs the approved fixed task. “Server-side” means the checks happen in the service that controls the request, not only in the visitor's browser. The AI model does not decide who is allowed to run research; the rule checks are fixed software logic.
+
+Most tests use a clearly labelled mock instead of calling an AI model. A mock is a test substitute. It helps check the software but is not evidence of a live model run. The live run is separately described in the [project status](docs/fellowship/project-status.md).
+
+## Run and check it locally
+
+Requirements: Node.js 24 or later and npm 11 or later.
+
+```sh
 npm ci
 npm run dev
 ```
 
-`npm run dev` builds the app, applies D1 migrations to Wrangler's local SQLite database, and starts the Worker runtime at `http://127.0.0.1:8788`. Local inference uses an explicitly labelled deterministic mock; it does not call a model. Install Chromium once with `npx playwright install chromium`. `npm run test:agreement` runs portable agreement and receipt conformance tests without Cloudflare credentials. `npm run test:e2e` checks the reviewer UI using controlled API fixtures; `npm run test:e2e:fullstack` builds the app and checks it against the local Worker and D1. Both local integration paths use a clearly labelled mock, not live Workers AI. `npm run test:vision-static` builds and browser-tests the GitHub Pages vision-only artifact. `npm run verify` also checks that artifact, and runs formatting, lint, type checks, unit tests, production build, local migrations, API integration, and documentation checks.
+The local site opens at `http://127.0.0.1:8788`. Local inference uses a deterministic mock and does not call a model. Install Chromium once with `npx playwright install chromium`.
 
-For the protocol consumer example, see [`examples/portable-ai-worker/`](examples/portable-ai-worker/README.md). It shows caller authentication as an independent service responsibility, deterministic agreement evaluation before model execution, and an output-release recheck. The local conformance suite compares that consumer with the MindCommons evaluator. An agreement is not proof of representative authority and cannot constrain services that do not implement it.
+Useful checks:
 
-## Public links
+```sh
+npm run verify
+npm run test:e2e
+npm run test:e2e:fullstack
+npm run test:agreement
+```
 
-- Source: <https://github.com/Bepoadewale/mindcommons>
-- Live demonstration: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/>
-- Latest policy-and-benefit walkthrough: <https://bepoadewale.github.io/mindcommons/mindcommons-demo-authorization.mp4> (public 1920×1080 MP4; it demonstrates the real denial and session receipt without running AI)
-- Captioned technical video: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo-captioned.mp4> (public 1920×1080 MP4; a <https://bepoadewale.github.io/mindcommons/mindcommons-demo-captioned.mp4> Pages fallback is available)
-- Original screen recording: <https://mindcommons-mozilla-demo.bepoadewale1.workers.dev/mindcommons-demo.mp4> (preserved; YouTube upload is still planned by the project owner)
-- Future-product wireframe: <https://bepoadewale.github.io/mindcommons/> (public static visualization with expandable concepts; no API or AI execution)
+`npm run verify` runs formatting, code checks, automated tests, a local database setup, a production build and documentation checks. Browser tests exercise the website. The agreement tests check that the same rules produce the same answer in MindCommons and the separate Worker example. These local tests do not use live AI. See the [portable example guide](examples/portable-ai-worker/README.md) for more.
 
-## Privacy, research, and governance limits
+## Privacy and limits
 
-The prototype must use synthetic content only. It is not suitable for patient data, clinical decisions, or human-subject research. The consent panel explains the fixed synthetic input, purpose, fictional requester, hosted model boundary, and limits of withdrawal; it is not legally valid consent. Demo roles are not identity verification, audit records are not tamper-proof, and a cloud inference call does not establish deletion from model weights. Application limits cap new sessions at 500/day, API requests at 60/minute/session, and model runs at 100/day; these safeguards do not guarantee account-wide free usage. Community authority, consent language, safeguarding, and benefit-sharing arrangements need to be co-designed before any real pilot. See [threat model](docs/security/threat-model.md), [privacy limitations](docs/security/privacy-limitations.md), [community authority](docs/governance/community-authority.md), and the conditional [SRHIN roadmap](docs/fellowship/srhin-embedded-roadmap.md).
+Do not enter personal information in the demo. It is for synthetic material only and is not suitable for patient records, clinical decisions or human-subject research. The browser does not save demo research data in its local storage. Demo sessions expire and can be reset. The hosted AI task sends selected synthetic text to Cloudflare, an outside service. Withholding a result after a change does not recall text already sent. The demo's switchable roles are fictional and do not verify anyone's identity or authority.
+
+Before any real-world use, the project would need community-led decisions, appropriate ethics and safeguarding review, legal and privacy advice, and a secure design for the specific research. See the [privacy limits](docs/security/privacy-limitations.md), [threat model](docs/security/threat-model.md), [community decision guide](docs/governance/community-authority.md), and [proposed SRHIN fellowship roadmap](docs/fellowship/srhin-embedded-roadmap.md).
+
+## Project stage
+
+MindCommons is an independent technical prototype. It is not an established cooperative, an SRHIN project, a community-validated product or an awarded Mozilla project. The proposed fellowship is an opportunity to explore whether and how the idea should change through authorized community co-design. Read the [plain-language project status](docs/fellowship/project-status.md) and [technical evidence summary](docs/fellowship/technical-evidence-summary.md).
 
 ## Contributing and license
 
-Contributions are welcome under the [Apache License 2.0](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Changes to `main` go through pull requests and required checks.
+Contributions are welcome under the [Apache License 2.0](LICENSE). See [how to contribute](CONTRIBUTING.md) and [security reporting](SECURITY.md). Changes to `main` go through pull requests and required checks.

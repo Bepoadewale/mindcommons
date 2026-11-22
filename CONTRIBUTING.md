@@ -1,23 +1,23 @@
-# Contributing
+# How to contribute
 
-MindCommons is an independent public-interest prototype. Keep claims grounded in checked behavior and keep all application data synthetic.
+MindCommons is an independent public-interest prototype. Contributions should keep the examples fictional and explain the project in clear language.
 
-## Changes
+## Make a change
 
-1. Open an issue or describe the focused change in a pull request.
-2. Create a short-lived branch from `main`.
-3. Add or update tests and documentation for changed behavior.
-4. Run the documented verification commands once they are available.
-5. Open a pull request. `main` is protected; no direct pushes.
+1. Open an issue or describe one focused change in a pull request.
+2. Start a short-lived branch from `main`.
+3. Update tests and documentation when behavior changes.
+4. Run the checks listed in the README.
+5. Open a pull request. The `main` branch is protected; do not push changes directly to it.
 
-There is no requirement for a second human approval because this repository is solo-maintained. Automated checks are the merge gate once configured.
+Automated checks are required before a change can merge. This solo-maintained project does not require approval from a second person.
 
-## Safety boundaries
+## Keep people safe
 
-- Never submit real health data, narratives, identifiers, or credentials.
-- Never make the browser the authorization authority.
-- Do not add arbitrary scripts, prompts, or code execution to research jobs.
-- Label mock inference and proposed features clearly.
-- Follow the [security policy](SECURITY.md) for vulnerability reports.
+- Do not add real health information, personal stories, names, or credentials.
+- Keep permission decisions in the server. A button hidden in the browser is not a security check.
+- Do not add arbitrary scripts, prompts, or code execution to research tasks.
+- Clearly label test substitutes and proposed future features.
+- Follow the [security reporting guide](SECURITY.md) if you find a weakness.
 
-By contributing, you agree that contributions are provided under Apache-2.0.
+Contributions are provided under the [Apache License 2.0](LICENSE).
